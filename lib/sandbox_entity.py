@@ -632,6 +632,11 @@ class sandbox_entity(dict):
   
   # Movement
   # Logistics
+  def GetCargo(self):
+    ''' Return the state of the cargo for this unit.
+    '''
+    return self.cargo
+  
   def CanLoad(self, other):
     '''! \brief confirms whether a unit Other can be loaded.
          \todo consider net weight for loading
@@ -642,10 +647,10 @@ class sandbox_entity(dict):
   
   def AdjustSupply(self, val):
     ''' Adjust the quantity of supply to an unit by the package val.'''
-    self['logistics'].Restock(val)
-    self['logistics']['cargo'].ConvertGeneric()
+    self.cargo = self.cargo + val
+    self.cargo.ConvertGeneric()
     
-  def ExpendSupply(self, pulse = None):
+  def ExpendPulseSupply(self, pulse = None):
     '''!
          Expand supply for a impulse
     '''
@@ -656,8 +661,8 @@ class sandbox_entity(dict):
         return
     
     # Alternative implementation
-    cost = self['logistics'].ComputePulseSupply(self['activities this pulse']+['idle'], pulse, self['combat'].RawRCP())
-    self['logistics'].Unload(cost)
+    cost = self['logistics'].SupplyExpenditure(1,self['activities this pulse']+['idle'], pulse, self)
+    self.AdjustSupply(-1.0 * cost)
   
   # Files
   def fromXML(self, doc, node):
@@ -787,9 +792,9 @@ class EntityTest(unittest.TestCase):
     unit = sandbox_entity('defaultname','Bde','HQ')
     self.assert_(unit.InflictDammage(1.0))
 
-  def testExpendSupplyNoPulseNoWorld(self):
+  def testExpendPulseSupplyNoPulseNoWorld(self):
     unit = sandbox_entity('defaultname','Bde','HQ')
-    self.assertEqual(unit.ExpendSupply(), None)
+    self.assertEqual(unit.ExpendPulseSupply(), None)
     
   def testLenChainOfCommand(self):
     a = sandbox_entity()

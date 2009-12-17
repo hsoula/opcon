@@ -534,7 +534,7 @@ class sandbox:
     '''
     for i in self.OOB:
       i.Step(self.map, self.clock, self.Pulse())
-      i.ExpendSupply()
+      i.ExpendPulseSupply()
       
     # Re-define the echelon footprints.  
     for i in self.GetOOB(top_level=True):
