@@ -548,6 +548,15 @@ class sandbox_entity(dict):
         return self['sensors'][i]
     return None
   # Combat
+  def CanMoveStance(self):
+    '''
+       Return 1 if can move, -1 if whithdrawal (logically a yes anyway)
+    '''
+    if self['stance'] == 'hasty defense' or self['stance'] == 'deliberate defense' or self['stance'] == 'Support':
+      return 0
+    if self['stance'] == 'withdrawal':
+      return -1
+    return 1
   def GetStance(self):
     return self['combat']['stance']
   def GetRCPperPerson(self):
@@ -636,6 +645,11 @@ class sandbox_entity(dict):
     ''' Return the state of the cargo for this unit.
     '''
     return self.cargo
+  
+  def CanMoveLogitics(self):
+    ''' Place holder for until the tasks are refactored.
+    '''
+    return True
   
   def CanLoad(self, other):
     '''! \brief confirms whether a unit Other can be loaded.

@@ -498,7 +498,7 @@ class sandbox_task(dict):
     delta = E['movement'].Speed(E['agent'].map.TerrainUnder(E['position']), E.C2Level(), E['combat']['stance'])
     
     # Has orders to advance
-    delta = delta * E['combat'].CanMove()
+    delta = delta * E.CanMoveStance()
     if delta == 0.0 or self.Yield(E,delta,E['movement'].Speed(E['agent'].map.TerrainUnder(E['position']), E.C2Level(), E['combat']['stance'])) :
       return 0.0
     
@@ -652,7 +652,7 @@ class taskRedeploy(sandbox_task):
     
     # Can move by virtue of logistics
     E['agent'].log('Redeploying...','operations')
-    if E['logistics'].CanMove() == 0:
+    if E.CanMoveLogitics() == 0:
       E['position'].rate = 0.0
       E['agent'].log('Redeployment aborted by supply problems.','operations')
       return
@@ -833,7 +833,7 @@ class taskRelocate(sandbox_task):
     E['activities this pulse'].extend(self.ConsumptionCodes())
     
     # Can move by virtue of logistics
-    if E['logistics'].CanMove() == 0:
+    if E.CanMoveLogitics() == 0:
       E['position'].rate = 0.0
       E['agent'].log('Out of petrol, no movement allowed anymore.','logistics')
       return
@@ -1489,7 +1489,7 @@ class taskPickUp(sandbox_task):
          
         Flag LOGPAC for deletion.
     '''
-    E['logistics'].LoadFreight(U['logistics'].GetCargo())
+    E['logistics'].LoadFreight(U.GetCargo())
     U['delete me'] = True
     
   def LoadUnit(self, E, U):
@@ -1576,7 +1576,7 @@ class taskDropOff(sandbox_task):
     
     # transfer the supply to the LOGPAC
     LOGPAC['logistics']['capacity'] = C
-    LOGPAC['logistics'].Restock(C)
+    LOGPAC.AdjustSupply(C)
     LOGPAC['recipient'] = self['recipient']
     LOGPAC['SUPREQ'] = self['SUPREQ']
 
@@ -1726,7 +1726,7 @@ class taskConvoyMerge(sandbox_task):
     E['activities this pulse'].extend(self.ConsumptionCodes())
     
     # Return unexpanded supply to home
-    E.GetHQ()['logistics'].Restock(E['logistics']['cargo'])
+    E.GetHQ().AdjustSupply(E['logistics']['cargo'])
     E.GetHQ()['logistics']['freight'] = E.GetHQ()['logistics']['freight'] + E['logistics']['max_freight']
     E.GetHQ()['agent'].log('Reabsorbing %s with outstanding %.2f units left'%(E['name'],E['logistics']['cargo']),'logistics')
     
@@ -1771,8 +1771,8 @@ class taskDispatchSupply(sandbox_task):
     if E.Position().Overlaps(self['target unit'].Position()):
       # Execute a simple transaction -- validate order
       mycargo = E['logistics'].ValidateRequest(self['COMMODITY'])
-      E.Unload(mycargo)
-      self['target unit'].Restock(mycargo)
+      E.AdjustSupply(-1*mycargo)
+      self['target unit'].AdjustSupply(mycargo)
       A.log('Transferring directly %.2f STON of material to %s.'%(float(mycargo), self['target unit']['name']),'logistics')
       self['target unit']['agent'].log('Absorbing directly %.2f STON of material from %s.'%(float(mycargo), E['name']),'logistics')
       # remove from list
@@ -1812,9 +1812,9 @@ class taskDispatchSupply(sandbox_task):
         # Overwrite COMMODITY, now in real material.
         self['COMMODITY'] = mycargo * 1.0
         netcargo = mycargo + supplyneed
-        newconvoy['logistics'].Restock(supplyneed) # overhead already added
+        newconvoy.AdjustSupply(supplyneed) # overhead already added
         newconvoy['logistics'].LoadFreight(mycargo) # The package to be sent.
-        E['logistics'].Unload(netcargo)
+        E.AdjustSupply(-1*netcargo)
   
         # Discard freight from self
         E['logistics']['max_freight'] = max(E['logistics']['max_freight'],E['logistics']['freight'])
@@ -1959,7 +1959,7 @@ class taskFieldRessuply(sandbox_task):
     
     # If pre-planning for set LOGPACs
     for i in self['LOGPACs']:
-      self['supply required'] = self['supply required'] - E.sim.AsEntity(i)['logistics'].GetCargo()
+      self['supply required'] = self['supply required'] - E.sim.AsEntity(i).GetCargo()
     
     # Must have at least 1 LOGPAC
     return [self]
@@ -2014,7 +2014,7 @@ class taskFieldRessuply(sandbox_task):
         LOGPAC['agent'].log('Disbanding.','personel')
         # Get all supply
         stock = E['logistics'].StripLOGPACs([LOGPAC])
-        E['logistics'].Restock(stock)
+        E.AdjustSupply(stock)
         
 class taskRessuply(sandbox_task):
   '''! \brief Task that stalls progression until completed.

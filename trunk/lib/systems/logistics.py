@@ -421,28 +421,17 @@ class system_logistics(system_base.system_base):
   #
   # Report and information
   #
-  def CanMove(self): #del
-    '''
-       Check for bulk POL
-    '''
-    if self['cargo'].has_key('III'):
-      if self['cargo']['III'] > 0.0:
-        return 1
-    return 0
-  
   def CombatSupplyLevel(self): #del, combat
     '''! Return the level of Ammunition relative to capacity. 
+         Broken, awaiting the refactoring of the combat module.
     '''
+    return 1.0
     try:
       return min(1.0,self['cargo']['V'] / self['capacity']['V'])
     except:
       return 0.0
     
-  def GetCargo(self): #del, state
-    '''!
-       Return the cargo supply_package instance.
-    '''
-    return self['cargo']
+
   def SetCargo(self, C): #del, state
     '''! \brief replace the cargo by another one
          \param C A (supply_package) The cargo to be set to, deleting the previous instance.
@@ -506,19 +495,7 @@ class system_logistics(system_base.system_base):
     self['freight'] += temp
     return temp
     
-  def Unload(self, package):
-    '''
-       Remove package from the cargo
-    '''
-    self['expenses'] = self['expenses'] + package
-    self['cargo'] = self['cargo'] - package
-    
-  def Restock(self, package):
-    '''
-       Add the package to the cargo
-    '''
-    self['intake'] = self['intake'] + package
-    self['cargo'] = self['cargo'] + package  
+     
     
   # Computation of expenses - Interface
   def SupplyExpenditure(self, N=1, activity_code = ['idle'], deltatime = 1.0/6, E=None):
