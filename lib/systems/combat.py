@@ -116,15 +116,6 @@ class system_combat(system_base.system_base):
     
     return out
     
-  def CanMove(self):
-    '''
-       Return 1 if can move, -1 if whithdrawal (logically a yes anyway)
-    '''
-    if self['stance'] == 'hasty defense' or self['stance'] == 'deliberate defense' or self['stance'] == 'Support':
-      return 0
-    if self['stance'] == 'withdrawal':
-      return -1
-    return 1
     
   def FootprintRadius(self, stance = None):
     if stance == None:
