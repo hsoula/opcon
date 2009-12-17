@@ -1,0 +1,28 @@
+#summary Extensibility
+#labels Phase-Requirements
+
+= Introduction =
+
+There are three main places where the project must be extensible. They are described here.
+
+
+= Models = 
+Each unit is an entity which is a union of a state (data that changes from unit to another) and a number of Stateless models. The models are:
+  * [logistics]
+  * [combat]
+  * [movement]
+  * [C3]
+  * [intelligence]
+
+Each unit is defined by inheritable templates which contain a model or a template for a model for each of the modules. All of the data is stored in XML files, which can be edited by hand, or eventually with some kind of UI.
+
+A user should be able to:
+  * Create unit template by putting together a set of existing models.
+  * Insert new model template in custom or base definition files.
+  * Define models directly in unit templates.
+  * Never have to copy/paste data, use inheritance instead.
+  * Easily define variants by adding only the necessary modifications after inheriting a template.
+
+= Code =
+
+= Scenario design =
