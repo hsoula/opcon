@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<templates>
+    <defense_systems>
+        <defense_system name="base">
+            <armor front="1.0" back="1.0" flank="1.0" top="1.0" bottom="1.0"/>
+        </defense_system>
+    </defense_systems>
+    <defense_systems>
+        <defense_system name="light-plate">
+            <armor front="3.0" back="3.0" flank="3.0" top="3.0" bottom="3.0"/>
+        </defense_system>
+    </defense_systems>
+</templates>

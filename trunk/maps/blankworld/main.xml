@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<map>
+	<name>blankworld</name>
+	<filename>main.png</filename>
+	<width>100</width>
+	<climate>temperate</climate>
+	<ref_coord>00d00'00&quot; 00d00'00&quot;</ref_coord>
+	<ref_XY type="vect_5D"><x>0.0</x><y>0.0</y><z>0.0</z><course>0.0</course><rate>0.0</rate></ref_XY>
+	<terrain filename="terrain.png">
+		<class name="urban"><color type="RGB">255,0,255</color></class>
+		<class name="restricted"><color type="RGB">255,255,0</color></class>
+		<class name="water"><color type="RGB">0,0,255</color></class>
+		<class name="severely restricted"><color type="RGB">255,0,0</color></class>
+		<class name="unrestricted"><color type="RGB">255,255,255</color></class>
+		<class name="impassable"><color type="RGB">0,0,0</color></class>
+</terrain>
+	<friction>
+		<mode name="base">
+			<terrain name="urban">1.0</terrain>
+			<terrain name="restricted">1.0</terrain>
+			<terrain name="water">1.0</terrain>
+			<terrain name="severely restricted">1.0</terrain>
+			<terrain name="unrestricted">1.0</terrain>
+			<terrain name="impassable">1.0</terrain>
+</mode>
+</friction>
+</map>

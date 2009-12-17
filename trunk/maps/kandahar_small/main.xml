@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<map>
+	<name>kandahar_small</name>
+	<filename>main.png</filename>
+	<width>35.8992873668</width>
+	<climate>temperate</climate>
+	<ref_coord>31d37' 65d39'52"</ref_coord>
+	<ref_XY type="vect_5D"><x>47445.8215788</x><y>20749.346406</y><z>0.0</z><course>0.0</course><rate>0.0</rate></ref_XY>
+	<terrain filename="terrain.png">
+		<class name="unrestricted"><color type="RGB">255, 255, 255</color></class>
+		<class name="restricted"><color type="RGB">255, 255, 0</color></class>
+		<class name="severely restricted"><color type="RGB">255, 0, 0</color></class>
+		<class name="impassable"><color type="RGB">0,0,0</color></class>
+		<class name="water"><color type="RGB">0,0, 255</color></class>
+		<class name="urban"><color type="RGB">255, 0, 255</color></class>
+	</terrain>
+	<friction>
+		<mode name="base">
+			<terrain name="unrestricted">1.0</terrain>
+			<terrain name="restricted">0.5</terrain>
+			<terrain name="severely restricted">0.05</terrain>
+			<terrain name="impassable">0.001</terrain>
+			<terrain name="water">0.0</terrain>
+			<terrain name="urban">0.75</terrain>
+			<terrain name="off map">1.0</terrain>
+		</mode>
+		<mode name="leg"><terrain name="restricted">0.75</terrain><terrain name="severely restricted">0.5</terrain><terrain name="impassable">0.1</terrain></mode>
+		<mode name="wheeled"/>
+		<mode name="tracked"><terrain name="restricted">0.75</terrain><terrain name="severely restricted">0.2</terrain></mode>
+		<mode name="air">
+			<terrain name="unrestricted">1.0</terrain>
+			<terrain name="restricted">1.0</terrain>
+			<terrain name="severely restricted">1.0</terrain>
+			<terrain name="impassable">1.0</terrain>
+			<terrain name="water">1.0</terrain>
+			<terrain name="urban">1.0</terrain>
+			<terrain name="off map">1.0</terrain>
+		</mode>
+		<mode name="amphib" sameas="tracked"><terrain name="water">0.33</terrain></mode>
+	</friction>
+</map>

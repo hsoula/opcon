@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<templates>
+    <weapon_systems>
+        <weapon_system name="base">
+            <!-- All ranges are in metres-->
+            <max_range>500.0</max_range>
+            <effective_range>100.0</effective_range>
+            <min_range>0.0</min_range>
+            <!-- Data used by the logistic model -->
+            <logistics>
+                <!-- In kilogram, per units-->
+                <lift>0.0</lift>
+                <!-- probability of a failure -->
+                <breakdown>0.01</breakdown>
+                <!-- In Short tons, per unit per hour of high intensity combat(I know, it is a weird scale) -->
+                <consumption_rate type="LOGPAC">
+                    <class name="V">0.00055</class>
+                </consumption_rate>
+            </logistics>
+            <!-- How many are allocated per person, and per vehicles-->
+            <allowance personel="1.0" vehicle="0.0"/>
+            <payload name="base">
+                <RCP area="0.1" point="0.1"/>
+                <!-- All radii in metres-->
+                <blast_radius>0.0</blast_radius>
+                <casualty_radius>0.00</casualty_radius>
+                <!-- DP as in the Harpoon 4.1 ruleset-->
+                <demolition_points>0.0001</demolition_points>
+                <effect smoke="0" incendiary="0"/>
+                <!-- In effective mm of steel-->
+                <penetration_steel>2.0</penetration_steel>
+            </payload>
+            <!-- Posible: visual, IR, radar, low-light, radiation (active or passive)-->
+            <sensor active="0" mode="visual"/>
+        </weapon_system>
+        
+        <!-- Add low-light scope capability for M4 units -->
+        <weapon_system name="M16/M4" template="base">
+            <sensor active="0" mode="low-light"/>
+        </weapon_system>
+        
+    </weapon_systems>
+
+    <!-- kits -->
+    <personel>
+        <personel name="US-Infantry-2009">
+            <weapon_system template="M16/M4"/>
+        </personel>
+    </personel>
+</templates>

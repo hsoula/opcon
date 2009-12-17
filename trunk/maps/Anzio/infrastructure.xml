@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<network>
+	<templates>
+		<infrastructure name="airfield">
+			<runway length="2500" orientation="010"/>
+		</infrastructure>
+	</templates>
+	<!-- A predetermined list of nodes -->
+	<nodes>
+		<node name="LIRL">
+			<!-- This is an example of a node using a template from another file. -->
+			<coord>33T UG 2500</coord>
+			<infrastructure template="airfield"/>
+		</node>
+	</nodes>
+	<!-- A list of defined roads-->
+	<roads>
+		<road name="SP2" lanes="2" surface="road" curve="1.0">
+			<node name="Cisterna Di Latina" kind="urban"><coord>33T UG 1806</coord></node>
+			<node name="SP2-1"><coord>33T UG 1905</coord></node>
+			<node name="SP2-2"><coord>33T UG 2203</coord></node>
+			<node name="SP2-B1" kind="bridge"><coord>33T UG 2302</coord></node>
+			<node name="LIRL"><coord>33T UG 2500</coord></node>
+			<node name="SP2-4"><coord>33T UF 2699</coord></node>
+			<node name="Borgo Faiti"><coord>33T UF 3392</coord></node>
+		</road>
+		<road name="SS156" lanes="2" surface="road" curve="0.90">
+			<node name="Sezze Scalo"><coord>33T UF 3695</coord></node>
+			<node name="Borgo Faiti"/>
+			<node name="Borgo San Michele"><coord>33T UF 3089</coord></node>
+			<node name="Latina"><coord>33T UF 2592</coord></node>
+			<node name="Borgo Piave"><coord>33T UF 2194</coord></node>
+		</road>
+		<road name="via Chiesa Nuova" lanes="1.5" surface="road" curve="0.33">
+			<node name="Sezze Scalo"/>
+			<node name="Sezze"><coord>33T UF 3896</coord></node>
+		</road>
+		<road name="SS148" lanes="4" surface="highway" curve="1.0">
+			<node name="Borgo Piave"/>
+			<node name="SS148-B1" kind="bridge"><coord>33T UF 1995</coord></node>
+			<node name="SS148-1"><coord>33T UF 1697</coord></node>
+			<node name="SS148-2"><coord>33T UF 1598</coord></node>
+			<node name="SS148-3"><coord>33T UG 1001</coord></node>
+			<node name="Aprilia" type="urban"><coord>33T UG 0306</coord></node>
+		</road>
+		<road name="via Provinciale Per Latina" lanes="2" surface="road" curve="1.0">
+			<node name="Borgo Piave"/>
+			<node name="Borgo Podgora"><coord>33T UF 2198</coord></node>
+			<node name="PPL-1" kind="bridge"><coord>33T UF 2099</coord></node>
+			<node name="SP2-1"/>
+		</road>
+		<road name="via Concale" lanes="2" surface="road" curve="0.9">
+			<node name="SS148-1"/>
+			<node name="Borgo Podgora"/>
+			<node name="LIRL"/>
+		</road>
+		<road name="via Nettuno" lanes="2" surface="road" curve="0.8">
+			<node name="SS148-2"/>
+			<node name="Cisterna Di Latina"/>
+		</road>
+	</roads>
+</network>

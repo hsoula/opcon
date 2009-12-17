@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<map>
+	<name>Anzio</name>
+	<climate>temperate</climate>
+	<width>127.592870482</width>
+	<ref_coord>33T UG 0000000000</ref_coord>
+	<ref_XY type="vect_5D"><x>12772.3357814</x><y>34312.2736255</y></ref_XY>
+	<filename>main.png</filename>
+	<terrain filename="terrain.png">
+		<class name="unrestricted"><color type="RGB">255, 255, 255</color></class>
+		<class name="restricted"><color type="RGB">255, 255, 0</color></class>
+		<class name="severely restricted"><color type="RGB">255, 0, 0</color></class>
+		<class name="impassable"><color type="RGB">0,0,0</color></class>
+		<class name="water"><color type="RGB">0,0, 255</color></class>
+		<class name="urban"><color type="RGB">255, 0, 255</color></class>
+	</terrain>
+	<friction>
+		<mode name="base">
+			<terrain name="unrestricted">1.0</terrain>
+			<terrain name="restricted">0.5</terrain>
+			<terrain name="severely restricted">0.05</terrain>
+			<terrain name="impassable">0.001</terrain>
+			<terrain name="water">0.0</terrain>
+			<terrain name="urban">0.75</terrain>
+			<terrain name="off map">1.0</terrain>
+		</mode>
+		<mode name="leg"><terrain name="restricted">0.75</terrain><terrain name="severely restricted">0.5</terrain><terrain name="impassable">0.1</terrain></mode>
+		<mode name="wheeled"/>
+		<mode name="tracked"><terrain name="restricted">0.75</terrain><terrain name="severely restricted">0.2</terrain></mode>
+		<mode name="air">
+			<terrain name="unrestricted">1.0</terrain>
+			<terrain name="restricted">1.0</terrain>
+			<terrain name="severely restricted">1.0</terrain>
+			<terrain name="impassable">1.0</terrain>
+			<terrain name="water">1.0</terrain>
+			<terrain name="urban">1.0</terrain>
+			<terrain name="off map">1.0</terrain>
+		</mode>
+		<mode name="amphib" sameas="tracked"><terrain name="water">0.33</terrain></mode>
+	</friction>
+</map>

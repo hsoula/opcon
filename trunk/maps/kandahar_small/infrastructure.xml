@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<network>
+	<templates>
+	</templates>
+	<!-- A predetermined list of nodes -->
+	<nodes>
+	</nodes>
+	<!-- A list of defined roads-->
+	<roads>
+		<road name="HWY1-W" lanes="2" surface="road" curve="1.0">
+			<node name="HWY1 - West Entry"><coord>37R EQ 348845</coord></node>
+			<node name="Nurmohammadkhan"><coord>37R EQ 365854</coord></node>
+			<node name="Nurmohammadkhan bridge"><coord>37R EQ 370859</coord></node>
+			<node name="Senjaray"><coord>37R EQ 392864</coord></node>
+			<node name="Deh Sabzi"><coord>37R EQ 423878</coord></node>
+			<node name="Khandahar bridge" kind="bridge"><coord>37R EQ 434866</coord></node>
+			<node name="HWY1-Rd 1 Junction"><coord>37R EQ 436862</coord></node>
+			<node name="Cypzap"><coord>37R EQ 463870</coord></node>
+			<node name="Khandahar West"><coord>37R EQ 531870</coord></node>
+		</road>
+		<road name="Khandahar Main"  lanes="1.5" surface="road" curve="0.71">
+			<node name="Khandahar West"/>
+			<node name="Khandahar Centre"><coord>37R EQ 550866</coord></node>
+			<node name="Khandahar East"><coord>37R EQ 596870</coord></node>
+		</road>
+		<road name="Khandahar North"  lanes="1.5" surface="road" curve="0.71">
+			<node name="Khandahar Bridge North-West" kind="bridge"><coord>37R EQ 550875</coord></node>
+			<node name="Khandahar Centre-North"><coord>37R EQ 526892</coord></node>
+			<node name="Khandahar East"/>
+		</road>
+		<road name="Khandahar Connector"  lanes="1.5" surface="road" curve="0.8">
+			<node name="Khandahar Centre-North"/>
+			<node name="Khandahar Centre"/>
+		</road>
+		<road name="HWY1-E"  lanes="2.0" surface="road" curve="1.0">
+			<node name="Khandahar West"/>
+			<node name="Axabatap"><coord>37R EQ 673875</coord></node>
+			<node name="HWY 1E - East Entry"><coord>37R EQ 705877</coord></node>
+		</road>
+		<road name="HWY2"  lanes="2.0" surface="road" curve="1.0">
+			<node name="Khandahar West"/>
+			<node name="Wopaktam"><coord>37R EQ 676819</coord></node>
+			<node name="HWY2- South Entry"><coord>37R EQ 688796</coord></node>
+		</road>
+		<road name="HWY3"  lanes="1.5" surface="road" curve="0.85">
+			<node name="Khandahar West"/>
+			<node name="Mynna-Annam" kind="bridge"><coord>37R EQ 572891</coord></node>
+			<node name="Tennezap"><coord>37R EQ 560919</coord></node>
+			<node name="Hypaiokapes"><coord>37R ER 637011</coord></node>
+			<node name="Takary"><coord>37R ER 682093</coord></node>
+			<node name="HWY3 - East Entry"><coord>37R ER 704108</coord></node>
+		</road>
+	</roads>
+</network>
