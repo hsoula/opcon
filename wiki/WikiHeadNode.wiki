@@ -3,8 +3,9 @@
 
 = Design Principles =
 
-  * [Extensibility]
-  * [Realism]
+  * [Extensibility] -- Defining what matters, and nothing else more than that.
+  * [Realism] -- Take the same decision in the sim as you would in real life.
+  * [NoMicromanagement] -- Lots of details, and a robust AI to handle them.
 
 = Milestones =
 
