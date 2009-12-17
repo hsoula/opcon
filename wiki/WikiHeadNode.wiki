@@ -3,7 +3,12 @@
 
 = Design Principles =
 
+  * [Extensibility]
+  * [Realism]
+
 = Milestones =
 
-= User Interface(s) =
+  * MilestoneXMLconversion
+  * MileStoneRelease1
 
+= User Interface(s) =
