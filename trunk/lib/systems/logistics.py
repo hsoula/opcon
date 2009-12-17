@@ -403,23 +403,9 @@ class system_logistics(system_base.system_base):
   # Initialization
   def ConsumptionInitialize(self, hardware = None, initRCP = None, Nv = None, Np = None, echelon = None, climate = 'temperate'):
     '''
-       Set the consumption model
+       Set the consumption model - #del
     '''
-    if hardware != None:
-      self['hardware'] = hardware
-    if initRCP != None: 
-      self['initRCP'] = initRCP   
-    if Nv != None: 
-      self['Nv'] = Nv
-    if Np != None: 
-      self['Np'] = Np
-    self['climate'] = climate
-    if echelon != None: 
-      self['echelon'] = echelon
-
-    # day of intense fight
-    self.ComputeCapacity()
-    self['cargo'] = self['capacity'] * 1.0
+    pass
     
   # Manips
   #
@@ -577,14 +563,14 @@ class system_logistics(system_base.system_base):
     return out
   
 
-  def DailySupply(self):
+  def DailySupply(self, E):
     '''! \brief Returns an average 24 h of supply based on the definition of the daily load.
     
          This is a convenient method for planning.
     '''
     if 'idle' in self['basic load']:
       mod = 24.0 / self['basic load']['idle']
-      return self.ProjectSupply(self['basic load'], self['initRCP']) * mod
+      return self.ProjectSupply(1, self['basic load'], E) * mod
     return supply_package()
   #
   # Umpire interface
@@ -613,7 +599,7 @@ class system_logistics_CSS(system_logistics):
     out = supply_package()
     
     for i in unit_list:
-      out = out + i['logistics'].DailySupply()
+      out = out + i['logistics'].DailySupply(i)
       
     return out
   
@@ -625,7 +611,7 @@ class system_logistics_CSS(system_logistics):
     for i in unit_list:
       if i['TOE'] == 'convoy' or i['TOE'] == 'LOGPAC':
         continue
-      dailyload = i['logistics'].DailySupply()
+      dailyload = i['logistics'].DailySupply(i)
       transittime = i['agent'].EstimateConvoyTransitTime() * 2.0
       burden = burden + (float(dailyload)*transittime)
   
