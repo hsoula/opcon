@@ -8,7 +8,7 @@
 
 = Milestones =
 
-  * MilestoneXML
+  * MilestoneXmlConversion
   * MileStoneRelease1
 
 = User Interface(s) =
