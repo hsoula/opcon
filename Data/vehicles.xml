@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<templates>
+    <vehicles>
+        <!-- A nothing special wheeled vehicle. No armor.-->
+        <vehicle name="civilian car" crew="1" dismount="4" weight="1000.0" lift="250.0">
+            <defense_system template="base"/>
+            <movement template="wheeled"/>
+            <logistics template="civilian car"/>
+            <criticals>
+                <critical penetrating="True" effect="mobility"/>
+                <critical penetrating="False" effect="dismount" weight="2"/>
+            </criticals>
+        </vehicle>
+        <vehicle name="M707 HMMWV">
+            <defense_system template="light plates"/>
+            <movement template="wheeled"/>
+            <logistics template="HMVEE"/>
+            <criticals>
+                <critical penetrating="True" effect="mobility"/>
+                <critical penetrating="True" effect="dismount"/>
+            </criticals>
+        </vehicle>
+    </vehicles>
+</templates>

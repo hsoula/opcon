@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<templates>
+	<infrastructure name="hamlet">
+		<note>A group of 10 small buildings.</note>
+		<footprint shape="circle"><radius unit="km">1.0</radius></footprint>
+		<size>large</size>
+		<DP>120</DP>
+		<parking>40</parking>
+		<accomodation>200</accomodation>
+		<power unit="kW">10</power>
+	</infrastructure>
+	<infrastructure name="garage">
+		<note>A garage/machine shop.</note>
+		<footprint shape="circle"><radius unit="km">0.05</radius></footprint>
+		<size>small</size>
+		<DP>10</DP>
+		<parking>10</parking>
+		<capacity type="LOGPAC"><item class="III(MOGAS)">10.0</item></capacity>
+		<cargo type="LOGPAC"/>
+		<accomodation>10</accomodation>
+		<mechanic>4</mechanic>
+		<power unit="kW">1</power>
+	</infrastructure>
+	<infrastructure name="template">
+		<note>A group of 10 small buildings.</note>
+		<footprint shape="circle"><radius unit="km">1.0</radius></footprint>
+		<size>large</size>
+		<DP>120</DP>
+		<perimeter>none</perimeter>
+		<parking>100</parking>
+		<consumption type="LOGPAC"/>
+		<capacity type="LOGPAC"/>
+		<cargo type="LOGPAC"/>
+		<accomodation>2000</accomodation>
+		<medical>20</medical>
+		<mechanic>2</mechanic>
+		<power unit="kW">10</power>
+	</infrastructure>
+</templates>
