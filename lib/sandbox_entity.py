@@ -645,6 +645,10 @@ class sandbox_entity(dict):
     ''' Return the state of the cargo for this unit.
     '''
     return self.cargo
+  def GetCapacity(self):
+    ''' Get the capacity for the whole unit.
+    '''
+    return self['logistics'].GetCapacity(self)
   
   def CanMoveLogitics(self):
     ''' Place holder for until the tasks are refactored.
