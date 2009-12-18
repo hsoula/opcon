@@ -430,40 +430,60 @@ class system_logistics(system_base.system_base):
       return min(1.0,self['cargo']['V'] / self['capacity']['V'])
     except:
       return 0.0
-    
-
-  def SetCargo(self, C): #del, state
-    '''! \brief replace the cargo by another one
-         \param C A (supply_package) The cargo to be set to, deleting the previous instance.
-    '''
-    self['cargo'] = C
   
-  def GetCapacity(self):
+  def GetCapacity(self, E=None):
     '''! \brief returns the cargo capacity of a unit 
     '''
-    return self['capacity']
-  def Report(self):
+    # Base capacity of the model
+    out = self['capacity']
+    
+    if not E:
+      return out
+    
+    # Vehicles
+    for i in E.vehicle:
+      cnt = E.vehicle[i]['count']
+      vh  = E.vehicle[i]['kit']
+      out = out + i.GetCapacity()
+      
+    # Personel
+    for i in E.personel:
+      cnt = E.personel[i]['count']
+      vh  = E.personel[i]['kit']
+      out = out + i.GetCapacity()
+      
+    return out
+  
+  
+  def Report(self, E):
     '''
-       Logistics report
+       Logistics report for entity E
     '''
+    cargo = E.GetCargo()
+    capacity = E.GetCapacity()
+    
     out = html.Tag('b','Inventory:')
-    out = out + ' %.2f STON (%.2f%% store)'%(float(self['cargo']), 100.0 * float(self['cargo'])/float(self['capacity']))
+    out = out + ' %.2f STON (%.2f%% store)'%(float(cargo), 100.0 * float(cargo)/float(capacity))
     mylist = ''
     for i in ['Unspecified','I','II','III','IV','V','VI','VII','VIII','IX','X','water']:
-      for j in self['cargo'].keys():
+      for j in cargo.keys():
         if j == i or j.find('%s('%(i)) == 0:
-          mylist = mylist + html.Tag('li','%s : %.2f STON'%(j,self['cargo'][j]))
+          mylist = mylist + html.Tag('li','%s : %.2f STON'%(j,cargo[j]))
     out = out + html.Tag('ol',mylist)
-    if self['freight']:
-      out = out + html.Tag('p','Freight   : %.2f STON available.'%(self['freight']))
     return html.Tag('div',out)
    
-  def ValidateRequest(self, commodity, overhead = supply_package()):
+  def ValidateRequest(self, commodity, overhead = supply_package(), E=None):
     ''' Returns up the the capacity if the current stock.
         Returns a negative 
     '''
-    temp = self['cargo'] - overhead
+    # Remove overhead from the cargo
+    cargo = E.GetCargo()
+    temp = cargo - overhead
+    
+    # Remove the commodity from what is left 
     out = temp - commodity
+    
+    # Remove deficits
     if not out.HasNoDeficit():
       # remove all deficit from commodity
       for i in out.keys():
@@ -471,7 +491,8 @@ class system_logistics(system_base.system_base):
           commodity[i] = commodity[i] + out[i]
           
     # consider available freight minus the overhead
-    mod = max(0.0,min(1.0, (float(self['freight'])-float(overhead))/float(commodity)))
+    freight_lift = E.GetCapacity() - cargo
+    mod = max(0.0,min(1.0, (float(freight_lift)-float(overhead))/float(commodity)))
     return commodity * mod
           
   
