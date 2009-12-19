@@ -1,0 +1,18 @@
+#summary Logistics model
+#labels Phase-Design,logistics,models,supply
+
+= General Principle =
+The logistics models is concerned with the tracking of materiel during a scenario. The materiel is stored in a custom data structure called the [supply_package]. Units have the following properties:
+
+Stateless properties
+  # capacity : a supply_package that represent the maximal quantity of materiel that a unit can lift with its organic assets. 
+  # Consumption_rate : There are four consumption rates:
+    # idle : materiel expenditure in STON per hour when the unit/system does nothing.
+    # transit : materiel expenditure when the unit is relocating.
+    # combat : materiel expenditure when the unit/system if fighting.
+    # service : materiel expenditure when the unit/system is providing CSS. 
+  # basic_load: the number of hours for each consumption_rate class that a unit will attempt to maintain through routine resupply requests.
+
+State properties
+  # cargo : the quantity of materiel transported by the unit's organic assets.
+  # mounted dismounts: The number of personel lifted for ferry or relocation ops. Doesn't include the crew of the vehicle itself.
