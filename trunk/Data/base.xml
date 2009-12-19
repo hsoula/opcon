@@ -78,6 +78,8 @@
 			<signature> <stance name="deployed">0.05</stance> </signature>
 		</intelligence>
 		<!-- logistics models -->
+		<!-- Allowable quantity units: STON, kg, lt, gal, lb [default=STON] property name= units
+		     Allowable time units: min, hr, day [default="hrs"] property name= time_units-->
 		<logistics name="base">
 			<capacity type="LOGPAC"/>
 			<cargo type="LOGPAC"/>
@@ -88,6 +90,15 @@
 				<transit>6.0</transit>
 				<combat>1.0</combat>
 			</basicload>
+			<consumption_rate>
+				<idle class="LOGPAC"/>
+				<transit class="LOGPAC"/>
+				<combat class="LOGPAC"/>
+				<service class="LOGPAC"/>
+			</consumption_rate>
+		</logistics>
+		<logistics name="basic_human">
+			<capacity type="LOGPAC"><class name="Unspecified" units="kg">40.0</class></capacity>
 			<consumption_rate>
 				<idle class="LOGPAC"/>
 				<transit class="LOGPAC"/>
@@ -128,21 +139,6 @@
 					<class name="III">0.00666</class>
 				</transit>
 			</consumption_rate>
-		</logistics>
-		<logistics name="empty">
-			<max_freight type="LOGPAC">
-				<class name="Unspecified">12.0</class>
-			</max_freight>
-			<freight type="LOGPAC"/><capacity type="LOGPAC"/><cargo type="LOGPAC"/><intake type="LOGAPC"/><expenses type="LOGPAC"/>
-			<hardware>wheeled</hardware>
-			<initRCP>1.0</initRCP>
-			<vehicles>10</vehicles>
-			<personel>100</personel>
-			<basicload>
-				<idle>72.0</idle>
-				<transit>6.0</transit>
-				<combat>1.0</combat>
-			</basicload>
 		</logistics>
 		<!-- Movement models -->
 		<movement name="base">
