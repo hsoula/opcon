@@ -7,9 +7,12 @@ import Renderer_html as html
 import system_base
 
 class supply_package(dict):
-  def __init__(self, generic = None):
+  units_conversion = {'':1.0, 'STON':1.0, 'kg':0.00110231131, 'lb':0.0005, 'lt':0.00110231131, 'gal':0.0041727022181012319}
+  time_units_conversion = {'':1.0, 'hrs':1.0, 'mins':60.0, 'day':24**-1}
+  def __init__(self, generic = 0.0):
     '''
        Can be initialized with a quantity of generic suppply points.
+       Express everything in Short Tons and all rates in Short tons per hour.
     '''
     if generic:
       self['Unspecified'] = generic
@@ -30,9 +33,16 @@ class supply_package(dict):
     if doc.Get(node, 'type') != 'LOGPAC':
       return False
     
+    # Read in units
+    units = sandbox_package.units_conversion(doc.Get(node, 'units'))
+    
+    # Read in rate
+    ratetime = sandbox_package.time_units_conversion(doc.Get(node, 'time_units'))
+    
     # Read goods in
     for i in doc.ElementAsList(node):
-      self[doc.Get(i,'name')] = doc.Get(i)
+      name = doc.Get(i,'name')
+      self[name] = doc.Get(i) * units * ratetime
     return True
     
   def __str__(self):
