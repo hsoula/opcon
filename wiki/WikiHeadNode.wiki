@@ -1,6 +1,10 @@
 #summary Head Node of the Wiki
 #labels Featured
 
+= Guides =
+  * [Designer Guide] - for scenario designer and umpires
+  * [Player's Guide] - for players and observers.
+
 = Design Principles =
 
   * [Extensibility] -- Defining what matters, and nothing else more than that.
