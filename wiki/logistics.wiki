@@ -18,7 +18,7 @@ State properties
   # mounted dismounts: The number of personel lifted for ferry or relocation ops. Doesn't include the crew of the vehicle itself.
 
 = XML examples =
-The basic definition. It has no capacity for materiel nor passenger lift. It has no crew. By default, all logistic models inherit 72 hours of *idle* activity supply, 6 for *transit* and 1 hour of intense combat. The basicload property is meaningless in the base example. Finally, the base model doesn't expand any supply, regardless of the unit's activity. 
+The basic definition. It has no capacity for materiel nor passenger lift. It has no crew. By default, all logistic models inherit 72 hours of *idle* activity supply, 6 for *transit* and 1 hour of intense *combat*. The basicload property is meaningless in the base example. Finally, the base model doesn't expand any supply, regardless of the unit's activity. Essentially, a unit using this model will operate with the logistic model *turned off*.
 {{{
 <logistics name="base">
    <capacity type="LOGPAC"/>
