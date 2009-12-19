@@ -16,3 +16,24 @@ Stateless properties
 State properties
   # cargo : the quantity of materiel transported by the unit's organic assets.
   # mounted dismounts: The number of personel lifted for ferry or relocation ops. Doesn't include the crew of the vehicle itself.
+
+= XML examples =
+The basic definition. It has no capacity for materiel nor passenger lift. It has no crew. By default, all logistic models inherit 72 hours of *idle* activity supply, 6 for *transit* and 1 hour of intense combat. The basicload property is meaningless in the base example. Finally, the base model doesn't expand any supply, regardless of the unit's activity. 
+{{{
+<logistics name="base">
+   <capacity type="LOGPAC"/>
+   <passenger_lift>0</passenger_lift>
+   <crew>0</crew>
+   <basicload>
+       <idle>72.0</idle>
+       <transit>6.0</transit>
+       <combat>1.0</combat>
+   </basicload>
+   <consumption_rate>
+       <idle class="LOGPAC"/>
+       <transit class="LOGPAC"/>
+       <combat class="LOGPAC"/>
+       <service class="LOGPAC"/>
+   </consumption_rate>
+</logistics>
+}}}
