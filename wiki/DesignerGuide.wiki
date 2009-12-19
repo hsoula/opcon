@@ -1,0 +1,15 @@
+#summary Head Node for scenario designers and umpires
+#labels Phase-Design,umpire
+
+= Models = 
+  * [logistics]
+  * [combat]
+  * [C3]
+  * [movement]
+  * [intelligence]
+
+= Units =
+
+= Scenarios =
+
+= Maps and Infrastructures =
