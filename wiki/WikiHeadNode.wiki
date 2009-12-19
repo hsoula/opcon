@@ -2,8 +2,8 @@
 #labels Featured
 
 = Guides =
-  * [Designer Guide] - for scenario designer and umpires
-  * [Player's Guide] - for players and observers.
+  * [DesignerGuide] - for scenario designer and umpires
+  * [PlayerGuide] - for players and observers.
 
 = Design Principles =
 
