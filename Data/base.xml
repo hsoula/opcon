@@ -91,19 +91,19 @@
 				<combat>1.0</combat>
 			</basicload>
 			<consumption_rate>
-				<idle class="LOGPAC"/>
-				<transit class="LOGPAC"/>
-				<combat class="LOGPAC"/>
-				<service class="LOGPAC"/>
+				<idle type="LOGPAC"/>
+				<transit type="LOGPAC"/>
+				<combat type="LOGPAC"/>
+				<service type="LOGPAC"/>
 			</consumption_rate>
 		</logistics>
 		<logistics name="basic_human">
 			<capacity type="LOGPAC"><class name="Unspecified" units="kg">40.0</class></capacity>
 			<consumption_rate>
-				<idle class="LOGPAC"/>
-				<transit class="LOGPAC"/>
-				<combat class="LOGPAC"/>
-				<service class="LOGPAC"/>
+				<idle type="LOGPAC"/>
+				<transit type="LOGPAC"/>
+				<combat type="LOGPAC"/>
+				<service type="LOGPAC"/>
 			</consumption_rate>
 		</logistics>
 		<logistics name="civilian car">
@@ -118,7 +118,7 @@
 				<transit>15.0</transit>
 			</basicload>
 			<consumption_rate>
-				<transit class="LOGPAC">
+				<transit type="LOGPAC">
 					<class name="III">0.00333</class>
 				</transit>
 			</consumption_rate>
@@ -135,7 +135,7 @@
 				<transit>15.0</transit>
 			</basicload>
 			<consumption_rate>
-				<transit class="LOGPAC">
+				<transit type="LOGPAC">
 					<class name="III">0.00666</class>
 				</transit>
 			</consumption_rate>

@@ -93,7 +93,7 @@ class sandbox_entity(dict):
     
     # Logistics
     self.cargo = supply_package()
-    self.mounted_dismount = 0
+    self.mounted_dismount = False
     
     
     # Agents
@@ -160,10 +160,6 @@ class sandbox_entity(dict):
     
   def SetModelLogistics(self, M):
     self['logistics'] = M
-    try:
-      self['logistics']['initRCP'] = self['combat']['RCP']
-    except:
-      pass
     
   def SetModelC3(self, M):
     self['C3'] = M
@@ -708,7 +704,7 @@ class sandbox_entity(dict):
     # Dismount 
     x = doc.Get(node, 'dismounted')
     if x:
-      self['stance'] = bool(x)
+      self.mounted_dismount = not bool(x)
       
     # Systems
     models = doc.Get(node,'models')
