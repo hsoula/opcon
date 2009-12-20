@@ -792,7 +792,7 @@ class sandbox:
         # Load the map definition infrastructure
         fname = os.path.join(os.getcwd(),'maps',self.map.Name(),'infrastructure.xml')
         if os.access(fname,os.F_OK):
-          self.network.LoadFromXML(sandboXML(fname))
+          self.network.LoadFromXML(sandboXML(read=fname))
         else:
           raise "DefaultInfrastructureNotFound"
         
@@ -898,6 +898,14 @@ class SandboxMain(unittest.TestCase):
       self.assertTrue(True)
     except:
       self.assertTrue(False)
+      
+  def testLoadSpecificScenarioFile(self):
+    try:
+      self.box = sandbox("testscenario.xml")
+      self.assertTrue(True)
+    except:
+      self.assertTrue(False)
+    
     
     
 if __name__ == "__main__":

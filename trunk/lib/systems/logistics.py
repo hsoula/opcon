@@ -34,10 +34,10 @@ class supply_package(dict):
       return False
     
     # Read in units
-    units = sandbox_package.units_conversion(doc.Get(node, 'units'))
+    units = supply_package.units_conversion[doc.Get(node, 'units')]
     
     # Read in rate
-    ratetime = sandbox_package.time_units_conversion(doc.Get(node, 'time_units'))
+    ratetime = supply_package.time_units_conversion[doc.Get(node, 'time_units')]
     
     # Read goods in
     for i in doc.ElementAsList(node):
@@ -395,18 +395,18 @@ class system_logistics(system_base.system_base):
       self['crew_size'] = lift
     
     # Basic Load
-    if 'basicload' in dd:
-      bl = dd['basicload']
+    bl = doc.Get(node, 'basicload')
+    if bl:
       d = doc.ElementsAsDict(bl)
       if d:
         self['basic load'].update(d)
         
     # consumption vectors
-    cons = doc.Get(node, 'consumption_rate'):
-      if cons:
-        for i in ['idle','transit','combat','service']:
-          nd = doc.Get(cons, i)
-          self['consumption_rate'][i] = nd
+    cons = doc.Get(node, 'consumption_rate')
+    if cons:
+      for i in ['idle','transit','combat','service']:
+        nd = doc.Get(cons, i)
+        self['consumption_rate'][i] = nd
         
 
   
