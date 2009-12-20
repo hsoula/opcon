@@ -17,6 +17,10 @@
         51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 '''
 
+# For unit testing only
+if __name__ == "__main__":
+    import syspathlib
+    
 # import section
 from sandbox_graph import *
 from sandbox_XML   import *
@@ -279,22 +283,22 @@ class InfrastructureTest(unittest.TestCase):
     
     def setUp(self):
         self.folder = os.getcwd()
-        self.infrastructure = os.path.join(os.path.split(self.folder)[0], 'Data','Infrastructure')
-        self.testfolder = os.path.join(self.infrastructure, 'Unittest')
-        os.chdir(self.testfolder)
+        
+        # Anzio infrastructure file
+        self.anziofile = os.path.join(os.path.split(self.folder)[0], 'maps','Anzio','infrastructure.xml')
         
     def OpenFile(self, fname):
-        return sandboXML(read=os.path.join(self.testfolder,fname))
+        return sandboXML(read=fname)
     
     def tearDown(self):
-        os.chdir(self.folder)
+        pass
     
     def testReadAnzioFile(self):
-        xml = self.OpenFile('anzio.xml')
+        xml = self.OpenFile(self.anziofile)
         self.assertTrue(xml)
         
     def testParseAnzioFile(self):
-        xml = self.OpenFile('anzio.xml')
+        xml = self.OpenFile(self.anziofile)
         
         net = sandbox_network()
         net.LoadFromXML(xml)
@@ -302,7 +306,7 @@ class InfrastructureTest(unittest.TestCase):
         self.assertTrue(net)
         
     def testPathFinding(self):
-        xml = self.OpenFile('anzio.xml')
+        xml = self.OpenFile(self.anziofile)
         
         net = sandbox_network()
         net.LoadFromXML(xml)
