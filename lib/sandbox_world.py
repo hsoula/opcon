@@ -830,12 +830,21 @@ class sandbox:
       # Define location
       loc = doc.Get(unit, 'location')
       if loc:
-        '''
-           Allowed type:
-              1 - named location : Infrastructure label [footprint: infrastructure, node*, <radius>, <footprint>]
-              2 - vect_5D <radius>|<footprint>
-              3 - coordinate <radius>|<footprint>
-        '''
+        # Recognize the type
+        nodetype = doc.Get(loc, 'type')
+        if nodetype == 'named location':
+          # Get the coordinate from the network
+          nd = self.network.GetNode(doc.Get(loc))
+          
+          # Get the coordinate from the node
+          coord = nd.Coordinates()
+        else:
+          # Coordinates
+          coord = nodetype
+        
+        # convert to a position vector
+        x.SetPosition(self.map.MGRS.AsVect(coord))
+
       # Add to world
       self.AddEntity(x)
       
