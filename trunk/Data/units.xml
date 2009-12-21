@@ -1,0 +1,65 @@
+<templates>
+	<units>
+		<!-- A LOGPAC is a placeholder for materiel -->
+		<unit name="LOGPAC" stance="deployed" dismounted="False">
+			<TOE>
+				<category>LOGPAC</category>
+				<personel template="base" count="0"/>
+				<vehicle  template="base" count="0"/>
+			</TOE>
+			<models>
+				<C3 template="base"/>
+				<intelligence template="LOGPAC"/>
+				<combat template="base"/>
+				<movement template="base"/>
+				<logistics template="base"/>
+			</models>
+			<notes>An empty unit that can be used as LOGPAC.</notes>
+		</unit>
+
+		<!-- A Fire Team is the smallest infantry formation that can matter in an operational sim --> 
+		<unit name="FireTeam" stance="deployed" dismounted="True">
+			<identity>A/1/1/1-501</identity> <!-- A bogus name for debugging purpose -->
+			<command_echelon>Team</command_echelon>
+			<size>Team</size>
+			<TOE>
+				<category>inf</category>
+				<personel template="US-Infantry-2009" count="4"/>
+			</TOE>
+			<models>
+				<movement template="leg"/>
+			</models>
+			<notes>A basic unit made of 4 small arm foot soldiers.</notes>
+		</unit>
+
+		<!-- A template for a unit's definition -->
+		<unit name="base" stance="deployed" dismounted="True">
+			<!-- the name of the unit, free-form -->
+			<identity>-</identity>
+			<!-- If the unit is in command, what is the level of the echelon -->
+			<command_echelon>[Team|Sqd|Sec|Plt|Coy|Bn|Rgt|Bde|Div]</command_echelon>
+			<!-- The size of the unit itself -->
+			<size>Team</size>
+			<!-- Definition of the TOE type, and a description of its personel and vehicles -->
+			<TOE>
+				<category>inf</category>
+				<personel template="US-Infantry-2009" count="4"/>
+				<vehicle template="civilian car" count="0"/>
+			</TOE>
+			<!-- Model plugins/parameters to use to handle C3, combat, movement, logistics and intelligence -->
+			<models>
+				<C3/>
+				<intelligence template="base"/>
+				<combat/>
+				<movement template="wheeled">
+					<friction>
+						<terrain name="urban">0.87</terrain>
+					</friction>
+				</movement>
+				<logistics template="base"/>
+			</models>
+			<subordinates/>
+			<notes>A basic unit made of 4 small arm foot soldiers.</notes>
+		</unit>
+	</units>
+</templates>

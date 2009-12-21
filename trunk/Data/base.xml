@@ -1,120 +1,16 @@
 <?xml version="1.0"?>
 <templates>
-	<units>
-		<unit name="LOGPAC" stance="deployed" dismounted="False">
-			<TOE>
-				<category>LOGPAC</category>
-				<personel template="base" count="0"/>
-				<vehicle  template="base" count="0"/>
-			</TOE>
-			<models>
-				<C3 template="base"/>
-				<intelligence template="LOGPAC"/>
-				<combat template="base"/>
-				<movement template="base"/>
-				<logistics template="base"/>
-			</models>
-			<notes>An empty unit that can be used as LOGPAC.</notes>
-		</unit>
-		<unit name="FireTeam" stance="deployed" dismounted="True">
-			<identity>A/1/1/1-501</identity>
-			<command_echelon>Team</command_echelon>
-			<size>Team</size>
-			<TOE>
-				<category>inf</category>
-				<personel template="US-Infantry-2009" count="4"/>
-				<vehicle template="civilian car" count="0"/>
-			</TOE>
-			<models>
-				<C3/>
-				<intelligence template="base"/>
-				<combat/>
-				<movement template="wheeled">
-					<friction>
-						<terrain name="urban">0.87</terrain>
-					</friction>
-				</movement>
-				<logistics template="base"/>
-			</models>
-			<subordinates/>
-			<notes>A basic unit made of 4 small arm foot soldiers.</notes>
-		</unit>
-	</units>
-	<models>
-		<!-- C3 models -->
-		<C3 name="base">
-			<fatigue>1.0</fatigue>
-			<morale>1.0</morale>
-			<suppression>1.0</suppression>
-		</C3>
-		<!-- Combat models -->
-		<combat name="base">
-			<RCP TOE="1.0" recoverable="0.0">1.0</RCP>
-			<stance>deliberate defense</stance>
-			<readiness>1.0</readiness>
-			<radius>2.0</radius>
-			<indirectFire>
-				<minrange>1.0</minrange>
-				<maxrange>10.0</maxrange>
-				<RCP>4.0</RCP>
-			</indirectFire>
-		</combat>
-		<!-- Intelligence models -->
-		<intelligence name="base">
-			<signature>
-				<stance name="deployed">0.75</stance>
-				<stance name="transit">0.9</stance>
-			</signature>
-			<sensors>
-				<sensor name="visual"/>
-			</sensors>
-		</intelligence>
-		<intelligence name="LOGPAC">
-			<!-- Not automatically detectable, but almost. -->
-			<signature> <stance name="deployed">0.95</stance> </signature>
-		</intelligence>		
-		<intelligence name="LOGPAC-concealed">
-			<!-- Not automatically undetectable, but almost. -->
-			<signature> <stance name="deployed">0.05</stance> </signature>
-		</intelligence>
-		<!-- logistics models -->
-		<!-- Allowable quantity units: STON, kg, lt, gal, lb [default=STON] property name= units
-		     Allowable time units: min, hr, day [default="hrs"] property name= time_units-->
-		<logistics name="base">
-			<capacity type="LOGPAC"/>
-			<cargo type="LOGPAC"/>
-			<passenger_lift>0</passenger_lift>
-			<crew>0</crew>
-			<basicload>
-				<idle>72.0</idle>
-				<transit>6.0</transit>
-				<combat>1.0</combat>
-			</basicload>
-			<consumption_rate>
-				<idle type="LOGPAC"/>
-				<transit type="LOGPAC"/>
-				<combat type="LOGPAC"/>
-				<service type="LOGPAC"/>
-			</consumption_rate>
-		</logistics>
+	<!-- units --> 
+	<import name="units.xml"/>
 
-		<!-- Movement models -->
-		<movement name="base">
-			<!-- An example of an almost fully defined entry -->
-			<speed>35.0</speed>
-			<mode>wheeled</mode>
-			<friction>
-				<terrain name="urban">0.71</terrain>
-			</friction>
-		</movement>
-		<movement name="wheeled"/>
-		<movement name="tracked"><mode>tracked</mode></movement>
-		<movement name="amphib"><mode>amphib</mode></movement>
-		<movement name="leg"><speed>6.0</speed><mode>leg</mode></movement>
-		<movement name="air"><speed>200.0</speed><mode>air</mode></movement>
-	</models>
+	<!-- Models -->
+	<import name="C3.xml"/>
+	<import name="combat.xml"/>
+	<import name="intelligence.xml"/>
+	<import name="movement.xml"/>
+	<import name="logistics.xml"/>
 	
-	<!-- weapon systems -->
+	<!-- Weapon system definitions -->
 	<import name="weapon_systems.xml"/>
 	
 	<!-- defense system -->
