@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<templates>
+	<models>
+		<!-- Combat models -->
+		<combat name="base">
+			<RCP TOE="1.0" recoverable="0.0">1.0</RCP>
+			<stance>deliberate defense</stance>
+			<readiness>1.0</readiness>
+			<radius>2.0</radius>
+			<indirectFire>
+				<minrange>1.0</minrange>
+				<maxrange>10.0</maxrange>
+				<RCP>4.0</RCP>
+			</indirectFire>
+		</combat>
+	</models>
+</templates>

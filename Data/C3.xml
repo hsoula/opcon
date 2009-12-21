@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<templates>
+	<models>
+		<!-- C3 models -->
+		<C3 name="base">
+			<fatigue>1.0</fatigue>
+			<morale>1.0</morale>
+			<suppression>1.0</suppression>
+		</C3>
+	</models>
+</templates>

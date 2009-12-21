@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<templates>
+	<models>
+		<!-- Intelligence models -->
+		<intelligence name="base">
+			<signature>
+				<stance name="deployed">0.75</stance>
+				<stance name="transit">0.9</stance>
+			</signature>
+			<sensors>
+				<sensor name="visual"/>
+			</sensors>
+		</intelligence>
+		<intelligence name="LOGPAC">
+			<!-- Not automatically detectable, but almost. -->
+			<signature> <stance name="deployed">0.95</stance> </signature>
+		</intelligence>		
+		<intelligence name="LOGPAC-concealed">
+			<!-- Not automatically undetectable, but almost. -->
+			<signature> <stance name="deployed">0.05</stance> </signature>
+		</intelligence>
+	</models>
+</templates>
