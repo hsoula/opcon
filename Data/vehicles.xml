@@ -21,4 +21,40 @@
             </criticals>
         </vehicle>
     </vehicles>
+    <models>
+	<logistics name="civilian car">
+		<capacity type="LOGPAC">
+			<class name="Unspecified">0.3</class>
+			<class name="III">0.05</class> <!-- 40 litre tank -->
+		</capacity>
+		<cargo type="LOGPAC"/>
+		<passenger_lift>3</passenger_lift>
+		<crew>1</crew>
+		<basicload>
+			<transit>15.0</transit>
+		</basicload>
+		<consumption_rate>
+			<transit type="LOGPAC">
+				<class name="III">0.00333</class>
+			</transit>
+		</consumption_rate>
+	</logistics>
+	<logistics name="HMVEE">
+		<capacity type="LOGPAC">
+			<class name="Unspecified">1.0</class>
+			<class name="III">0.10</class> <!-- 80 litre tank -->
+		</capacity>
+		<cargo type="LOGPAC"/>
+		<passenger_lift>4</passenger_lift>
+		<crew>1</crew>
+		<basicload>
+			<transit>15.0</transit>
+		</basicload>
+		<consumption_rate>
+			<transit type="LOGPAC">
+				<class name="III">0.00666</class>
+			</transit>
+		</consumption_rate>
+	</logistics>
+    </models>
 </templates>
