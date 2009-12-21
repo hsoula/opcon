@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<scenario version="0.7">
+	<reset>1</reset>
+	<name>Blank World</name>
+	<clock type="datetime">20/12/2009 1845</clock>
+	
+	<!-- The Map name to load up -->
+	<map>blankworld</map>
+
+	<!-- The head of the data to load -->
+	<data filename="base.xml"/>
+</scenario>

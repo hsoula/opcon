@@ -97,15 +97,6 @@
 				<service type="LOGPAC"/>
 			</consumption_rate>
 		</logistics>
-		<logistics name="basic_human">
-			<capacity type="LOGPAC"><class name="Unspecified" units="kg">40.0</class></capacity>
-			<consumption_rate>
-				<idle type="LOGPAC"/>
-				<transit type="LOGPAC"/>
-				<combat type="LOGPAC"/>
-				<service type="LOGPAC"/>
-			</consumption_rate>
-		</logistics>
 		<logistics name="civilian car">
 			<capacity type="LOGPAC">
 				<class name="Unspecified">0.3</class>
@@ -164,4 +155,7 @@
 	
 	<!-- vehicles -->
 	<import name="vehicles.xml"/>
+	
+	<!-- personel -->
+	<import name="personel.xml"/>
 </templates>

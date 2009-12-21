@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<templates>
+    <personel_profiles>
+        <!-- A basic human. -->
+        <personel name="human_being" weight="90.0">
+            <defense_system template="base"/>
+            <movement template="leg"/>
+            <logistics template="human_being"/>
+            <criticals>
+                <critical penetrating="False" effect="fatality" weight="1"/>
+                <critical penetrating="False" effect="shock" weight="2"/>
+                <critical penetrating="False" effect="wound" weight="2"/>
+            </criticals>
+        </personel>
+	<!-- Trigger puller US (2009). -->
+        <personel name="US-Infantry-2009" template="human_being">
+	    <weapon_system template="M16/M4"/>
+            <logistics template="trigger_puller"/>
+        </personel>
+    </personel_profiles>
+
+    <models>
+	<logistics name="human_being" template="base">
+	    <capacity type="LOGPAC"><class name="Unspecified" units="kg">40.0</class></capacity>
+	    <consumption_rate>
+		<!-- model winged from ST101-6 2007 data -->
+		<idle type="LOGPAC">
+		    <class name="I" units="lb" time_units="day">5.25</class>
+		    <class name="III(packaged)" units="lb" time_units="day">0.51</class>
+		    <class name="VI" units="lb" time_units="day">2.06</class>
+		    <class name="water" units="lt" time_units="day">6.1</class>
+		</idle>
+	    </consumption_rate>
+	</logistics>
+	<logistics name="trigger_puller" template="base">
+	    <capacity type="LOGPAC"><class name="Unspecified" units="kg">40.0</class></capacity>
+	    <consumption_rate>
+		<!-- model winged from ST101-6 2007 data -->
+		<idle type="LOGPAC">
+		    <class name="I" units="lb" time_units="day">5.25</class>
+		    <class name="III(packaged)" units="lb" time_units="day">0.51</class>
+		    <class name="V" units="lb" time_units="day">1.00</class> <!-- Nominal training expenditure -->
+		    <class name="VI" units="lb" time_units="day">2.06</class>
+		    <class name="water" units="lt" time_units="day">6.1</class>
+		</idle>
+	    </consumption_rate>
+	</logistics>
+    </models>
+</templates>
