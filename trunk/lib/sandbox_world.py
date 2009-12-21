@@ -47,7 +47,7 @@ from sandbox_XML import sandboXML
 
 # classes
 class sandbox:
-  def __init__(self, scenario='testscenario.xml'):
+  def __init__(self, scenario='blankworld.xml'):
     # compatibility
     self.version = '0.7.X'
     self.OS = {}

@@ -9,7 +9,7 @@
 from sandbox_exception import SandboxException
 
 
-class sandbox_personel(dict):
+class sandbox_personel:
     def __init__(self):
         # List of pointers to weapons
         self.weapon_systems = []
@@ -19,6 +19,9 @@ class sandbox_personel(dict):
         
         # Allowance count
         self.count = 0
+        
+        # Logistic model
+        self.logistic = None
     
     def fromXML(self, doc, node):
         # Kit name

@@ -129,7 +129,8 @@ class sandbox_entity(dict):
     self['icon']['char'] = MapSym[self['TOE']][0]
      
     # template information
-    self.sim.data.FetchData(self, 'unit', self.template)
+    if self.sim and self.template:
+      self.sim.data.FetchData(self, 'unit', self.template)
 
   def __getattr__(self, name):
     '''! \brief Attempt direct access to the models.
@@ -783,31 +784,30 @@ class sandbox_entity(dict):
 import unittest
 
 class EntityTest(unittest.TestCase):
+  def setUp(self):
+    from sandbox_world import sandbox
+    if __name__ == "__main__":
+      os.chdir('..')
+    self.sim = sandbox()
+    
+  def tearDown(self):
+    if __name__ == "__main__":
+      os.chdir('./lib')
+      
   def testBaseUnit(self):
-    unit = sandbox_entity('defaultname','Bde','HQ')
+    unit = sandbox_entity(template='FireTeam', sim=self.sim)
     self.assertFalse(False)
+    
   def testWrongEchelonLabel(self):
-    unit = sandbox_entity('defaultname','bogus','HQ')
-    self.assertFalse(unit['command_echelon']=='bogus')
-  def testWrongTOELabel(self):
-    unit = sandbox_entity('defaultname','Bde','bogus')
-    self.assertFalse(unit['TOE']=='bogus')
+    unit = sandbox_entity(command_echelon= "bogus", template='FireTeam')
+    self.assertFalse(unit['command_echelon']=='Team')
 
-  def testPickleWithoutWorld(self):
-    unit = sandbox_entity('defaultname','Bde','HQ')
-    self.assertFalse(unit.PrePickle())
   def testSendNoWorld(self):
-    unit = sandbox_entity('defaultname','Bde','HQ')
+    unit = sandbox_entity(template='FireTeam', sim=self.sim)
     self.assertFalse(unit.Send({}))
-  def testGetRCPNoworld(self):
-    unit = sandbox_entity('defaultname','Bde','HQ')
-    self.assert_(unit.GetRCP())
-  def testInflicatDamageNoWorld(self):
-    unit = sandbox_entity('defaultname','Bde','HQ')
-    self.assert_(unit.InflictDammage(1.0))
 
   def testExpendPulseSupplyNoPulseNoWorld(self):
-    unit = sandbox_entity('defaultname','Bde','HQ')
+    unit = sandbox_entity(template='FireTeam', sim=self.sim)
     self.assertEqual(unit.ExpendPulseSupply(), None)
     
   def testLenChainOfCommand(self):
