@@ -21,7 +21,7 @@ class sandbox_personel:
         self.count = 0
         
         # Logistic model
-        self.logistic = None
+        self.logistics = None
     
     def fromXML(self, doc, node):
         # Kit name
@@ -30,12 +30,22 @@ class sandbox_personel:
         # Read in kit's weapons
         for x in doc.Get(node, 'weapon_system',True):
             self.weapon_systems.append(self.datasource.Get('weapon_system',doc.Get(x,'template')))
+            
+        # Read in logistics parameters
+        temp = doc.Get(node, 'logistics')
+        if temp:
+            template = doc.Get(temp, 'template')
+            if not template:
+                template = 'base'
+            self.logistics = self.datasource.Get('logistics', template)
     
 class sandbox_vehicle(dict):
     def __init__(self):
         self['defense_system'] = None
         self['movement'] = None
         self['criticals'] = {'penetrating':[], 'non penetrating':[]}
+        # Logistics
+        self.logistics = None
     
     def fromXML(self, doc, node):
         # defense
@@ -70,6 +80,14 @@ class sandbox_vehicle(dict):
                     else:
                         pen = 'non-penetrating'
                     self['criticals'][pen].append((effect, float(wt)))
+                    
+        # Read in logistics parameters
+        temp = doc.Get(node, 'logistics')
+        if temp:
+            template = doc.Get(temp, 'template')
+            if not template:
+                template = 'base'
+            self.logistics = self.datasource.Get('logistics', template)
             
 
     def GetMode(self):

@@ -677,7 +677,7 @@ class sandbox_entity(dict):
     
     # Alternative implementation
     cost = self['logistics'].SupplyExpenditure(1,self['activities this pulse']+['idle'], pulse, self)
-    self.AdjustSupply(-1.0 * cost)
+    self.AdjustSupply(cost * -1.0)
   
   # Files
   def fromXML(self, doc, node):
@@ -710,13 +710,22 @@ class sandbox_entity(dict):
     # Systems
     models = doc.Get(node,'models')
     for i in ['C3','combat','intelligence','movement','logistics']:
+      # Get the model node
       x = doc.Get(models,i)
-      if doc.Get(x,'template'):
-        self.sim.data.FetchData(self[i],i,doc.Get(x,'template'))
-      else:
+      
+      # No model specified
+      if x == '':
         self.sim.data.FetchData(self[i],i,'base')
+      elif doc.Get(x,'template') in ['', 'base']:
+        # Load base model
+        self.sim.data.FetchData(self[i],i,'base')
+      else:
+        # Load correct template
+        self.sim.data.FetchData(self[i],i,doc.Get(x,'template'))
+        
       # Read the node itself
-      self[i].fromXML(doc,x)
+      if x:
+        self[i].fromXML(doc,x)
       
     # Systems and components
     x = doc.Get(node, 'TOE')
