@@ -14,6 +14,7 @@ import os.path
 from sandbox_XML import *
 from sandbox_TOE import sandbox_personel, sandbox_weapon_system, sandbox_defense_system, sandbox_vehicle
 from movement import system_movement
+from logistics import system_logistics
 
 from sandbox_exception import SandboxException
 
@@ -108,6 +109,7 @@ class sandbox_data_server:
         x['defense_system'] = sandbox_defense_system
         x['vehicle'] = sandbox_vehicle
         x['movement'] = system_movement
+        x['logistics'] = system_logistics
         
     def GetInstance(self, template_name):
         if template_name in self.constructor_map:
