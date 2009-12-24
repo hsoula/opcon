@@ -14,7 +14,7 @@ class TOEMargument:
         self.argument = argument
         
         # The outcome
-        self.outcome = outcome
+        self.outcome = ''
         
         # Concept mapping
         self.concept = {}
@@ -35,6 +35,24 @@ class TOEMargument:
         
         # Outcome
         self.increment = None
+        
+    def __str__(self):
+        if not self.IsTrue() and self.increment != None:
+            
+            out = 'INNEFFECTIVE %s'%(self.argument)
+            if self.Blame():
+                out += ' BECAUSE:\n'
+            else:
+                return out
+            count = 1
+            for i in self.Blame():
+                out += '\t%d) %s\n'%(count, i)
+                count += 1
+            return out
+        elif self.increment == None:
+            return 'Unresolved %s'%(self.argument)
+        else:
+            return 'Successful %s'%(self.argument)
         
     def BuildConcepts(self):
         # map words to values
@@ -166,7 +184,7 @@ class TOEMargument:
         self.blame = []
         
         for i in self.failedpro:
-            self.blame.append([i.argument, i.Blame()])
+            self.blame.append(i)
             n -= 1
             if n == 0:
                 break
