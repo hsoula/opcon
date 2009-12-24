@@ -2,7 +2,29 @@
 <templates>
 	<models>
 		<!-- Combat models -->
-		<combat name="base">
+		<combat name="base" training_level="untrained">
+			<!-- The base model is for untrained civilians -->
+			<training_levels>
+				<!-- Possible tactical actions, specify separately 
+				     from the training_level only to simulate special conditions. -->
+				<action name="attack by fire">untrained</action>
+				<action name="seek cover">untrained</action>
+				<action name="maneuver">untrained</action>
+				<action name="disengage">untrained</action>
+				<action name="request support">untrained</action>
+			</training_levels>
+		</combat>
+		
+		<!-- Standard training levels, should cover 90% of cases -->
+		<combat name="green" training_level="green" template="base"/>
+		<combat name="reserve" training_level="green" template="base"/>
+		<combat name="regular" training_level="regular" template="base"/>
+		<combat name="elite" training_level="elite" template="base"/>
+		<combat name="SOF" training_level="elite" template="base"/>
+		
+		
+		
+		<combat_old name="base">
 			<RCP TOE="1.0" recoverable="0.0">1.0</RCP>
 			<stance>deliberate defense</stance>
 			<readiness>1.0</readiness>
