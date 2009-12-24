@@ -125,6 +125,9 @@ testsuite.append(unittest.TestLoader().loadTestsFromModule(C3))
 import SandboxUnitTestTasking
 testsuite.append(unittest.TestLoader().loadTestsFromModule(SandboxUnitTestTasking))
 
+import sandbox_TOEM
+testsuite.append(unittest.TestLoader().loadTestsFromModule(TOEMtesting))
+
 # collate all and run
 allsuite = unittest.TestSuite(testsuite)
 unittest.TextTestRunner(verbosity=2).run(allsuite)
