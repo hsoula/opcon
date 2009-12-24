@@ -14,7 +14,7 @@ class TOEMargument:
         self.argument = argument
         
         # The outcome
-        self.outcome = ''
+        self.outcome = outcome
         
         # Concept mapping
         self.concept = {}

@@ -11,7 +11,37 @@ import Renderer_html as html
 
 import system_base
 
+class new_system_combat(system_base.system_base):
+  ''' This model is overhauled so profoundly that I will duplicate the class instead of overwriting the code.
+  
+      This module deal with the abstracted tactical situation.
+  '''
+  # Constructor and operators
+  def __init__(self, skill_level='untrained'):
+    # Training level
+    self.skillmap = {}
+    
+    # The default training level for the unit to do everything that is not mapped.
+    self.unit_skill = skill_level
+    
+  def fromXML(self, doc, node):
+    ''' Read the data from a XML document
+    '''
+    pass
+    
+  # Accessor methods.
+  def GetSkill(self, skillname):
+    ''' Returns the skill level for a given skill, or the unit's default.
+    '''
+    return self.skillmap.get(skillname, self.unit_skill)
 
+  # Controler methods
+  def GetExpectedKillsPerMinute(self, E):
+    ''' Process the raw expected kills per minute for entity E.
+        Sum over all weapon_system for all personel (dismounted) and vehicles. 
+    '''
+    pass
+  
 class system_combat(system_base.system_base):
   # default attrition level per hour
   attrition_level = 0.5
