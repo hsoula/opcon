@@ -28,6 +28,7 @@
 			</TOE>
 			<models>
 				<movement template="leg"/>
+				<combat template="regular"/>
 			</models>
 			<notes>A basic unit made of 4 small arm foot soldiers.</notes>
 		</unit>
