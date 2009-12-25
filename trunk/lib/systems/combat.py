@@ -27,7 +27,18 @@ class new_system_combat(system_base.system_base):
   def fromXML(self, doc, node):
     ''' Read the data from a XML document
     '''
-    pass
+    # Read in the default training level
+    x = doc.Get(node, 'training_level')
+    if x:
+      self.unit_skill = x
+    
+    # Read in specific tasks
+    x = doc.Get(node, 'training_levels')
+    if x:
+      for action doc.Get(x, 'action', True):
+        name = doc.Get(action, 'name')
+        level = doc.Get(action)
+        self.skillmap[name] = level
     
   # Accessor methods.
   def GetSkill(self, skillname):
