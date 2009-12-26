@@ -45,6 +45,16 @@ class new_system_combat(system_base.system_base):
     ''' Returns the skill level for a given skill, or the unit's default.
     '''
     return self.skillmap.get(skillname, self.unit_skill)
+  
+  def GetWeaponSystems(self, E, wpn_range=None):
+    '''
+        Returns a list of weapon systems for entity E.
+        Option: wpn_range: The range in meters which must be included in the effective
+                           range of the weapon system.
+        Returns, a dictionary indexed by the weapon system and containing the number of items in E.
+    '''
+    pass
+  
 
   # Controler methods
   def GetExpectedKillsPerMinute(self, E):
