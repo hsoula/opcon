@@ -231,7 +231,7 @@ class SensorVisual(sandbox_sensor):
     def SpecifyMobility(self, E, cnt):
         # Classify intentions and activities.
         if random() <= cnt.p_right:
-          cnt.UpdateField('mobility', cnt.unit['combat']['stance'])
+          cnt.UpdateField('mobility', cnt.unit.GetStance())
         elif random() <= 1.0 - cnt.p_right:
           # Lie about stance (FIXME)
           cnt.UpdateField('mobility', 'deliberate defense')

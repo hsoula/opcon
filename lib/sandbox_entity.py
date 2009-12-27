@@ -307,7 +307,7 @@ class sandbox_entity(dict):
     
   def C2Level(self):
     '''! Command and control'''
-    return min( 1.0, self['C3'].LevelHumanFactor() * self['C3'].LevelDeployState(self['combat']['stance']))
+    return min( 1.0, self['C3'].LevelHumanFactor() * self['C3'].LevelDeployState(self.GetStance()))
   
   def C3Level(self):
     '''! Command, control and communication. Distance to HQ factored in.'''
@@ -555,11 +555,17 @@ class sandbox_entity(dict):
       return -1
     return 1
   def GetStance(self):
-    return self['combat']['stance']
+    return self['stance']
+  def SetStance(self, stance):
+    self['stance'] = stance
   def GetRCPperPerson(self):
       return self['logistics']['initRCP'] / float(self['logistics']['Np'])
   def GetRCPperVehicle(self):
       return self['logistics']['initRCP'] / float(self['logistics']['Nv'])
+  def GetWeaponSystems(self, wrng=None):
+    # Returns
+    return self['combat'].GetWeaponSystems(self,wpn_range=wrng)
+  
   def Footprint(self):
     return self['position'].footprint
   def Position(self):
@@ -595,12 +601,12 @@ class sandbox_entity(dict):
     return self.Position().footprint.PointInside(point)
   
   def Signature(self):
-    return self['intelligence'].Signature(self['combat']['stance'])
+    return self['intelligence'].Signature(self.GetStance())
   def GetRCP(self, noterrain = False):
     if self.sim and not noterrain:
-      return self['combat'].RCP(self.C2Level(),self.sim.map.TerrainUnder(self['position']),self['combat']['stance'],self['logistics'].CombatSupplyLevel())
+      return self['combat'].RCP(self.C2Level(),self.sim.map.TerrainUnder(self['position']),self.GetStance(),self['logistics'].CombatSupplyLevel())
     else:
-      return self['combat'].RCP(self.C2Level(),'unrestricted',self['combat']['stance'],self['logistics'].CombatSupplyLevel())
+      return self['combat'].RCP(self.C2Level(),'unrestricted',self.GetStance(),self['logistics'].CombatSupplyLevel())
   
   
   def InflictDammage(self, dmg, modvector = [1.,0.33333,0.166667]):
@@ -841,7 +847,7 @@ class EntityTest(unittest.TestCase):
   def testC2LevelUnsupportedStance(self):
     # Will not matter unless implemented differently
     a = sandbox_entity()
-    a['combat'].SetStance('bogus')
+    a.SetStance('bogus')
     self.assertEqual(a.C2Level(),1.0)
     
   def testNoAddSelfSubord(self):
@@ -852,6 +858,12 @@ class EntityTest(unittest.TestCase):
     a = sandbox_entity()
     a.ReportToHQ(a)
     self.assertEqual(a.GetHQ(),None)
+
+  def testGetAllWeaponSystems(self):
+    # Create a unit
+    unit = sandbox_entity(template='FireTeam', sim=self.sim)
+    x = unit.GetWeaponSystems()
+    self.assertEqual(type(x),type([]))
     
 if __name__ == "__main__":
     # suite

@@ -495,11 +495,11 @@ class sandbox_task(dict):
   
   def SpeedOnSpot(self, E):
     # Compute velocity in Km/h
-    delta = E['movement'].Speed(E['agent'].map.TerrainUnder(E['position']), E.C2Level(), E['combat']['stance'])
+    delta = E['movement'].Speed(E['agent'].map.TerrainUnder(E['position']), E.C2Level(), E.GetStance())
     
     # Has orders to advance
     delta = delta * E.CanMoveStance()
-    if delta == 0.0 or self.Yield(E,delta,E['movement'].Speed(E['agent'].map.TerrainUnder(E['position']), E.C2Level(), E['combat']['stance'])) :
+    if delta == 0.0 or self.Yield(E,delta,E['movement'].Speed(E['agent'].map.TerrainUnder(E['position']), E.C2Level(), E.GetStance())) :
       return 0.0
     
     return delta
@@ -694,7 +694,7 @@ class taskRedeploy(sandbox_task):
     # Are we done?
     if self['displacement'] <= 0.0:
       # change stance at last
-      E['combat'].SetStance(self['final_stance'])
+      E.SetStance(self['final_stance'])
       if E['combat']['readiness'] < self['final readiness']:
         E['combat']['readiness'] = min( E['combat']['readiness'] + E.sim.Pulse(), self['final readiness'])
         if E['combat']['readiness'] != self['final_stance']:
@@ -739,7 +739,7 @@ class taskRedeploy(sandbox_task):
        Returns the mean speed within footprint
        OUPUT : In kph
     '''
-    return E['movement'].Speed(self.MeanFriction(E),E.C2Level(),E['combat']['stance'])
+    return E['movement'].Speed(self.MeanFriction(E),E.C2Level(),E.GetStance())
 
   def SolveReadiness(self, E):
     '''!
@@ -1236,10 +1236,10 @@ class taskWithdrawal(sandbox_task):
     E['position'].course = b
     
     # Change/Update stance
-    E['combat']['stance'] = 'withdrawal'
+    E.SetStance('withdrawal')
     
     # Compute velocity in Km/h
-    delta = E['movement'].Speed(E['agent'].map.TerrainUnder(E['position']), E.C2Level(), E['combat']['stance'])
+    delta = E['movement'].Speed(E['agent'].map.TerrainUnder(E['position']), E.C2Level(), E.GetStance())
     delta = delta * -1.0 * (E.sim.Pulse())
     
     # Do the translation
@@ -1983,7 +1983,7 @@ class taskFieldRessuply(sandbox_task):
        Returns the mean speed within footprint
        OUPUT : In kph
     '''
-    return E['movement'].Speed(self.MeanFriction(E),E.C2Level(),E['combat']['stance'])
+    return E['movement'].Speed(self.MeanFriction(E),E.C2Level(),E.GetStance())
 
   def _Step(self, E):
     '''! \brief Chew on the displacement until <= 0.0, then grab all LOGPAcs in the list.

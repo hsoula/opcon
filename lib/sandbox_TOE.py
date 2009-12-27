@@ -8,7 +8,6 @@
 '''
 from sandbox_exception import SandboxException
 
-
 class sandbox_personel:
     def __init__(self):
         # List of pointers to weapons
@@ -38,6 +37,9 @@ class sandbox_personel:
             if not template:
                 template = 'base'
             self.logistics = self.datasource.Get('logistics', template)
+    
+    def GetWeapons(self):
+        return self.weapon_systems
     
 class sandbox_vehicle(dict):
     def __init__(self):
@@ -156,6 +158,9 @@ class sandbox_weapon_system(dict):
                 # Store the instance
                 self.payload[x.name] = x
 
+    def GetAllowance(self, x):
+        return self['allowance'][x]
+    
 class sandbox_defense_system(dict):
     def __init__(self):
         self['armor'] = {'top':0.0, 'bottom':0.0, 'front':0.0, 'back':0.0, 'flank':0.0}
