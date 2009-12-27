@@ -11,12 +11,14 @@ import Renderer_html as html
 
 import system_base
 
-class new_system_combat(system_base.system_base):
+class system_combat(system_base.system_base):
   ''' This model is overhauled so profoundly that I will duplicate the class instead of overwriting the code.
   
       This module deal with the abstracted tactical situation.
   '''
   # Constructor and operators
+  # In meters
+  frontages = {'':1000.0, 'Team':10.0, 'Sqd':30.0, 'Sec':30.0, 'Plt':100.0, 'Coy':300.0,'Bn':1000.0}
   def __init__(self, skill_level='untrained'):
     # Training level
     self.skillmap = {}
@@ -35,7 +37,7 @@ class new_system_combat(system_base.system_base):
     # Read in specific tasks
     x = doc.Get(node, 'training_levels')
     if x:
-      for action doc.Get(x, 'action', True):
+      for action in doc.Get(x, 'action', True):
         name = doc.Get(action, 'name')
         level = doc.Get(action)
         self.skillmap[name] = level
@@ -53,17 +55,46 @@ class new_system_combat(system_base.system_base):
                            range of the weapon system.
         Returns, a dictionary indexed by the weapon system and containing the number of items in E.
     '''
-    pass
+    # The out put list, which will be a list of net count and systems
+    out = []
+    
+    # The personel-born weapons.
+    for personel in E.personel:
+      cnt = E.personel[personel]['count']
+      wpn_list = E.personel[personel]['kit'].GetWeapons()
+      for i in wpn_list:
+        cntw = cnt * i.GetAllowance()
+        out.append( [cntw, i] )
+      
+      
+    
+    # The vehicle-born weapons.
+    for vehicle in E.vehicle:
+      pass
+    
+    # Out you go
+    return out
   
 
   # Controler methods
+  def GetFootprint(self, E):
+    ''' Returns the footprint of E
+    '''
+    return geom.circle(E.Position().AsVect(),self.GetFrontage(E['size']))
+    
+  def GetFrontage(self, unit_size):
+    ''' Returns a frontage (or radius) as a function of the units size
+    '''
+    return system_combat.frontages.get(unit_size, '')
+    
+  
   def GetExpectedKillsPerMinute(self, E):
     ''' Process the raw expected kills per minute for entity E.
         Sum over all weapon_system for all personel (dismounted) and vehicles. 
     '''
     pass
   
-class system_combat(system_base.system_base):
+class old_system_combat(system_base.system_base):
   # default attrition level per hour
   attrition_level = 0.5
   def __init__(self, RCP = 1.0, stance = 'deliberate defense', footprint = 1.0, minrange = 0.0, maxrange = 0.0):
@@ -434,7 +465,7 @@ class sandbox_engagement(dict):
     
     # Append to log
     E['ground engagements'].append(self)
-    E['agent'].log('Engaging while in %s'%(E['combat']['stance']),'operations')
+    E['agent'].log('Engaging while in %s'%(E.GetStance()),'operations')
     
 
     
@@ -571,7 +602,7 @@ class sandbox_engagement(dict):
     # Consider Withdrawal
     for i in self.OOB.keys():
       e = self.sim.AsEntity(i)
-      if e['combat']['stance'] != 'withdrawal' and e['agent'].SolveWithdrawal(self):
+      if e.GetStance() != 'withdrawal' and e['agent'].SolveWithdrawal(self):
         e['agent'].PrepareWithdrawal()
 
     return True

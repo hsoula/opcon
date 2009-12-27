@@ -527,7 +527,7 @@ class agent:
         '''
         initpos = deepcopy(self.entity['position'])
         initread = self.entity['combat']['readiness']
-        curstance = self.entity['combat']['stance']
+        curstance = self.entity.GetStance()
         for i in opord.GetTaskList():
             i['initial position'] = initpos
             i['initial readiness'] = initread
@@ -979,7 +979,7 @@ class agent:
         cnt.UpdateField('side', self.entity['side'], mytime = self.clock)
         cnt.UpdateField('IFF/SIF', 'FR', mytime = self.clock)
         #cnt.UpdateField('movement arrow', val, mytime = self.clock)
-        cnt.UpdateField('mobility', self.entity['combat']['stance'], mytime = self.clock)
+        cnt.UpdateField('mobility', self.entity.GetStance(), mytime = self.clock)
         #cnt.UpdateField('locating indicator', val, mytime = self.clock)
         cnt.UpdateField('unique designation', self.entity['name'], mytime = self.clock)
         cnt.timestamp = deepcopy(self.clock)
@@ -1328,7 +1328,7 @@ class agent:
            OUTPUT : A string.
         '''
         head = html.Tag('H3','Deployment Details')
-        out =  'We are located at MGRS %s in %s stance. '%(self.map.MGRS.AsString(self.entity['position'],2),self.entity['combat']['stance'])
+        out =  'We are located at MGRS %s in %s stance. '%(self.map.MGRS.AsString(self.entity['position'],2),self.entity.GetStance())
 
         # Distance from HQ
         if self.entity.GetHQ():
@@ -1515,7 +1515,7 @@ class agent:
                 ctime = ctime + timedelta(hours=task.TaskTime())
         
         act = []
-        if self.entity['combat']['stance'] == 'support':
+        if self.entity.GetStance() == 'support':
             act.append('support')
             
         # Eligible SUPREQ
@@ -1637,7 +1637,7 @@ class agent:
         # Cursors
         ctime = deepcopy(self.clock)
         newpos = deepcopy(self.entity['position'])
-        stance = self.entity['combat']['stance']
+        stance = self.entity.GetStance()
         
         for task in opord.GetExpandedTaskList()[opord.GetExpandedTaskList().index(ctask):]:
             # never ending task.
@@ -2300,7 +2300,7 @@ class agent_CO(agent):
            OUTPUT : A string.
         '''
         head = html.Tag('H3','Deployment Details')
-        out =  'Our HQ element is located at MGRS %s in %s stance. '%(self.map.MGRS.AsString(self.entity['position'],2),self.entity['combat']['stance'])
+        out =  'Our HQ element is located at MGRS %s in %s stance. '%(self.map.MGRS.AsString(self.entity['position'],2),self.entity.GetStance())
 
         # Distance from HQ
         if self.entity.GetHQ():

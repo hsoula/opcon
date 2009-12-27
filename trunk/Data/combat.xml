@@ -34,6 +34,6 @@
 				<maxrange>10.0</maxrange>
 				<RCP>4.0</RCP>
 			</indirectFire>
-		</combat>
+		</combat_old>
 	</models>
 </templates>
