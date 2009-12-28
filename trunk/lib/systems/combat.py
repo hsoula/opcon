@@ -63,14 +63,13 @@ class system_combat(system_base.system_base):
       cnt = E.personel[personel]['count']
       wpn_list = E.personel[personel]['kit'].GetWeapons()
       for i in wpn_list:
-        cntw = cnt * i.GetAllowance()
+        cntw = cnt * i.GetAllowance('personel')
         out.append( [cntw, i] )
-      
-      
-    
+
     # The vehicle-born weapons.
     for vehicle in E.vehicle:
-      pass
+      cnt = E.vehicle[vehicle]['count']
+      
     
     # Out you go
     return out
