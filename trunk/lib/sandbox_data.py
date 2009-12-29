@@ -134,13 +134,7 @@ class SandboxDataServer(unittest.TestCase):
         #self.assertEqual(len(self.box.KeyGet()), 25)
         self.assert_(self.server)
         
-    def testGetBaseC3(self):
-        from C3 import *
-        x = system_C3()
-        x['morale'] = 0.1
-        self.server.FetchData(x,'C3','base')
-        self.assertEqual(x['morale'],1.0)
-    
+
     def testGetBaseCombat(self):
         from combat import *
         x = system_combat()

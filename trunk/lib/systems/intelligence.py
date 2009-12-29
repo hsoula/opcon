@@ -48,7 +48,6 @@ class sandbox_contact(dict):
     # Direct subordinates in direct contact
     self['direct subordinates'] = []
     
-    self.position_factor = 1.0 # UNUSED -- OBSOLETE
     self.location = None
     self.timestamp = None
     
@@ -114,8 +113,7 @@ class sandbox_contact(dict):
     if encode:
       out.unit = out.unit['uid']
     out.p_right = self.p_right
-    out.log = copy(self.log)
-    out.position_factor = self.position_factor
+    out.log = copy(self.log)	
     out.location = copy(self.location)
     out.timestamp = copy(self.timestamp)
     

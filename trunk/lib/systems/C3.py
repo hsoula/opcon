@@ -8,6 +8,22 @@ MORAL_FATIGUE_TRIGGER = 0.75
 import system_base
 import pickle
 
+class system_C4I(system_base):
+  '''
+     Controler class for everything that relates to data transfer and storage. Replace 
+     the previous version system_C3 and part of the functionality of the system_intelligence.
+  '''
+  def __init__(self):
+    # Base Class
+    system_base.system_base.__init__(self)
+    
+    # Parameters
+    # How much data can be held by the unit. By default, unlimited
+    self.bandwidth = 1E10
+    
+    # 
+    
+    
 class system_C3(system_base.system_base):
   '''! \brief Model Command, control and communication.
   
@@ -43,13 +59,6 @@ class system_C3(system_base.system_base):
        \param ech (string) The name of the echelon that the unit is reponsible for.
     '''
     system_base.system_base.__init__(self)
-    # Human dimension
-    self['fatigue'] = 1.0
-    self['morale'] = 1.0
-    self['suppression'] = 1.0
-    
-    # Effectiveness
-    self['effectiveness'] = 'IDEAL'
     
     # Connections
     self['echelon'] = ech
@@ -275,13 +284,7 @@ class system_C3(system_base.system_base):
       out = out + [self['subordinates'][i]] + self['subordinates'][i]['C3'].AllSubordinates()
     return out
   
-  def GetEffectiveness(self):
-    if type(self['effectiveness']) == type('') and self['effectiveness'] in self.effectiveness:
-      return self.effectiveness[self['effectiveness']]
-    elif type(self['effectiveness']) == type(1.0):
-      return self['effectiveness']
-    else:
-      return 1.0
+
   def GetMorale(self):
     return self['morale']
   def GetFatigue(self):
@@ -303,7 +306,7 @@ class system_C3(system_base.system_base):
   def LevelHumanFactor(self):
     '''An average of three humand factors'''
     # Internal factors
-    internal = self.GetEffectiveness() * ((self['morale'] + self['fatigue'] + self['suppression'])/ 3.0)
+    internal = ((self['morale'] + self['fatigue'] + self['suppression'])/ 3.0)
     return internal
   
   def LevelCommToHQ(self, mypos):
