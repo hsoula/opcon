@@ -8,10 +8,20 @@
 '''
 from sandbox_exception import SandboxException
 
-class sandbox_personel:
+class sandbox_components:
+    ''' This class is a post-hoc attempt to consolidate some of the code shared between personel
+        and vehicles.
+    '''
     def __init__(self):
-        # List of pointers to weapons
         self.weapon_systems = []
+        
+    def GetWeapons(self):
+        return self.weapon_systems
+
+class sandbox_personel(sandbox_components):
+    def __init__(self):
+        # Parent class
+        sandbox_components.__init__(self)
         
         # Kit name (if any)
         self.name = ''
@@ -41,8 +51,11 @@ class sandbox_personel:
     def GetWeapons(self):
         return self.weapon_systems
     
-class sandbox_vehicle(dict):
+class sandbox_vehicle(dict,sandbox_components):
     def __init__(self):
+        # Parent class
+        sandbox_components.__init__(self)
+        
         self['defense_system'] = None
         self['movement'] = None
         self['criticals'] = {'penetrating':[], 'non penetrating':[]}
@@ -61,6 +74,8 @@ class sandbox_vehicle(dict):
             template = doc.Get(x,'template')
             if not template:
                 template = 'base'
+        else:
+            template = 'base'
         self['movement'] = self.datasource.Get('movement', template)
         
         # Criticals
@@ -90,6 +105,11 @@ class sandbox_vehicle(dict):
             if not template:
                 template = 'base'
             self.logistics = self.datasource.Get('logistics', template)
+        
+        # Read in kit's weapons
+        for x in doc.Get(node, 'weapon_system',True):
+            self.weapon_systems.append(self.datasource.Get('weapon_system',doc.Get(x,'template')))
+
             
 
     def GetMode(self):

@@ -58,17 +58,22 @@ class system_combat(system_base.system_base):
     # The out put list, which will be a list of net count and systems
     out = []
     
-    # The personel-born weapons.
-    for personel in E.personel:
-      cnt = E.personel[personel]['count']
-      wpn_list = E.personel[personel]['kit'].GetWeapons()
-      for i in wpn_list:
-        cntw = cnt * i.GetAllowance('personel')
-        out.append( [cntw, i] )
+    # The personel-born weapons, counted only if the unit is dismounted
+    if E.IsDismounted():
+      for personel in E.personel:
+        cnt = E.personel[personel]['count']
+        wpn_list = E.personel[personel]['kit'].GetWeapons()
+        for i in wpn_list:
+          cntw = cnt * i.GetAllowance('personel')
+          out.append( [cntw, i] )
 
-    # The vehicle-born weapons.
+    # The vehicle-born weapons, should be consitional to be crewed.
     for vehicle in E.vehicle:
       cnt = E.vehicle[vehicle]['count']
+      wpn_list = E.vehicle[vehicle]['kit'].GetWeapons()
+      for i in wpn_list:
+        cntw = cnt * i.GetAllowance('vehicle')
+        out.append( [cntw, i] )
       
     
     # Out you go

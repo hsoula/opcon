@@ -33,10 +33,37 @@
 			<notes>A basic unit made of 4 small arm foot soldiers.</notes>
 		</unit>
 
+		<!-- A light scout section (HMMWV-based) -->
+		<unit name="US-light-scout-section" stance="deployed" dismounted="False">
+			<!-- the name of the unit, free-form -->
+			<identity>-</identity>
+			<!-- If the unit is in command, what is the level of the echelon -->
+			<command_echelon>Sec</command_echelon>
+			<!-- The size of the unit itself -->
+			<size>Sec</size>
+			<!-- Definition of the TOE type, and a description of its personel and vehicles -->
+			<TOE>
+				<category>scout</category>
+				<personel template="US-Infantry-2009" count="6"/>
+				<vehicle template="HMMWV + .50cal BMG" count="1"/>
+				<vehicle template="HMMWV + Mk-19 40mm MG" count="1"/>
+			</TOE>
+			<!-- Model plugins/parameters to use to handle C3, combat, movement, logistics and intelligence -->
+			<models>
+				<C3/>
+				<intelligence template="base"/>
+				<combat/>
+				<movement template="wheeled"/>
+				<logistics template="base"/>
+			</models>
+			<subordinates/>
+			<notes>A basic unit made of 4 small arm foot soldiers.</notes>
+		</unit>
+		
 		<!-- A template for a unit's definition -->
 		<unit name="base" stance="deployed" dismounted="True">
 			<!-- the name of the unit, free-form -->
-			<identity>-</identity>
+			<identity>A/1/1/1-501</identity>
 			<!-- If the unit is in command, what is the level of the echelon -->
 			<command_echelon>[Team|Sqd|Sec|Plt|Coy|Bn|Rgt|Bde|Div]</command_echelon>
 			<!-- The size of the unit itself -->

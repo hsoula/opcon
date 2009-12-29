@@ -56,7 +56,7 @@
         </weapon_system>
         
         <!-- Would work for any 12.7mm MG  -->
-        <weapon_system name=".50cal">
+        <weapon_system name=".50cal BMG">
             <!-- All ranges are in metres-->
             <max_range>7400.0</max_range>
             <effective_range>1800.0</effective_range>
@@ -88,6 +88,42 @@
             </payload>
             <!-- Posible: visual, IR, radar, low-light, radiation (active or passive)-->
             <sensor active="0" mode="visual"/>
+        </weapon_system>
+        
+        <!-- from: http://www.globalsecurity.org/military/systems/ground/mk19.htm  -->
+        <weapon_system name="Mk-19 40mm MG">
+            <!-- All ranges are in metres-->
+            <max_range>2200.0</max_range>
+            <effective_range>1600.0</effective_range>
+            <min_range>800.0</min_range>
+            <!-- Data used by the logistic model -->
+            <logistics>
+                <!-- In kilogram, per units-->
+                <lift>55.0</lift>
+                <!-- probability of a failure -->
+                <breakdown>0.01</breakdown>
+                <!-- In Short tons, per unit per hour of high intensity combat(I know, it is a weird scale) -->
+                <consumption_rate type="LOGPAC">
+                    <!-- CHECK: Basis of 40 rounds per minutes (sustained), .23kg per HEDP...-->
+                    <class name="V" units="kg" time_units="hrs">552.0</class>
+                </consumption_rate>
+            </logistics>
+            <!-- How many are allocated per person, and per vehicles-->
+            <allowance personel="0.0" vehicle="1.0"/>
+            <payload name="base">
+                <RCP area="1.0" point="0.5"/>
+                <!-- All radii in metres-->
+                <blast_radius>15.0</blast_radius>
+                <casualty_radius>30.0</casualty_radius> <!-- Made up. -->
+                <!-- DP as in the Harpoon 4.1 ruleset-->
+                <demolition_points>0.1</demolition_points>
+                <effect smoke="0" incendiary="0"/>
+                <!-- In effective mm of steel-->
+                <penetration_steel>50.0</penetration_steel>
+            </payload>
+            <!-- Posible: visual, IR, radar, low-light, radiation (active or passive)-->
+            <sensor active="0" mode="visual"/>
+            <sensor active="0" mode="low-light"/>
         </weapon_system>
         
     </weapon_systems>
