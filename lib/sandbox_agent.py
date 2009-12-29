@@ -196,7 +196,7 @@ class agent:
         self.Write('%s.INTSUM.txt'%(self.clock.strftime('%m%d.%H%M')),str(intsum))
         
         intsum['sender'] = self.entity['uid']
-        for i in self.entity['C3']['subordinates']:
+        for i in self.entity['subordinates']:
             self.entity.Send(intsum,i)
             
         # Find the delay to the next INTSUM
@@ -316,7 +316,7 @@ class agent:
         A.log('|     CSS Unit : %s'%(E.sim.AsEntity(request['CSS unit'])['name']))
         A.log('|     DP : MGRS %s'%(A.map.MGRS.AsString(DP)))
         A.log('|     ETA: %s'%(T.strftime('%m%d/%H%M ZULU time')))
-        if A.SolveCSSUnit() in E['C3']['subordinates']:
+        if A.SolveCSSUnit() in E['subordinates']:
           E.Send(request, A.SolveCSSUnit())
         else:
           E.Send(request)
@@ -1317,9 +1317,9 @@ class agent:
         if self.entity.GetHQ(): 
             out1 = out1 + '<BR>' + html.Tag('B', ' C3 level   : ') + self.entity['C3'].AsStringCommand(self.entity.C3Level()) + ' (%d%%)'%(100*self.entity.C3Level())
         out1 = out1 + '<BR>'
-        out1 = out1 + 'Suppression: ' + self.entity['C3'].AsStringSuppression() + ' (%d%%)<BR>'%(100*self.entity['C3']['suppression'])
-        out1 = out1 + 'Fatigue    : ' + self.entity['C3'].AsStringFatigue() + ' (%d%%)<BR>'%(100*self.entity['C3']['fatigue'])
-        out1 = out1 + 'Morale     : ' + self.entity['C3'].AsStringMorale() + ' (%d%%)<BR>'%(100*self.entity['C3']['morale'])
+        out1 = out1 + 'Suppression: ' + self.entity['C3'].AsStringSuppression() + ' (%d%%)<BR>'%(100*self.entity['suppression'])
+        out1 = out1 + 'Fatigue    : ' + self.entity['C3'].AsStringFatigue() + ' (%d%%)<BR>'%(100*self.entity['fatigue'])
+        out1 = out1 + 'Morale     : ' + self.entity['C3'].AsStringMorale() + ' (%d%%)<BR>'%(100*self.entity['morale'])
         out = out + html.Tag('blockquote',out1)
         return html.Tag('div',out)
     
@@ -1885,7 +1885,7 @@ class agent:
            return a list of subordinate convoys
         '''
         out = []
-        for i in self.entity['C3']['subordinates']:
+        for i in self.entity['subordinates']:
             if i['TOE'] == 'convoy':
                 out.append(i)
             
@@ -2249,7 +2249,7 @@ class agent_CO(agent):
        
        for i in self.entity.Subordinates():
            com += self.entity.CommLevelTo(i)
-           sup += self.entity['C3']['suppression']
+           sup += self.entity['suppression']
            fat += self.entity.GetFatigue()
            mor += self.entity.GetMorale()
        
@@ -2264,9 +2264,9 @@ class agent_CO(agent):
        out1 = '<BR>' + html.Tag('B', ' HQ C2 level   : ') + self.entity['C3'].AsStringCommand(self.entity.C2Level()) + ' (%d%%)'%(100*self.entity.C2Level())
        out1 += '<BR>' + html.Tag('B', ' C3 level   : ') + self.entity['C3'].AsStringCommand(com) + ' (%d%%)'%(100*com)
        out1 = out1 + '<BR>'
-       out1 = out1 + 'Suppression: ' + self.entity['C3'].AsStringSuppression(sup) + ' (%d%%)<BR>'%(100*self.entity['C3']['suppression'])
-       out1 = out1 + 'Fatigue    : ' + self.entity['C3'].AsStringFatigue(fat) + ' (%d%%)<BR>'%(100*self.entity['C3']['fatigue'])
-       out1 = out1 + 'Morale     : ' + self.entity['C3'].AsStringMorale(mor) + ' (%d%%)<BR>'%(100*self.entity['C3']['morale'])
+       out1 = out1 + 'Suppression: ' + self.entity['C3'].AsStringSuppression(sup) + ' (%d%%)<BR>'%(100*self.entity['suppression'])
+       out1 = out1 + 'Fatigue    : ' + self.entity['C3'].AsStringFatigue(fat) + ' (%d%%)<BR>'%(100*self.entity['fatigue'])
+       out1 = out1 + 'Morale     : ' + self.entity['C3'].AsStringMorale(mor) + ' (%d%%)<BR>'%(100*self.entity['morale'])
        out = out + html.Tag('blockquote',out1)
        return html.Tag('div',out)
    

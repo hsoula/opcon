@@ -91,12 +91,23 @@ class sandbox_entity(dict):
     self.vehicle = {}
     self['sensors'] = []
     
-    # Logistics
+    # Logistics ###############################
     self.cargo = supply_package()
     self.mounted_dismount = False
     
+    # Command and Control #####################
+    # Human factors
+    self['fatigue'] = self['morale'] = self['suppression'] = 1.0
     
-    # Agents
+    # Pointer to HIGHER and TF HIGHER (if any)
+    self['HQ'] = None
+    self['OPCON'] = None
+    
+    # List of immediate subordinates
+    self['subordinates'] = []
+    
+    
+    # Agents ##################################
     self['agent'] = agent(self)
     self.agentData = {}
     self['log'] = sandbox_log()
@@ -230,7 +241,7 @@ class sandbox_entity(dict):
     '''
     s,f = self['C3'].Regroup(self.C2Level())
     if s > 0.01:
-      self['agent'].log('Recovering suppression by %.2f to %.2f.'%(s,self['C3']['suppression']),'operations')
+      self['agent'].log('Recovering suppression by %.2f to %.2f.'%(s,self['suppression']),'operations')
     
     # Lack of supply
     dailyload = self['logistics'].ProjectSupply(activity_dict = self['logistics']['basic load'], E=self)
@@ -265,7 +276,7 @@ class sandbox_entity(dict):
       return [self]
     
     # Any of the subordinates
-    for sub in self['C3']['subordinates']:
+    for sub in self['subordinates']:
       if other == sub:
         # Shortcut
         return [self,sub]
@@ -320,8 +331,8 @@ class sandbox_entity(dict):
     if subord.GetHQ() != self:
       return False
     
-    if subord not in self['C3']['subordinates']:
-      self['C3']['subordinates'].append(subord)
+    if subord not in self['subordinates']:
+      self['subordinates'].append(subord)
       
     
   def DetachFromHQ(self):
@@ -331,9 +342,9 @@ class sandbox_entity(dict):
          
          \todo Fall back to alternate HQ if original HQ doesn't exist anymore.
     '''
-    if self['C3']['OPCON']:
-      self['C3']['OPCON'].DeleteSubordinate(self)
-      self['C3']['OPCON'] = None
+    if self['OPCON']:
+      self['OPCON'].DeleteSubordinate(self)
+      self['OPCON'] = None
       
     # Remove from the detached list
     if self.GetHQ():
@@ -358,15 +369,15 @@ class sandbox_entity(dict):
       return False  
     
     # Disconnect self from current OPCON
-    if self['C3']['OPCON'] != None:
+    if self['OPCON'] != None:
       # Disconnect from direct control.
-      self['C3']['OPCON'].DeleteSubordinate(self)
+      self['OPCON'].DeleteSubordinate(self)
      
     # Set OPCON
-    self['C3']['OPCON'] = HQ
+    self['OPCON'] = HQ
     
     # List as detached
-    hqc3 = self['C3']['HQ']['C3']
+    hqc3 = self['HQ']['C3']
     if not hqc3.has_key('detached'):
       hqc3['detached'] = []
     
@@ -395,18 +406,15 @@ class sandbox_entity(dict):
       return False  
     
     # Disconnect self from current HQ
-    if self['C3']['HQ'] != None and HQ != self['C3']['HQ']:
-      self['C3']['HQ'].DeleteSubordinate(self)
+    if self['HQ'] != None and HQ != self['HQ']:
+      self['HQ'].DeleteSubordinate(self)
 
     # Connect to the new HQ
-    self['C3']['HQ'] = HQ
+    self['HQ'] = HQ
     
     # Get the HQ to connect 
     if HQ:
       HQ.AddSubordinate(self)
-    
-      # Set the Echelon
-      #self['C3']['echelon'] = HQ.Echelon()
     
     
   def IssueOrder(self, order):
@@ -426,7 +434,7 @@ class sandbox_entity(dict):
     request['C3 level'] = self.C3Level()
     
     # Magic teleport into subordinate
-    if subord in self['C3']['subordinates']:
+    if subord in self['subordinates']:
       subord['staff queue'].append(request)
       
     # Magic teleport into higher echelon.
@@ -444,7 +452,7 @@ class sandbox_entity(dict):
     return self['C3'].GetHQ()
   
   def GetSubordinates(self):
-    return self['C3']['subordinates']
+    return self['subordinates']
   
   def GetSiblingUnits(self):
     '''
@@ -505,7 +513,7 @@ class sandbox_entity(dict):
     
         An echelon is the name of the formation for which the entity is the HQ.
     '''
-    return self['C3']['echelon']
+    return self['command_echelon']
   
   def HigherEchelon(self):
     '''! \brief Return the formation name of the higher Echelon

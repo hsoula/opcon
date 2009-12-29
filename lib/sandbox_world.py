@@ -266,10 +266,10 @@ class sandbox:
       entity.GetHQ().DeleteSubordinate(entity)
       
     # Disconnect subordinates
-    if entity['C3']['subordinates']:
-      for i in entity['C3']['subordinates']:
+    if entity['subordinates']:
+      for i in entity['subordinates']:
         # TODO alternate HQ?
-        i['C3']['HQ'] = None
+        i['HQ'] = None
         
     # Delete all contacts in OOB for entity
     self.OOB.remove(entity)

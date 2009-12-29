@@ -7,5 +7,9 @@
 			<morale>1.0</morale>
 			<suppression>1.0</suppression>
 		</C3>
+		
+		<C3 name="base1" training_level="regular">
+			<bandwidth/>
+		</C3>
 	</models>
 </templates>
