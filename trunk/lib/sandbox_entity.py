@@ -606,7 +606,7 @@ class sandbox_entity(dict):
   
   def Signature(self):
     return self['intelligence'].Signature(self.GetStance())
-  def GetRCP(self, noterrain = False):
+  def _GetRCP(self, noterrain = False):
     if self.sim and not noterrain:
       return self['combat'].RCP(self.C2Level(),self.sim.map.TerrainUnder(self['position']),self.GetStance(),self['logistics'].CombatSupplyLevel())
     else:
@@ -868,6 +868,14 @@ class EntityTest(unittest.TestCase):
     unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
     x = unit.GetWeaponSystems()
     self.assertEqual(type(x),type([]))
+    
+  def testGetAllWeaponSystemsRCP(self):
+    # Create a unit
+    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
+    x = unit.GetRCP(unit)
+    # True for as long as the parameters are unchanged.
+    self.assertEqual(x,1.5)    
+    
     
 if __name__ == "__main__":
     # suite
