@@ -107,7 +107,6 @@ class sandbox_entity(dict):
     # Location, heading, speed and disposition (non-templated)
     self.SetPosition( position_descriptor() ) #vect_5D()
     self['stance'] = 'deployed'
-    self['dismounted'] = True
     self['readiness'] = 0.0
     
     # Blank models (In case the templates are incomplete)
@@ -545,6 +544,11 @@ class sandbox_entity(dict):
         return self['sensors'][i]
     return None
   # Combat
+  def IsDismounted(self):
+    ''' Return true is dismounted flag is not logically a no.
+    '''
+    return self.mounted_dismount
+  
   def CanMoveStance(self):
     '''
        Return 1 if can move, -1 if whithdrawal (logically a yes anyway)
@@ -861,7 +865,7 @@ class EntityTest(unittest.TestCase):
 
   def testGetAllWeaponSystems(self):
     # Create a unit
-    unit = sandbox_entity(template='FireTeam', sim=self.sim)
+    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
     x = unit.GetWeaponSystems()
     self.assertEqual(type(x),type([]))
     
