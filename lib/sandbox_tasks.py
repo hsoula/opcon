@@ -663,22 +663,23 @@ class taskRedeploy(sandbox_task):
       return
     
     # convert readiness (Abort prematurely if readiness isn't at 0)
-    if E['combat']['readiness'] != self['final readiness']:
-      diff = self['final readiness'] - E['combat']['readiness']
+    if E['readiness'] != self['final readiness']:
+      diff = self['final readiness'] - E['readiness']
       # change underway time
       if diff < 0.0:
         diff = max(diff, -1*E.sim.Pulse())
       else:
         diff = min(diff, E.sim.Pulse())
         
-      E['combat'].AlterUnderwayTime(diff)
+      # Change readiness.
+      E['readiness'] += diff
       
       # Ignore small difference
-      if abs(E['combat']['readiness'] - self['final readiness']) < 0.001:
-        E['combat']['readiness'] = self['final readiness']
+      if abs(E['readiness'] - self['final readiness']) < 0.001:
+        E['readiness'] = self['final readiness']
         
       # No redeployment possible for as long as the units can't move
-      if E['combat']['readiness'] != self['final readiness']:
+      if E['readiness'] != self['final readiness']:
         return
                                      
     # are there interference with other units
@@ -695,9 +696,9 @@ class taskRedeploy(sandbox_task):
     if self['displacement'] <= 0.0:
       # change stance at last
       E.SetStance(self['final_stance'])
-      if E['combat']['readiness'] < self['final readiness']:
-        E['combat']['readiness'] = min( E['combat']['readiness'] + E.sim.Pulse(), self['final readiness'])
-        if E['combat']['readiness'] != self['final_stance']:
+      if E['readiness'] < self['final readiness']:
+        E['readiness'] = min( E['readiness'] + E.sim.Pulse(), self['final readiness'])
+        if E['readiness'] != self['final_stance']:
           return
       E['agent'].log("Fully redeployed to %s at time %s [Planned: %s]"%(self['final_stance'],E['agent'].clock.strftime("(%m-%d)%H%M ZULU"), self.PlannedEndTime().strftime("(%m-%d)%H%M ZULU")),'personel')
       E['agent'].log('Current position MGRS %s'%(E['agent'].map.MGRS.AsString(E['position'])),'operations')

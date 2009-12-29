@@ -48,7 +48,7 @@ class system_combat(system_base.system_base):
     '''
     return self.skillmap.get(skillname, self.unit_skill)
   
-  def GetWeaponSystems(self, E, wpn_range=None):
+  def GetWeaponSystems(self, E, wpn_range=None, max_range=False):
     '''
         Returns a list of weapon systems for entity E.
         Option: wpn_range: The range in meters which must be included in the effective
@@ -74,10 +74,25 @@ class system_combat(system_base.system_base):
       for i in wpn_list:
         cntw = cnt * i.GetAllowance('vehicle')
         out.append( [cntw, i] )
+    
+    # Performs the filtering #######################################
+    filtered_out = []
+    for i in out:
+      # Fetch the weapon
+      wpn = i[1]
+      
+      # Range Filter 
+      if wpn_range != None:
+        if max_range:
+          mr = wpn.GetMaxRange()
+        else:
+          mr = wpn.GetEffectiveRange()
+        if wpn_range >= wpn.GetMinRange() and wpn_range <= mr:
+          filtered_out.append(i)
       
     
     # Out you go
-    return out
+    return filtered_out
   
 
   # Controler methods
@@ -87,8 +102,7 @@ class system_combat(system_base.system_base):
     return geom.circle(E.Position().AsVect(),self.GetFrontage(E['size']))
     
   def GetFrontage(self, unit_size):
-    ''' Returns a frontage (or radius) as a function of the units size
-    '''
+    ''' Returns a frontage (or radius) as a function of the units size '''
     return system_combat.frontages.get(unit_size, '')
     
   
@@ -97,6 +111,38 @@ class system_combat(system_base.system_base):
         Sum over all weapon_system for all personel (dismounted) and vehicles. 
     '''
     pass
+  
+  # Modeling
+  def terrain_rcp(self,terrain):
+    if terrain == 'unrestricted':
+      out = 1.0
+    elif terrain == 'restricted':
+      out = 1.10
+    elif terrain == 'severely restricted':
+      out = 1.25
+    elif terrain == 'urban':
+      out = 1.5
+    else:
+      out = 1.0
+    return out
+  
+  def terrain_stance_rcp(self, terrain, stance):
+    out = self.terrain_rcp(terrain)
+      
+    if stance == 'deployed' or stance == 'withdrawal' or stance == 'security' or stance == 'offense':
+      return out
+    elif stance == 'transit':
+      return out * 0.5
+    elif stance == 'hasty defense':
+      return out * 1.15
+    elif stance == 'deliberate defense':
+      return out * 1.25
+    elif stance == 'retreat':
+      return out * 0.75
+    
+  # Refactoring placeholder, these must be removed eventually
+  def RawRCP(self):
+    raise
   
 class old_system_combat(system_base.system_base):
   # default attrition level per hour
@@ -174,7 +220,7 @@ class old_system_combat(system_base.system_base):
     # Generate a circular footprint based on the radius
     return geom.circle(E.Position().AsVect(),self['footprint'])
   
-  def AlterUnderwayTime(self, val):
+  def AlterUnderwayTime(self, val): #del
     '''
        change the underway time by val. Bounded at the min by 0h of course.
     '''
