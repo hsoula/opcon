@@ -78,6 +78,7 @@ class system_combat(system_base.system_base):
     # Performs the filtering #######################################
     filtered_out = []
     for i in out:
+      addme = True
       # Fetch the weapon
       wpn = i[1]
       
@@ -87,14 +88,41 @@ class system_combat(system_base.system_base):
           mr = wpn.GetMaxRange()
         else:
           mr = wpn.GetEffectiveRange()
-        if wpn_range >= wpn.GetMinRange() and wpn_range <= mr:
-          filtered_out.append(i)
+        if wpn_range < wpn.GetMinRange() or wpn_range > mr:
+          addme = False
+          
+      # Add only if it didn't fail all tests
+      if addme:
+        filtered_out.append(i)
+      
       
     
     # Out you go
     return filtered_out
   
 
+  def GetRCP(self, E, area=True, wpn_range=None, max_range=False):
+    ''' Returns the Expected number of critical hits per hour.
+    '''
+    # Weapon's list
+    wpns = self.GetWeaponSystems(E,wpn_range,max_range)
+    
+    # Sum up the E-values
+    Eval = 0.0
+    for w in wpns:
+      # Eval for w
+      ev = 0
+      if area:
+        ev += w[1].payload['base'].RCParea
+      else:
+        ev += w[1].payload['base'].RCPpoint
+        
+      # Weapon count times the Eval
+      Eval += w[0] * ev
+    
+    # Return the total
+    return Eval
+    
   # Controler methods
   def GetFootprint(self, E):
     ''' Returns the footprint of E

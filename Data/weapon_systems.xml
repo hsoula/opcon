@@ -74,7 +74,7 @@
                 </consumption_rate>
             </logistics>
             <!-- How many are allocated per person, and per vehicles-->
-            <allowance personel="0.75" vehicle="0.0"/>
+            <allowance personel="0.0" vehicle="1.0"/>
             <payload name="base">
                 <RCP area="0.5" point="0.5"/>
                 <!-- All radii in metres-->
