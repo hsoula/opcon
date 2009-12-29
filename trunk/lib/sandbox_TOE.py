@@ -180,6 +180,15 @@ class sandbox_weapon_system(dict):
 
     def GetAllowance(self, x):
         return self['allowance'][x]
+
+    def GetMinRange(self):
+        return self['min_range']
+    
+    def GetEffectiveRange(self):
+        return self['effective_range']
+    
+    def GetMaxRange(self):
+        return self['max_range']
     
 class sandbox_defense_system(dict):
     def __init__(self):

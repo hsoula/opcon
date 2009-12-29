@@ -526,7 +526,7 @@ class agent:
              \opord The OPORD/FRAGO to process
         '''
         initpos = deepcopy(self.entity['position'])
-        initread = self.entity['combat']['readiness']
+        initread = self.entity['readiness']
         curstance = self.entity.GetStance()
         for i in opord.GetTaskList():
             i['initial position'] = initpos
@@ -993,10 +993,12 @@ class agent:
         cnt.UpdateField('speed', self.entity['position'].rate * 1.0 / (self.entity.sim.Pulse()), mytime = self.clock)
         
         # Min/Max range IF
+        '''
         if self.entity.IFRCP():
             temp = self.entity.IFranges()
             cnt.UpdateField('min IF range', temp[0])
             cnt.UpdateField('max IF range', temp[1])
+        '''
         
         return cnt
             
@@ -1343,9 +1345,9 @@ class agent:
         for i in terrain:
             out = out + '%d%% %s, '%(100*terrain[i], i)
         out = out[:-2] + '. '
-        if self.entity['combat']['readiness'] != 0.0:
-            hr = int(self.entity['combat']['readiness'])
-            minutes = int(self.entity['combat']['readiness'] * 60) % 60
+        if self.entity['readiness'] != 0.0:
+            hr = int(self.entity['readiness'])
+            minutes = int(self.entity['readiness'] * 60) % 60
             if hr and minutes:
                 ts = '%dh %dm'%(hr,minutes)
             elif hr:
