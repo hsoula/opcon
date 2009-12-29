@@ -11,8 +11,10 @@
                 <critical penetrating="False" effect="dismount" weight="2"/>
             </criticals>
         </vehicle>
+	
+	<!-- Empty HMVEE -->
         <vehicle name="M707 HMMWV">
-            <defense_system template="light plates"/>
+            <defense_system template="light-plate"/>
             <movement template="wheeled"/>
             <logistics template="HMVEE"/>
             <criticals>
@@ -20,6 +22,17 @@
                 <critical penetrating="True" effect="dismount"/>
             </criticals>
         </vehicle>
+	
+	<!-- HMVEE with .50cal BMG on top.-->
+	<vehicle name="HMMWV + .50cal BMG" template="M707 HMMWV">
+	    <weapon_system template=".50cal BMG">1</weapon_system>
+	</vehicle>
+	
+	<!-- HMVEE with Mk-19 40mm MG on top.-->
+	<vehicle name="HMMWV + Mk-19 40mm MG" template="M707 HMMWV">
+	    <weapon_system template="Mk-19 40mm MG">1</weapon_system>
+	</vehicle>
+	
     </vehicles>
     <models>
 	<logistics name="civilian car">
