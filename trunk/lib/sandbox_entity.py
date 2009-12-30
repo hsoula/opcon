@@ -26,7 +26,7 @@ from intelligence import system_intelligence as intelligence
 from intelligence import sandbox_contact
 from combat import system_combat as combat
 from combat import sandbox_engagement as engagement
-from C3 import system_C3 as C3
+from C4I import system_C4I as C4I
 
 #import modules
 from sandbox_comm import *
@@ -56,7 +56,7 @@ from datetime import datetime
       systems:
            combat -- resolve engagements
            movement -- model movement from high-level OPORD
-           C3 -- Human factors and command and control models
+           C4I -- Human factors and command and control models
            logistics -- The management of logistics
            intelligence -- The detection and management of situational awareness
            
@@ -105,6 +105,10 @@ class sandbox_entity(dict):
     
     # List of immediate subordinates
     self['subordinates'] = []
+    self['detached'] = []
+    
+    # Communications and Situations
+    self['SITREP'] = {}
     
     
     # Agents ##################################
@@ -235,11 +239,11 @@ class sandbox_entity(dict):
   
   def StepRegroup(self):
     '''! \brief Implement a Regroup iteration.
-        # Wraps the C3 model regroup routine.
+        # Wraps the C4I model regroup routine.
         # Log a message
         # Adjust fatigue penalty
     '''
-    s,f = self['C3'].Regroup(self.C2Level())
+    s,f = self.Regroup(self.C2Level())
     if s > 0.01:
       self['agent'].log('Recovering suppression by %.2f to %.2f.'%(s,self['suppression']),'operations')
     
@@ -250,9 +254,98 @@ class sandbox_entity(dict):
       ratio = deficit / dailyload
       dmg = sum(ratio.values())
       self['agent'].log('Taking Fatigue due to a supply shortage.','personel')
-      self['C3'].AdjustFatigue(dmg)
+      self.AdjustFatigue(dmg)
     
-  # C3
+  # C4I - Human Factors
+  def AdjustMorale(self, val):
+    '''! \brief Adjust the value of morale by some value
+         \param val (float) A valid floating point variable.
+         
+         \note Morale goes some 0.1 times the rate when in the lower half and 1% the rate when above 1.0.
+         No negative values are accepted.
+    '''
+    mod = 1.0
+    if self['morale'] < 0.50: 
+      mod = 0.1
+    elif self['morale'] > 1.0:
+      mod = mod * 0.01
+    val = val * mod
+    self['morale'] = max((self['morale'] + val),0.0)
+    
+  def AdjustFatigue(self, val):
+    '''! \brief Adjust fatigue by a value.
+         \param val (float) A valid float value.
+         \note Fatigue is bounded [0.0,1.0]
+    '''
+    self['fatigue'] = max(min(self['fatigue']+val,1.0),0.0)
+    
+  def C2Level(self):
+    '''! Command and control'''
+    return min( 1.0, self['C3'].LevelHumanFactor() * self['C3'].LevelDeployState(self.GetStance()))
+  
+  def C4ILevel(self):
+    '''! Command, control and communication. Distance to HQ factored in.'''
+    return min( 1.0, self.C2Level() * self['C3'].LevelCommToHQ(self['position']))
+  def Regroup(self, mylevel):
+    '''!
+        Convert some suppresion into fatigue at a rate of 5% per 10 mins, and 0.5% of
+        suppression is converted into fatigue.
+    '''
+    if self.GetHQ() != None:
+      # An average of self and superior
+      target = (mylevel +  self.GetHQ().C3Level()) * 0.5
+    else:
+      target = mylevel * 0.5
+      
+    if target == 1.0:
+      target = 0.99999
+    elif target == 0.0:
+      target = 0.000001
+    
+    # Supre
+    newsup = self['suppression'] ** (1.0 - target)
+    recover = newsup - self['suppression']
+    if recover > 0.05:
+      recover = 0.05 + (0.1 * random() * (recover - 0.1))
+      #recover = 0.1
+    frecover = recover * SUP_to_FATG
+   
+    # recover SUP to Fatigue
+    self['suppression'] = min(1.0, self['suppression'] + recover)
+    self['fatigue'] = max(0.0 , self['fatigue'] - frecover)
+    
+    # Dampen moral high @ 0.1% per pulse
+    if self['morale'] > 1.0:
+      self['morale'] = max(1.0, self['morale']- 0.001)
+      
+    # Lose morale if fatigued
+    if self['fatigue'] < MORAL_FATIGUE_TRIGGER:
+      self['morale'] = max(0.0, self['morale'] - 0.001)
+      
+    # recover and fatigue absorbed
+    return recover, frecover    
+    
+  def Suppress(self, val):
+    '''! \brief  Adjust supression by val.
+         \param val (float) A suppression value. A positive value in this case is 
+         expected to be effective suppression, not unsuppress.
+         \note suppression is bounded [0.0, 1.0]
+    '''
+    self['suppression'] = self['suppression'] - val
+    self['suppression'] = min(1.0, self['suppression'])
+    self['suppression'] = max(0.0, self['suppression'])
+
+  def GetMorale(self):
+    return self['morale']
+  def GetFatigue(self):
+    '''! \bief Access Fatigue
+    '''
+    return self['fatigue']   
+  def IsSuppressed(self):
+    if random() > self['suppression']:
+      return 1
+    return 0 
+  # C4I - Chain of command
   def CommonHigherEchelon(self, other):
     #! \brief Return the lowest common echelon to self and other
     
@@ -309,19 +402,39 @@ class sandbox_entity(dict):
     # No chain
     if mychain == [None]:
       return 0.0
-    # Compute chain as the product of all C3 levels
+    # Compute chain as the product of all C4I levels
     out = 1.0
     for i in mychain:
       out = out * i.C3Level()
     return out
     
-  def C2Level(self):
-    '''! Command and control'''
-    return min( 1.0, self['C3'].LevelHumanFactor() * self['C3'].LevelDeployState(self.GetStance()))
+  def IsOPCON(self):
+    '''! \brief Returns True if the unit is in OPCON
+    '''
+    return bool(self['OPCON'])
+  def GetHQ(self):
+    '''! \brief returns the commanding unit, regardless of who is in command.
+    '''
+    if self.IsOPCON():
+      return self['OPCON']
+    return self['HQ']
   
-  def C3Level(self):
-    '''! Command, control and communication. Distance to HQ factored in.'''
-    return min( 1.0, self.C2Level() * self['C3'].LevelCommToHQ(self['position']))
+  def Subordinates(self):
+    return self['subordinates']
+  
+  def GetSiblingUnits(self):
+    '''
+       Returns direct subordinates of the HQ, but not self.
+    '''
+    myHQ = self.GetHQ()
+    out = []
+    if myHQ:
+      for i in myHQ.Subordinates():
+        if i != self:
+          out.append(i)
+    return out
+        
+
   def AddSubordinate(self, subord):
     '''!
        Will work only if subord is already connected to self. To connect, use the ReportToHQ() methods called from the subordinates, which will
@@ -333,12 +446,25 @@ class sandbox_entity(dict):
     
     if subord not in self['subordinates']:
       self['subordinates'].append(subord)
-      
+
+  def DeleteSubordinate(self, sub):
+    '''!
+       Disconnect the subordinate and delete the last SITREP.
+       \param sub (sandbox_entity) A subordinate unit to diconnect.
+       \note This method is called from the entity and redirected via __getattr__ most of the time. 
+    '''
+    out = False
+    if sub in self['subordinates']:
+      self['subordinates'].remove(sub)
+      out = True
+    if self['SITREP'].has_key(sub['uid']):
+      del self['SITREP'][sub['uid']]  
+    return out
     
   def DetachFromHQ(self):
     '''! \brief Detach from OPCON and resume with the echelon's HQ.
     
-         Will happen only if there is an original HQ that is set in the C3 dictionary.
+         Will happen only if there is an original HQ that is set in the C4I dictionary.
          
          \todo Fall back to alternate HQ if original HQ doesn't exist anymore.
     '''
@@ -350,10 +476,13 @@ class sandbox_entity(dict):
     if self.GetHQ():
       hq = self.GetHQ()
       if hq['C3'].has_key('detached'):
-        if self['uid'] in hq['C3']['detached']:
-          hq['C3']['detached'].remove(self['uid'])
+        if self['uid'] in hq['detached']:
+          hq['detached'].remove(self['uid'])
     
-  
+  def IsCommandUnit(self):
+    if self['subordinates']:
+      return 1
+    return 0 
  
   def AttachToHQ(self, HQ):
     '''! \brief Report to HQ as OPCON attachment (keep original echelon)
@@ -417,10 +546,63 @@ class sandbox_entity(dict):
       HQ.AddSubordinate(self)
     
     
+  def EchelonSubordinates(self, OPCON_only = True):
+    '''! \brief a vector of all Subordinates in the same echelon.
+    
+         \param OPCON_only Limit selection to those under direct control. 
+    '''
+    out = []
+    for i in self['subordinates']:
+      if not i.IsOPCON():
+        out.append(i)
+    
+    # Add detached unitss
+    if not OPCON_only:
+      out += self.DetachedSubordinates()
+    
+    return out
+  
+  def AttachedSubordinates(self):
+    '''! \brief A vector of subordinate unit/echelon under OPCON
+    '''
+    temp = self.EchelonSubordinates()
+    out = []
+    
+    # Add if not an echelon member
+    for i in self['subordinates']:
+      if not i in temp:
+        out.append(i)
+    
+    return out
+  
+  def DetachedSubordinates(self):
+    '''! \brief A vector of echelon/units under someone else's OPCON
+    '''
+    # Fetch a sim
+    sim = self.sim
+    
+    out = []
+    # Re-hydrate the detached list
+    for i in self['detached']:
+      out.append(sim.AsEntity(i))
+      
+    return out
+  
+  def AllSubordinates(self):
+    '''
+       OUTPUT : a list of all subordinates at all lower level
+    '''
+    out = []
+    for i in range(len(self['subordinates'])):
+      out = out + [self['subordinates'][i]] + self['subordinates'][i]['C3'].AllSubordinates()
+    return out
+  
+
+  # C4I - communications
   def IssueOrder(self, order):
     '''!
        Pass an order to an entity. The entity will dispatch it to the appropriate agent.
-       Record the C3 comand level at the time of issue.
+       Record the C4I comand level at the time of issue.
     '''
     if self.GetHQ():
       order['C3 level'] = float(self.GetHQ()['C3'])
@@ -445,27 +627,6 @@ class sandbox_entity(dict):
     if self.sim:
       self.sim.BroadcastSignal(request)
     
-  def GetHQ(self):
-    '''! \brief Get HQ, real of OPCON. 
-         Unnecessary wrapper, delete.
-    '''
-    return self['C3'].GetHQ()
-  
-  def GetSubordinates(self):
-    return self['subordinates']
-  
-  def GetSiblingUnits(self):
-    '''
-       Returns direct subordinates of the HQ, but not self.
-    '''
-    myHQ = self.GetHQ()
-    out = []
-    if myHQ:
-      for i in myHQ.GetSubordinates():
-        if i != self:
-          out.append(i)
-    return out
-        
   def GetLastSITREP(self, subord, echelon=True):
     '''!
        Return the last SITREP received from uid
@@ -473,16 +634,22 @@ class sandbox_entity(dict):
     if type(subord) != type(12):
       subord = subord['uid']
       
-    if self['C3']['SITREP'].has_key(subord):
-      return self['C3']['SITREP'][subord]
+    if self['SITREP'].has_key(subord):
+      return self['SITREP'][subord]
     
     if subord == self['uid']:
       return self['agent'].PrepareSITREP(echelon)
     return None
-  
+  def CacheSITREP(self, uid, sitrep):
+    '''!
+       Cache the sitrep for a subordinate unit, indexing by uid.
+    '''
+    self['SITREP'][uid] = sitrep  
+    
+
   # Echelon code
   def DeleteEchelonFootprint(self):
-    '''! \brief Remove the footprint from the C3 model so it can be recomputed.
+    '''! \brief Remove the footprint from the C4I model so it can be recomputed.
     '''
     if self['C3'].has_key('Echelon Footprint'):
       del self['C3']['Echelon Footprint']
@@ -642,7 +809,7 @@ class sandbox_entity(dict):
     
     # Suppression In proportion to RCP
     sup = dv[0] / self.GetRCP()
-    self['C3'].Suppress(sup)
+    self.Suppress(sup)
     sup = min(1.0,sup)
     
     # Casulaties
@@ -780,7 +947,7 @@ class sandbox_entity(dict):
     self['agent'].PrePickle()
     # OPORD
     self['OPORD'].PrePickle()
-    # C3 pointers
+    # C4I pointers
     self['C3'].PrePickle(self.sim)
     # Contacts
     for i in self['intelligence']['contacts'].keys():
@@ -797,7 +964,7 @@ class sandbox_entity(dict):
   def PostPickle(self, sim):
     self.sim = sim
     self['agent'].PostPickle(self)
-    # C3 Pointers
+    # C4I Pointers
     self['C3'].PostPickle(self.sim)
     # contacts
     for i in self['intelligence']['contacts'].keys():

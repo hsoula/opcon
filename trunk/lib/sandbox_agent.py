@@ -599,7 +599,7 @@ class agent:
         
         # Determine in within whether the report comes from below.
         within = None
-        if rep.Sender in self.entity['C3'].Subordinates():
+        if rep.Sender in self.entity.Subordinates():
             within = rep.Sender['uid']
         if self.ContactAbsorb(rep.cnt, within):
             self.log('\t| Adding contact %s to our intelligence picture.'%(rep.cnt.TrackName()),'intelligence')
@@ -672,7 +672,7 @@ class agent:
         
         else:
             # If not, send the request up/down the chain of command
-            # C3 levels for request is an average of both C3 values.
+            # C4I levels for request is an average of both C4I values.
             request['C3 level'] *= self.entity.C3Level() 
             
             # Send to subordinates if applicable
@@ -1315,7 +1315,7 @@ class agent:
         out = html.Tag('H3', 'Command, Control and Communication.')
         out1 = html.Tag('B', 'C2 level   : ') + self.entity['C3'].AsStringCommand(self.entity.C2Level()) + ' (%d%%)'%(100*self.entity.C2Level())
         if self.entity.GetHQ(): 
-            out1 = out1 + '<BR>' + html.Tag('B', ' C3 level   : ') + self.entity['C3'].AsStringCommand(self.entity.C3Level()) + ' (%d%%)'%(100*self.entity.C3Level())
+            out1 = out1 + '<BR>' + html.Tag('B', ' C4I level   : ') + self.entity['C3'].AsStringCommand(self.entity.C3Level()) + ' (%d%%)'%(100*self.entity.C3Level())
         out1 = out1 + '<BR>'
         out1 = out1 + 'Suppression: ' + self.entity['C3'].AsStringSuppression() + ' (%d%%)<BR>'%(100*self.entity['suppression'])
         out1 = out1 + 'Fatigue    : ' + self.entity['C3'].AsStringFatigue() + ' (%d%%)<BR>'%(100*self.entity['fatigue'])
@@ -2262,7 +2262,7 @@ class agent_CO(agent):
         
        out = html.Tag('H3', 'Command, Control and Communication.')
        out1 = '<BR>' + html.Tag('B', ' HQ C2 level   : ') + self.entity['C3'].AsStringCommand(self.entity.C2Level()) + ' (%d%%)'%(100*self.entity.C2Level())
-       out1 += '<BR>' + html.Tag('B', ' C3 level   : ') + self.entity['C3'].AsStringCommand(com) + ' (%d%%)'%(100*com)
+       out1 += '<BR>' + html.Tag('B', ' C4I level   : ') + self.entity['C3'].AsStringCommand(com) + ' (%d%%)'%(100*com)
        out1 = out1 + '<BR>'
        out1 = out1 + 'Suppression: ' + self.entity['C3'].AsStringSuppression(sup) + ' (%d%%)<BR>'%(100*self.entity['suppression'])
        out1 = out1 + 'Fatigue    : ' + self.entity['C3'].AsStringFatigue(fat) + ' (%d%%)<BR>'%(100*self.entity['fatigue'])

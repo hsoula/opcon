@@ -7,46 +7,26 @@ MORAL_FATIGUE_TRIGGER = 0.75
 
 import system_base
 import pickle
-
-
     
 class system_C4I(system_base.system_base):
-  '''! \brief Model Command, control and communication.
-  
-       This model abstract C4I into a small numbers of parameters:
-       
-       - fatigue : Physical fitness for a task.
-       - morale  : Belief that the operation serves a purpose/can be done.
-       - suppression : Ability to carry-on a task right now.
-       - effectiveness : Probability to carry on a C4I task immediately in ideal conditions.
-       
-       Other attributes of interest:
-       
-       - echelon (string) The name of the unit whose entity is the HQ. A unit this get its echelon
-       name from the echelon string of its HQ. Its own echelon string is the unit which the unit itself
-       is the parent.
-       - HQ (sandbox_entity) The unit which is controling the formation.
-       - OPCON (sandbox_entity) The unit which is in OPCON for the owning entity. Use OPCON to build combat teams 
-       and task force.
-       - Subordinates (list, sandbox_entity) A list of entities which are directly under the owning entity.
-       
-       - SITREP (dict, SITREP) Caching of the most recent SITREP from each subordinates. Indexed by UIDs.
-       
-       STATIC attributes:
-       All scales are static dictionaries which are used to verbalize the abstract numerical scales for morale, fatigue and suppression.       
-   '''
+  '''!
+       Controler class for data transfer and storage for a unit.
+  '''
   MoraleScale = {0.9:'GREEN', 0.75:'AMBER', 0.6:'RED', 0.4:'BLACK', 0.0:'Broken'}
   CommandScale = {0.9:'GREEN', 0.75:'AMBER', 0.6:'RED', 0.4:'BLACK', 0.0:'Broken'}
   FatigueScale = {0.80:'GREEN', 0.75:'AMBER', 0.6:'RED', 0.3:'BLACK', 0.0:'Exhausted'}
   SuppressionScale = {0.80:'GREEN', 0.60:'AMBER', 0.4:'RED', 0.2:'BLACK', 0.0:'Paralyzed'}  
   effectiveness = {'IDEAL': 1.0, 'EXCELLENT': 0.9, 'PROFESSIONAL': 0.8, 'SUB-STANDARD':0.7, 'DYSFUNCTIONAL': 0.5, 'INCOMPETENT':3.0**-1}
-  def __init__(self, ech = ''):
-    '''!
-       \param ech (string) The name of the echelon that the unit is reponsible for.
-    '''
+  
+  def __init__(self):
     # Base class
     system_base.system_base.__init__(self)
     
+    # Bandwidth
+    self.bandwidth = None
+    
+    
+  # File transactions
   def fromXML(self, doc, node):
     '''! \brief take care only of relevant info for scenario definition.
     '''
@@ -55,53 +35,13 @@ class system_C4I(system_base.system_base):
       if doc.Get(node, i):
         self[i] = doc.Get(node, i)
     
-    
-  def ToTemplate(self):
-    '''! \brief Disconnect the pointers to other units and return the pickled string.
-    '''
-    HQ = self['HQ']
-    OPCON = self['OPCON']
-    subord = self['subordinates']
-    
-    self['HQ'] = None
-    self['OPCON'] = None
-    self['subordinates'] = []
-    
-    out = pickle.dumps( self, pickle.HIGHEST_PROTOCOL )
-    
-    self['HQ'] = HQ
-    self['OPCON'] = OPCON
-    self['subordinates'] = subord
-    
-    return out
+  # Command Structure
   
-  def PrePickle(self,sim):
-    '''!
-       \param sim (sandbox_world) Needed to make sure that the internal data is made of UIDs.
-    '''
-    if self['HQ']:
-      self['HQ'] = sim.AsUID(self['HQ'])
-    if self['OPCON']:
-      self['OPCON'] = sim.AsUID(self['OPCON'])
-    for i in range(len(self['subordinates'])):
-        self['subordinates'][i] = sim.AsUID(self['subordinates'][i])
+  # Human Factors
   
-  def PostPickle(self, sim):
-    '''!
-       \param sim (sandbox_entity) Needed to reconstitute from UID to entities via the sandbox_world.AsEntity method.
-    '''
-    if self['HQ']:
-      self['HQ'] = sim.AsEntity(self['HQ'])
-    if self['OPCON']:
-      self['OPCON'] = sim.AsEntity(self['OPCON'])
-    for i in range(len(self['subordinates'])):
-      self['subordinates'][i] = sim.AsEntity(self['subordinates'][i])
-
-  # Interface
-  # Transformative
-
+  # Communication
   
-  # Informative   
+  # Situation
   def LevelHumanFactor(self):
     '''An average of three humand factors'''
     # Internal factors

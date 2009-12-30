@@ -525,7 +525,7 @@ class OPORD(sandbox_COMM):
          d. Signal
     
     '''
-    # C3 ##################################################
+    # C4I ##################################################
     addC3 = False
     out =  html.Tag('H2','5. Command and Signal')
     
@@ -571,7 +571,7 @@ class OPORD(sandbox_COMM):
 
   def IsSuppressed(self):
     '''
-       Randomly check against the C3 level of the OPORD
+       Randomly check against the C4I level of the OPORD
     '''
     if random() > self['C3 level']:
       return 1
@@ -1031,7 +1031,7 @@ class SUPREQ(sandbox_COMM):
     
   def IsSuppressed(self):
     '''
-       Randomly check against the C3 level of the OPORD
+       Randomly check against the C4I level of the OPORD
     '''
     if random() > self['C3 level']:
       return 1
@@ -1060,10 +1060,10 @@ class SUPREQ(sandbox_COMM):
     return '<p>Unimplmented</p>'
 
 class CNTREP(sandbox_COMM):
-  def __init__(self, sender = None, recipient = None, cnt = None, C3level = 1.0):
+  def __init__(self, sender = None, recipient = None, cnt = None, C4Ilevel = 1.0):
     sandbox_COMM.__init__(self, sender,recipient)
     self.cnt = cnt
-    self['C3 level'] = C3level
+    self['C3 level'] = C4Ilevel
     
   def AsText(self):
     return 'Contact Report from %s\n%s\n'%(self.sendername, str(self.cnt))
@@ -1099,7 +1099,7 @@ class INTSUM(sandbox_COMM):
       self['contacts'].append(lst)
 
 class SITREP(sandbox_COMM):
-  def __init__(self, me = None, gcontacts = None, gfriends = None, rep = None, C3level = 1.0):
+  def __init__(self, me = None, gcontacts = None, gfriends = None, rep = None, C4Ilevel = 1.0):
     sandbox_COMM.__init__(self, me)
     self.contacts = gcontacts
     self.friends = gfriends
@@ -1109,7 +1109,7 @@ class SITREP(sandbox_COMM):
     else:
       self.report = ''
     
-    self['C3 level'] = C3level
+    self['C3 level'] = C4Ilevel
     
   def AsHTML(self):
     return str(self)

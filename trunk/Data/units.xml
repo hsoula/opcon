@@ -48,7 +48,7 @@
 				<vehicle template="HMMWV + .50cal BMG" count="1"/>
 				<vehicle template="HMMWV + Mk-19 40mm MG" count="1"/>
 			</TOE>
-			<!-- Model plugins/parameters to use to handle C3, combat, movement, logistics and intelligence -->
+			<!-- Model plugins/parameters to use to handle C4I, combat, movement, logistics and intelligence -->
 			<models>
 				<C3/>
 				<intelligence template="base"/>
@@ -74,7 +74,7 @@
 				<personel template="US-Infantry-2009" count="4"/>
 				<vehicle template="civilian car" count="0"/>
 			</TOE>
-			<!-- Model plugins/parameters to use to handle C3, combat, movement, logistics and intelligence -->
+			<!-- Model plugins/parameters to use to handle C4I, combat, movement, logistics and intelligence -->
 			<models>
 				<C3/>
 				<intelligence template="base"/>
