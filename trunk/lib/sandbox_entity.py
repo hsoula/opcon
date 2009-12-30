@@ -127,7 +127,7 @@ class sandbox_entity(dict):
     # Blank models (In case the templates are incomplete)
     self.SetModelCombat(combat())
     self.SetModelIntelligence(intelligence())
-    self.SetModelC4I(C3())
+    self.SetModelC4I(C4I())
     self.SetModelLogistics(logistics())
     self.SetModelMovement(movement())
     
@@ -896,7 +896,7 @@ class sandbox_entity(dict):
       
     # Systems
     models = doc.Get(node,'models')
-    for i in ['C3','combat','intelligence','movement','logistics']:
+    for i in ['C4I','combat','intelligence','movement','logistics']:
       # Get the model node
       x = doc.Get(models,i)
       
