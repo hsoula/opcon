@@ -51,6 +51,14 @@ class sandboXML:
         if self.root:
             return str(self.root.tagName)
         
+    def SafeGet(self, node, defaultval=None, tag=''):
+        ''' Returns the value of the defaultval if the node doesn't exist'''
+        x = self.Get(node, tag)
+        if x != '':
+            return x
+        else:
+            return defaultval
+        
     def Get(self, node, tag='', force_list = False):
         '''! \brief Look for an attribute or element with the corresponding tag(s). Return a list of if there is multiple elements.
         '''

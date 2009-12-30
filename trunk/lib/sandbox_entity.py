@@ -264,20 +264,13 @@ class sandbox_entity(dict):
          \note Morale goes some 0.1 times the rate when in the lower half and 1% the rate when above 1.0.
          No negative values are accepted.
     '''
-    mod = 1.0
-    if self['morale'] < 0.50: 
-      mod = 0.1
-    elif self['morale'] > 1.0 and val >= 0.0:
-      mod = mod * 0.01
-    val = val * mod
-    self['morale'] = max((self['morale'] + val),0.0)
+    self['morale'] = self['C4I'].AdjustHumanFactor(self.GetMorale(), val)
     
   def AdjustFatigue(self, val):
     '''! \brief Adjust fatigue by a value.
          \param val (float) A valid float value.
-         \note Fatigue is bounded [0.0,1.0]
     '''
-    self['fatigue'] = max(min(self['fatigue']+val,1.0),0.0)
+    self['fatigue'] = self['C4I'].AdjustHumanFactor(self.GetFatigue(), val)
     
   def C2Level(self):
     '''! Command and control'''
