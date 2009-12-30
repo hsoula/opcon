@@ -38,22 +38,25 @@ class system_C4I(system_base.system_base):
   # Command Structure
   
   # Human Factors
+  def LevelDeployState(self, stance):
+    '''Level modifier due to stance'''
+    if stance == 'transit':
+      return 0.8
+    return 1.0
   
-  # Communication
-  
-  # Situation
-  def LevelHumanFactor(self):
+  def LevelHumanFactor(self, E):
     '''An average of three humand factors'''
     # Internal factors
-    internal = ((self['morale'] + self['fatigue'] + self['suppression'])/ 3.0)
+    internal = ((E.GetMorale() + E.GetFatigue() + E.GetSuppression())/ 3.0)
     return internal
   
-  def LevelCommToHQ(self, mypos):
+  # Communication
+  def LevelCommToHQ(self, E):
     '''Factor adjusting the C4I levels due to proximity to higher unit.
        TODO : Establish reasonable range levels and factors.
     '''
-    if self.GetHQ():
-      d = (mypos-self.GetHQ()['position']).length()
+    if E.GetHQ():
+      d = (E.Position()-E.GetHQ().Position()).length()
       if d <= 30.0:
         return 1.0
       elif d <= 60.0:
@@ -63,24 +66,8 @@ class system_C4I(system_base.system_base):
     # No higher Unit
     return 1.0
   
-  def LevelDeployState(self, stance):
-    '''Level modifier due to stance'''
-    if stance == 'transit':
-      return 0.8
-    return 1.0
-  
-  def Report(self):
-    '''
-    '''
-    # overall
-    report = 'Overall Command and Control : %d%%. '%(100 * float(self))
-    # Morale
-    report = report + "Morale is at %d %%, "%(100*self['morale'])
-    report = report + "fatigue is at %d %% and "%(100*(1-self['fatigue']))
-    report = report + "suppression is at %d %%.\n"%(100*(1-self['suppression']))
-    return report
-    
-      
+
+  # Verbalization
   def KeyLowerThan(self, k, L):
     '''! \brief Return the largest element in L that is smaller than k '''
     candidate = min(L)
@@ -91,41 +78,36 @@ class system_C4I(system_base.system_base):
       return candidate
     
     
-  def AsStringMorale(self, m = None):
-    if m == None:
-      m = self['morale']
+  def AsStringMorale(self, m):
     L = system_C4I.MoraleScale.keys()
     return system_C4I.MoraleScale[self.KeyLowerThan(m,L)]
   
-  def AsStringFatigue(self, m = None):
-    if m == None:
-      m = self['fatigue']
+  def AsStringFatigue(self, m ):
     k = system_C4I.FatigueScale.keys()
     return system_C4I.FatigueScale[self.KeyLowerThan(m,k)]
   
-  def AsStringSuppression(self, m = None):
-    if m == None:
-      m = self['suppression']
+  def AsStringSuppression(self, m):
     k = system_C4I.SuppressionScale.keys()
     return system_C4I.SuppressionScale[self.KeyLowerThan(m,k)]
   
-  def AsStringCommand(self, m = None):
-    if m == None:
-      m = self['suppression']
+  def AsStringCommand(self, m):
     k = system_C4I.CommandScale.keys()
     return system_C4I.CommandScale[self.KeyLowerThan(m,k)]
+ 
+  # Situation
+  def Report(self, E):
+    '''
+    '''
+    # overall
+    report = 'Overall Command and Control : %d%%. '%(100 * self.LevelHumanFactor(E))
+    # Morale
+    report = report + "Morale is at %d %%, "%(100*E.GetMorale())
+    report = report + "fatigue is at %d %% and "%(100*(1-E.GetFatigue()))
+    report = report + "suppression is at %d %%.\n"%(100*(1-E.GetSuppression()))
+    return report
     
-  def __float__(self):
-    '''
-       Returns a bounded value:
-         0.0 --> No C4I
-         1.0 --> Direct and full control
-    '''
-    # Internal factors
-    internal = (self['morale'] + self['fatigue'] + self['suppression'])/ 3.0
       
-    return internal
-  
+ 
   
 import unittest
 class C4ITest(unittest.TestCase):

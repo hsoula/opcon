@@ -131,7 +131,7 @@ class sandbox_XML_templates:
     # Model Section
     ms = doc.Get(node, 'models')
     if doc.Get(ms, 'C3'):
-      out.SetModelC3(self.LoadModel(doc, doc.Get(ms, 'C3')))
+      out.SetModelC4I(self.LoadModel(doc, doc.Get(ms, 'C3')))
     if doc.Get(ms, 'movement'):
       out.SetModelMovement(self.LoadModel(doc, doc.Get(ms, 'movement')))
     if doc.Get(ms, 'intelligence'):
@@ -341,7 +341,7 @@ class sandbox_templates:
     # Make a unit with all defaults
     out = sandbox_entity.sandbox_entity(gname,'Coy')
     out['side'] = gside
-    out.SetModelC3(self.Make('C3','Default'))
+    out.SetModelC4I(self.Make('C3','Default'))
     out.SetModelIntelligence(self.Make('Intelligence','Default'))
     out.SetModelCombat(self.Make('Combat','Default'))
     out.SetModelLogistics(self.Make('Logistics','Default'))
@@ -354,7 +354,7 @@ class sandbox_templates:
     # A generic Mechanized Bn
     out =  sandbox_entity.sandbox_entity(gname,'Bn','mech')
     out['side'] = gside
-    out.SetModelC3(self.Make('C3','Default'))
+    out.SetModelC4I(self.Make('C3','Default'))
     out.SetModelIntelligence(self.Make('Intelligence','MechBn'))
     out.SetModelCombat(self.Make('Combat','MechBn'))
     out.SetModelLogistics(self.Make('Logistics','MechBn'))
@@ -365,7 +365,7 @@ class sandbox_templates:
     # A generic Mechanized Bn
     out = sandbox_entity.sandbox_entity(gname,'Bn','armor')
     out['side'] = gside
-    out.SetModelC3(self.Make('C3','Default'))
+    out.SetModelC4I(self.Make('C3','Default'))
     out.SetModelIntelligence(self.Make('Intelligence','ArmorBn'))
     out.SetModelCombat(self.Make('Combat','ArmorBn'))
     out.SetModelLogistics(self.Make('Logistics','ArmorBn'))
@@ -377,7 +377,7 @@ class sandbox_templates:
     # A generic 155mm SP Bty
     out = sandbox_entity.sandbox_entity(gname,'Coy','sp-art')
     out['side'] = gside
-    out.SetModelC3(self.Make('C3','Default'))
+    out.SetModelC4I(self.Make('C3','Default'))
     out.SetModelIntelligence(self.Make('Intelligence','ArmorBn'))
     out.SetModelCombat(self.Make('Combat','155SpBty'))
     out.SetModelLogistics(self.Make('Logistics','155SpBty'))
@@ -388,7 +388,7 @@ class sandbox_templates:
   def CreateUnitRecceTroop(self, gname = '', gside = 'Blue'):
     out = sandbox_entity.sandbox_entity(gname,'Plt','recce')
     out['side'] = gside
-    out.SetModelC3(self.Make('C3','Default'))
+    out.SetModelC4I(self.Make('C3','Default'))
     out.SetModelIntelligence(self.Make('Intelligence','RecceTroop'))
     out.SetModelCombat(self.Make('Combat','RecceTroop'))
     out.SetModelLogistics(self.Make('Logistics','RecceTroop'))
@@ -399,7 +399,7 @@ class sandbox_templates:
   def CreateUnitBdeHHC(self, gname = '', gside = 'Blue'):
     out = sandbox_entity.sandbox_entity(gname,'Coy','HQ')
     out['side'] = gside
-    out.SetModelC3(self.Make('C3','Default'))
+    out.SetModelC4I(self.Make('C3','Default'))
     out.SetModelIntelligence(self.Make('Intelligence','BdeHHC'))
     out.SetModelCombat(self.Make('Combat','Staff'))
     out.SetModelLogistics(self.Make('Logistics','BdeHHC'))
@@ -411,7 +411,7 @@ class sandbox_templates:
     # Forward Support Company
     out = sandbox_entity.sandbox_entity(gname,'Bn','CSS')
     out['side'] = gside
-    out.SetModelC3(self.Make('C3','Default'))
+    out.SetModelC4I(self.Make('C3','Default'))
     out.SetModelIntelligence(self.Make('Intelligence','FSB'))
     out.SetModelCombat(self.Make('Combat','Staff'))
     out.SetModelLogistics(self.Make('Logistics','FSB'))
@@ -422,7 +422,7 @@ class sandbox_templates:
     ''' Create a generic convoy for supply.'''
     out = sandbox_entity.sandbox_entity(gname,'Sec','convoy')
     out['side'] = gside
-    out.SetModelC3(self.Make('C3','Default'))
+    out.SetModelC4I(self.Make('C3','Default'))
     out.SetModelIntelligence(self.Make('Intelligence','convoy'))
     out.SetModelCombat(self.Make('Combat','Staff'))
     out.SetModelLogistics(self.Make('Logistics','convoy'))
@@ -434,7 +434,7 @@ class sandbox_templates:
     ''' Create a LOGPAC, unmanned. '''
     out = sandbox_entity.sandbox_entity('LOGPAC','installation',"LOGPAC")
     out['side'] = gside
-    out.SetModelC3(self.Make('C3','Default'))
+    out.SetModelC4I(self.Make('C3','Default'))
     out.SetModelIntelligence(self.Make('Intelligence','LOGPAC'))
     out.SetModelCombat(self.Make('Combat','LOGPAC'))
     out.SetModelLogistics(self.Make('Logistics','LOGPAC'))

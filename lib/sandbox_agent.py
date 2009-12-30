@@ -173,7 +173,7 @@ class agent:
         '''
         '''
         # IsCommandUnit
-        if self.entity['C3'].IsCommandUnit() == False:
+        if self.entity.IsCommandUnit() == False:
             return
         # Are we passed the threshold?
         if self.data.has_key('next INTSUM'):
@@ -506,7 +506,7 @@ class agent:
         # COMMAND #######################################################
         # Set HQ 
         tHQ = self.entity.sim.AsEntity(opord.GetHQ())
-        if tHQ != self.entity['C3']["HQ"] and tHQ != None:
+        if tHQ != self.entity["HQ"] and tHQ != None:
             self.entity.ReportToHQ(tHQ)
             
         # Timing and Projected logistics
@@ -612,7 +612,7 @@ class agent:
         if rep.Sender(self.entity.sim) == None:
             return
         # Save the SITREP into the 
-        self.entity['C3'].CacheSITREP(rep.sender['uid'],rep)
+        self.entity.CacheSITREP(rep.sender['uid'],rep)
         
         
         self.log('Received a SITREP from %s'%(rep.Sender(self.entity.sim)['name']),'communications')
@@ -1227,7 +1227,7 @@ class agent:
         
         
         # Fish out all subordinates at all levels
-        subs = self.entity['C3'].AllSubordinates()
+        subs = self.entity.AllSubordinates()
         for i in range(len(subs)):
             cnt = self.entity['intelligence'].Contact(subs[i])
             if cnt != None and cnt.Type() != 'undetected':
@@ -1313,13 +1313,13 @@ class agent:
            Report on command and control.
         '''
         out = html.Tag('H3', 'Command, Control and Communication.')
-        out1 = html.Tag('B', 'C2 level   : ') + self.entity['C3'].AsStringCommand(self.entity.C2Level()) + ' (%d%%)'%(100*self.entity.C2Level())
+        out1 = html.Tag('B', 'C2 level   : ') + self.entity['C4I'].AsStringCommand(self.entity.C2Level()) + ' (%d%%)'%(100*self.entity.C2Level())
         if self.entity.GetHQ(): 
-            out1 = out1 + '<BR>' + html.Tag('B', ' C4I level   : ') + self.entity['C3'].AsStringCommand(self.entity.C3Level()) + ' (%d%%)'%(100*self.entity.C3Level())
+            out1 = out1 + '<BR>' + html.Tag('B', ' C4I level   : ') + self.entity['C4I'].AsStringCommand(self.entity.C3Level()) + ' (%d%%)'%(100*self.entity.C3Level())
         out1 = out1 + '<BR>'
-        out1 = out1 + 'Suppression: ' + self.entity['C3'].AsStringSuppression() + ' (%d%%)<BR>'%(100*self.entity['suppression'])
-        out1 = out1 + 'Fatigue    : ' + self.entity['C3'].AsStringFatigue() + ' (%d%%)<BR>'%(100*self.entity['fatigue'])
-        out1 = out1 + 'Morale     : ' + self.entity['C3'].AsStringMorale() + ' (%d%%)<BR>'%(100*self.entity['morale'])
+        out1 = out1 + 'Suppression: ' + self.entity['C4I'].AsStringSuppression(self.entity.GetSuppression()) + ' (%d%%)<BR>'%(100*self.entity.GetSuppression())
+        out1 = out1 + 'Fatigue    : ' + self.entity['C4I'].AsStringFatigue(self.entity.GetFatigue()) + ' (%d%%)<BR>'%(100*self.entity.GetFatigue())
+        out1 = out1 + 'Morale     : ' + self.entity['C4I'].AsStringMorale(self.entity.GetMorale()) + ' (%d%%)<BR>'%(100*self.entity.GetMorale())
         out = out + html.Tag('blockquote',out1)
         return html.Tag('div',out)
     
@@ -2104,7 +2104,7 @@ class agent_CO(agent):
        self.data['last SITREP'] = self.clock
        
        # Fish out all subordinates at all levels
-       subs = self.entity['C3'].AllSubordinates()
+       subs = self.entity.AllSubordinates()
        for i in range(len(subs)):
            cnt = self.entity['intelligence'].Contact(subs[i])
            if cnt != None:
@@ -2249,7 +2249,7 @@ class agent_CO(agent):
        
        for i in self.entity.Subordinates():
            com += self.entity.CommLevelTo(i)
-           sup += self.entity['suppression']
+           sup += self.entity.GetSuppression()
            fat += self.entity.GetFatigue()
            mor += self.entity.GetMorale()
        
@@ -2261,12 +2261,12 @@ class agent_CO(agent):
        mor /= N
         
        out = html.Tag('H3', 'Command, Control and Communication.')
-       out1 = '<BR>' + html.Tag('B', ' HQ C2 level   : ') + self.entity['C3'].AsStringCommand(self.entity.C2Level()) + ' (%d%%)'%(100*self.entity.C2Level())
-       out1 += '<BR>' + html.Tag('B', ' C4I level   : ') + self.entity['C3'].AsStringCommand(com) + ' (%d%%)'%(100*com)
+       out1 = '<BR>' + html.Tag('B', ' HQ C2 level   : ') + self.entity['C4I'].AsStringCommand(self.entity.C2Level()) + ' (%d%%)'%(100*self.entity.C2Level())
+       out1 += '<BR>' + html.Tag('B', ' C4I level   : ') + self.entity['C4I'].AsStringCommand(com) + ' (%d%%)'%(100*com)
        out1 = out1 + '<BR>'
-       out1 = out1 + 'Suppression: ' + self.entity['C3'].AsStringSuppression(sup) + ' (%d%%)<BR>'%(100*self.entity['suppression'])
-       out1 = out1 + 'Fatigue    : ' + self.entity['C3'].AsStringFatigue(fat) + ' (%d%%)<BR>'%(100*self.entity['fatigue'])
-       out1 = out1 + 'Morale     : ' + self.entity['C3'].AsStringMorale(mor) + ' (%d%%)<BR>'%(100*self.entity['morale'])
+       out1 = out1 + 'Suppression: ' + self.entity['C4I'].AsStringSuppression(sup) + ' (%d%%)<BR>'%(100*self.entity.GetSuppression())
+       out1 = out1 + 'Fatigue    : ' + self.entity['C4I'].AsStringFatigue(fat) + ' (%d%%)<BR>'%(100*self.entity.GetFatigue())
+       out1 = out1 + 'Morale     : ' + self.entity['C4I'].AsStringMorale(mor) + ' (%d%%)<BR>'%(100*self.entity.GetMorale())
        out = out + html.Tag('blockquote',out1)
        return html.Tag('div',out)
    

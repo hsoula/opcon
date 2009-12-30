@@ -577,7 +577,7 @@ class sandbox:
       
       while B < len(self.OOB):
         # Suppression
-        if self.OOB[A]['C3'].IsSuppressed() or B == A:
+        if self.OOB[A].IsSuppressed() or B == A:
           B = B + 1
           continue
         # Detection Routine
