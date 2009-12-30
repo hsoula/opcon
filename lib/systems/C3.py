@@ -105,7 +105,7 @@ class system_C4I(system_base.system_base):
   def LevelHumanFactor(self):
     '''An average of three humand factors'''
     # Internal factors
-    internal = ((self['morale'] + self['fatigue'] + self['suppression'])/ 3.0)
+    internal = ((self['morale'] + self['fatigue'] + self.GetSuppression())/ 3.0)
     return internal
   
   def LevelCommToHQ(self, mypos):
