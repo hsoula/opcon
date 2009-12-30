@@ -156,7 +156,7 @@ class sandbox_entity(dict):
          A special attention must be paid if there is a attribute name clash.
     '''
     # Models to scan for
-    models = ['C3','combat','intelligence','logistics','movement']
+    models = ['C4I','combat','intelligence','logistics','movement']
     
     for M in models:
       if hasattr(self[M], name):
@@ -267,7 +267,7 @@ class sandbox_entity(dict):
     mod = 1.0
     if self['morale'] < 0.50: 
       mod = 0.1
-    elif self['morale'] > 1.0:
+    elif self['morale'] > 1.0 and val >= 0.0:
       mod = mod * 0.01
     val = val * mod
     self['morale'] = max((self['morale'] + val),0.0)
@@ -1052,6 +1052,33 @@ class EntityTest(unittest.TestCase):
     x = unit.GetRCP(unit)
     # True for as long as the parameters are unchanged.
     self.assertEqual(x,1.5)    
+    
+  def testAdjustMoralNormal(self):
+    # Create a unit
+    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
+    unit.AdjustMorale(-0.1)
+    self.assertEqual(0.9,unit.GetMorale())
+    
+  def testAdjustMoralLow(self):
+    # Create a unit
+    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
+    unit['morale'] = 0.45
+    unit.AdjustMorale(-0.1)
+    self.assertEqual(0.44,unit.GetMorale())
+    
+  def testAdjustMoralHighUp(self):
+    # Create a unit
+    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
+    unit['morale'] = 1.1
+    unit.AdjustMorale(0.1)
+    self.assertEqual(1.101,unit.GetMorale())
+    
+  def testAdjustMoralHighDown(self):
+    # Create a unit
+    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
+    unit['morale'] = 1.1
+    unit.AdjustMorale(-0.1)
+    self.assertEqual(1.0,unit.GetMorale())
     
     
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 	<import name="units.xml"/>
 
 	<!-- Models -->
-	<import name="C3.xml"/>
+	<import name="C4I.xml"/>
 	<import name="combat.xml"/>
 	<import name="intelligence.xml"/>
 	<import name="movement.xml"/>

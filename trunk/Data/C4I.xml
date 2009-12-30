@@ -2,13 +2,7 @@
 <templates>
 	<models>
 		<!-- C4I models -->
-		<C4I name="base">
-			<fatigue>1.0</fatigue>
-			<morale>1.0</morale>
-			<suppression>1.0</suppression>
-		</C4I>
-		
-		<C4I name="base1" training_level="regular">
+		<C4I name="base" training_level="regular">
 			<bandwidth/>
 		</C4I>
 	</models>
