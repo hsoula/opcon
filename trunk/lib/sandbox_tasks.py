@@ -125,7 +125,7 @@ class sandbox_task(dict):
       self.BeginTask(E)
       
     # Task specfic routine if not suppressed
-    if not E['C3'].IsSuppressed():
+    if not E.IsSuppressed():
       if self.GetSubTask() != self:
         self.GetSubTask().Step(E)
       else:
@@ -658,7 +658,7 @@ class taskRedeploy(sandbox_task):
       return
     
     # Supression cancelling the pulse
-    if E['C3'].IsSuppressed():
+    if E.IsSuppressed():
       E['agent'].log("Pausing for 10 minutes to regroup.",'personel')
       return
     
@@ -840,7 +840,7 @@ class taskRelocate(sandbox_task):
       return
     
     # Supression cancelling the pulse
-    if E['C3'].IsSuppressed():
+    if E.IsSuppressed():
       E['agent'].log("Pausing for 10 minutes to regroup.",'personel')
       return
     
@@ -2177,7 +2177,7 @@ class taskSupport(sandbox_task):
     
     for csstask in E['OPORD'].GetTaskList('css'):
       # Suppression
-      if E['C3'].IsSuppressed():
+      if E.IsSuppressed():
         continue
       
       self.RessuplyScheduler(E)

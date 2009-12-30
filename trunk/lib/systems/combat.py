@@ -533,7 +533,7 @@ class sandbox_engagement(dict):
     # Add the entity to the OOB dictionary
     temp = {}
     temp['initial RCP'] = E['combat'].RawRCP()
-    temp['initial morale'] = E['C3'].GetMorale()
+    temp['initial morale'] = E.GetMorale()
     temp['dammage'] = 0.0
     temp['destruction'] = 0.0
     self.OOB[E['uid']] = temp
@@ -625,7 +625,7 @@ class sandbox_engagement(dict):
     for i in self.OOB.keys():
       e = self.sim.AsEntity(i)
       # Can act
-      if e['C3'].IsSuppressed():
+      if e.IsSuppressed():
         continue
       
       enylist = self.ListTargets(e)

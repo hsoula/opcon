@@ -127,7 +127,7 @@ class sandbox_entity(dict):
     # Blank models (In case the templates are incomplete)
     self.SetModelCombat(combat())
     self.SetModelIntelligence(intelligence())
-    self.SetModelC3(C3())
+    self.SetModelC4I(C3())
     self.SetModelLogistics(logistics())
     self.SetModelMovement(movement())
     
@@ -176,8 +176,8 @@ class sandbox_entity(dict):
   def SetModelLogistics(self, M):
     self['logistics'] = M
     
-  def SetModelC3(self, M):
-    self['C3'] = M
+  def SetModelC4I(self, M):
+    self['C4I'] = M
     
   def SetModelIntelligence(self, M):
     self['intelligence'] = M
@@ -245,7 +245,7 @@ class sandbox_entity(dict):
     '''
     s,f = self.Regroup(self.C2Level())
     if s > 0.01:
-      self['agent'].log('Recovering suppression by %.2f to %.2f.'%(s,self['suppression']),'operations')
+      self['agent'].log('Recovering suppression by %.2f to %.2f.'%(s,self.GetSuppression()),'operations')
     
     # Lack of supply
     dailyload = self['logistics'].ProjectSupply(activity_dict = self['logistics']['basic load'], E=self)
@@ -281,11 +281,11 @@ class sandbox_entity(dict):
     
   def C2Level(self):
     '''! Command and control'''
-    return min( 1.0, self['C3'].LevelHumanFactor() * self['C3'].LevelDeployState(self.GetStance()))
+    return min( 1.0, self['C4I'].LevelHumanFactor(self) * self['C4I'].LevelDeployState(self.GetStance()))
   
-  def C4ILevel(self):
+  def C3Level(self):
     '''! Command, control and communication. Distance to HQ factored in.'''
-    return min( 1.0, self.C2Level() * self['C3'].LevelCommToHQ(self['position']))
+    return min( 1.0, self.C2Level() * self['C4I'].LevelCommToHQ(self))
   def Regroup(self, mylevel):
     '''!
         Convert some suppresion into fatigue at a rate of 5% per 10 mins, and 0.5% of
@@ -303,23 +303,23 @@ class sandbox_entity(dict):
       target = 0.000001
     
     # Supre
-    newsup = self['suppression'] ** (1.0 - target)
-    recover = newsup - self['suppression']
+    newsup = self.GetSuppression() ** (1.0 - target)
+    recover = newsup - self.GetSuppression()
     if recover > 0.05:
       recover = 0.05 + (0.1 * random() * (recover - 0.1))
       #recover = 0.1
     frecover = recover * SUP_to_FATG
    
     # recover SUP to Fatigue
-    self['suppression'] = min(1.0, self['suppression'] + recover)
-    self['fatigue'] = max(0.0 , self['fatigue'] - frecover)
+    self['suppression'] = min(1.0, self.GetSuppression() + recover)
+    self['fatigue'] = max(0.0 , self.GetFatigue() - frecover)
     
     # Dampen moral high @ 0.1% per pulse
-    if self['morale'] > 1.0:
+    if self.GetMorale() > 1.0:
       self['morale'] = max(1.0, self['morale']- 0.001)
       
     # Lose morale if fatigued
-    if self['fatigue'] < MORAL_FATIGUE_TRIGGER:
+    if self.GetFatigue() < MORAL_FATIGUE_TRIGGER:
       self['morale'] = max(0.0, self['morale'] - 0.001)
       
     # recover and fatigue absorbed
@@ -341,8 +341,10 @@ class sandbox_entity(dict):
     '''! \bief Access Fatigue
     '''
     return self['fatigue']   
+  def GetSuppression(self):
+    return self['suppression']
   def IsSuppressed(self):
-    if random() > self['suppression']:
+    if random() > self.GetSuppression():
       return 1
     return 0 
   # C4I - Chain of command
@@ -350,7 +352,7 @@ class sandbox_entity(dict):
     #! \brief Return the lowest common echelon to self and other
     
     # Simplest case, self is parent to other
-    if other in self['C3'].AllSubordinates():
+    if other in self.AllSubordinates():
       return self
     
     # Recusive ascent
@@ -374,7 +376,7 @@ class sandbox_entity(dict):
         # Shortcut
         return [self,sub]
       # Should we descend?
-      for subsub in sub['C3'].AllSubordinates():
+      for subsub in sub.AllSubordinates():
         if subsub == other:
           temp = sub.ChainOfCommandTo(other)
           if temp != [None]:
@@ -475,7 +477,7 @@ class sandbox_entity(dict):
     # Remove from the detached list
     if self.GetHQ():
       hq = self.GetHQ()
-      if hq['C3'].has_key('detached'):
+      if hq.has_key('detached'):
         if self['uid'] in hq['detached']:
           hq['detached'].remove(self['uid'])
     
@@ -493,7 +495,7 @@ class sandbox_entity(dict):
       return False
       
     # Cannot subordinate to a subordinate (prevent loops in chain of command)
-    if HQ in self['C3'].AllSubordinates():
+    if HQ in self.AllSubordinates():
       self['agent'].log("Can't subordinate to a lower echelon.",'personel')
       return False  
     
@@ -506,7 +508,7 @@ class sandbox_entity(dict):
     self['OPCON'] = HQ
     
     # List as detached
-    hqc3 = self['HQ']['C3']
+    hqc3 = self['HQ']
     if not hqc3.has_key('detached'):
       hqc3['detached'] = []
     
@@ -530,7 +532,7 @@ class sandbox_entity(dict):
       return False
       
     # Cannot subordinate to a subordinate (prevent loops in chain of command)
-    if HQ in self['C3'].AllSubordinates():
+    if HQ in self.AllSubordinates():
       self['agent'].log("Can't subordinate to a lower echelon.")
       return False  
     
@@ -594,7 +596,7 @@ class sandbox_entity(dict):
     '''
     out = []
     for i in range(len(self['subordinates'])):
-      out = out + [self['subordinates'][i]] + self['subordinates'][i]['C3'].AllSubordinates()
+      out = out + [self['subordinates'][i]] + self['subordinates'][i].AllSubordinates()
     return out
   
 
@@ -605,7 +607,7 @@ class sandbox_entity(dict):
        Record the C4I comand level at the time of issue.
     '''
     if self.GetHQ():
-      order['C3 level'] = float(self.GetHQ()['C3'])
+      order['C3 level'] = self.GetHQ().C3Level()
       
     self['staff queue'].append(order)
     
@@ -651,8 +653,8 @@ class sandbox_entity(dict):
   def DeleteEchelonFootprint(self):
     '''! \brief Remove the footprint from the C4I model so it can be recomputed.
     '''
-    if self['C3'].has_key('Echelon Footprint'):
-      del self['C3']['Echelon Footprint']
+    if self.has_key('Echelon Footprint'):
+      del self['Echelon Footprint']
       
   def EchelonFootprint(self, force= False):
     '''! \brief return the footprint for the entire echelon.
@@ -663,15 +665,15 @@ class sandbox_entity(dict):
     '''
     # Echelon Test
     if self.Echelon() and self.Subordinates():
-      if self['C3'].has_key('Echelon Footprint') and not force:
-        return self['C3']['Echelon Footprint']
+      if self.has_key('Echelon Footprint') and not force:
+        return self['Echelon Footprint']
       else:
         V = self.Footprint().vertices()
         for i in self.Subordinates():
            V += i.EchelonFootprint(force).vertices()
         
-        self['C3']['Echelon Footprint'] = geometry_rubberband().Solve(V)
-        return self['C3']['Echelon Footprint']
+        self['Echelon Footprint'] = geometry_rubberband().Solve(V)
+        return self['Echelon Footprint']
       
     return self.Footprint()
   
