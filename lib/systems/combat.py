@@ -375,7 +375,7 @@ class old_system_combat(system_base.system_base):
    Solve for CAS --> ADA --> ...
    Agglomerate all ground maneuvering units (+ CAS) into battle formations.
    Implement effect of ground smoke and EW jamming before computing SA.
-   Set the C3Level based on their shared comm levels and compute an Uber Situational awareness score
+   Set the C4ILevel based on their shared comm levels and compute an Uber Situational awareness score
    Establish which units are more prone to take fire from ENY (Assaulting, Breaching).
    Implement the effect of strikes and bombardments.
    Implement the effect of ground + CAS maneuvers

@@ -118,8 +118,8 @@ import combat
 testsuite.append(unittest.TestLoader().loadTestsFromModule(combat))
 
 # Combat
-import C3
-testsuite.append(unittest.TestLoader().loadTestsFromModule(C3))
+import C4I
+testsuite.append(unittest.TestLoader().loadTestsFromModule(C4I))
 
 # Overall testing of tasks
 import SandboxUnitTestTasking

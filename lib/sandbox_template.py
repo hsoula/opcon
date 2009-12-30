@@ -20,7 +20,7 @@ from intelligence import system_intelligence as intelligence
 from intelligence import sandbox_contact
 from combat import system_combat as combat
 from combat import sandbox_engagement as engagement
-from C3 import system_C3 as C3
+from C4I import system_C4I as C4I
 
 from sandbox_XML import sandboXML, XMLParseError
 
@@ -190,9 +190,9 @@ class sandbox_templates:
     except:
       print "Failed to build %s" %(s)   
       
-  # C3 #########################################################
+  # C4I #########################################################
   def MakeC3Default(self):
-    return C3()
+    return C4I()
   
   # Movement ###################################################
   def MakeMovementDefault(self):
@@ -395,7 +395,7 @@ class sandbox_templates:
     out.SetModelMovement(self.Make('Movement','wheeled'))
     return out
   
-  # C3 units
+  # C4I units
   def CreateUnitBdeHHC(self, gname = '', gside = 'Blue'):
     out = sandbox_entity.sandbox_entity(gname,'Coy','HQ')
     out['side'] = gside
