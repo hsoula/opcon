@@ -8,7 +8,7 @@
 				<vehicle  template="base" count="0"/>
 			</TOE>
 			<models>
-				<C3 template="base"/>
+				<C4I template="base"/>
 				<intelligence template="LOGPAC"/>
 				<combat template="base"/>
 				<movement template="base"/>
@@ -50,7 +50,7 @@
 			</TOE>
 			<!-- Model plugins/parameters to use to handle C4I, combat, movement, logistics and intelligence -->
 			<models>
-				<C3/>
+				<C4I/>
 				<intelligence template="base"/>
 				<combat/>
 				<movement template="wheeled"/>
@@ -76,7 +76,7 @@
 			</TOE>
 			<!-- Model plugins/parameters to use to handle C4I, combat, movement, logistics and intelligence -->
 			<models>
-				<C3/>
+				<C4I/>
 				<intelligence template="base"/>
 				<combat/>
 				<movement template="wheeled">
