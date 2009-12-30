@@ -131,12 +131,20 @@ class C4ITest(unittest.TestCase):
       C = system_C4I()
       self.assertEqual('GREEN',C.AsStringMorale(0.91))
       
+    def testLevelDeployStateTransit(self):
+      C = system_C4I()
+      self.assertEqual(0.8, C.LevelDeployState('transit'))
+      
+    def testLevelDeployStateDeployed(self):
+      C = system_C4I()
+      self.assertEqual(1.0, C.LevelDeployState('deployed'))
+      
 if __name__ == "__main__":
     # suite
     testsuite = []
 
     # basic tests on sandbox instance
-    testsuite.append(unittest.makeSuite(C3Test))
+    testsuite.append(unittest.makeSuite(C4ITest))
     
     # collate all and run
     allsuite = unittest.TestSuite(testsuite)
