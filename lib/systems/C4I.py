@@ -22,8 +22,15 @@ class system_C4I(system_base.system_base):
     # Base class
     system_base.system_base.__init__(self)
     
+    # training level
+    self.training_level = 'regular'
+    
     # Bandwidth
     self.bandwidth = None
+    
+    # Comm range
+    self.wireless_range_effective = 30.0
+    self.wireless_range_max = 60.0
     
     
   # File transactions
@@ -31,13 +38,34 @@ class system_C4I(system_base.system_base):
     '''! \brief take care only of relevant info for scenario definition.
     '''
     # Parse XML node
-    for i in ['fatigue', 'morale', 'suppression']:
-      if doc.Get(node, i):
-        self[i] = doc.Get(node, i)
-    
+    # training level
+    self.training_level = doc.SafeGet(node,'training_level', self.training_level)
+      
+    # bandwidth
+    self.bandwidth = doc.SafeGet(node,'bandwidth', self.bandwidth)
+      
+    # Wireless
+    wir = doc.Get(node,'wireless')
+    if x:
+      self.wireless_range_effective = doc.Get(wir,'effective_range',self.wireless_range_effective)
+      self.wireless_range_max = doc.Get(wir,'max_range',self.wireless_range_max)
+      
+      
+      
   # Command Structure
-  
   # Human Factors
+  def AdjustHumanFactor(self, baseval, val):
+    ''' Adjust a human factor such that it goes up/down slower when outside of the range
+        When above 1.0, goes up very slowly but down normally.
+    '''
+    mod = 1.0
+    if baseval < 0.50: 
+      mod = 0.1
+    elif baseval > 1.0 and val >= 0.0:
+      mod = mod * 0.01
+    val = val * mod
+    return max((baseval + val),0.0)
+    
   def LevelDeployState(self, stance):
     '''Level modifier due to stance'''
     if stance == 'transit':
@@ -45,7 +73,7 @@ class system_C4I(system_base.system_base):
     return 1.0
   
   def LevelHumanFactor(self, E):
-    '''An average of three humand factors'''
+    '''An average of three human factors'''
     # Internal factors
     internal = ((E.GetMorale() + E.GetFatigue() + E.GetSuppression())/ 3.0)
     return internal
@@ -57,10 +85,10 @@ class system_C4I(system_base.system_base):
     '''
     if E.GetHQ():
       d = (E.Position()-E.GetHQ().Position()).length()
-      if d <= 30.0:
+      if d <= self.wireless_range_effective:
         return 1.0
-      elif d <= 60.0:
-        return 0.80
+      elif d > self.wireless_range_max:
+        return 0.0
       else:
         return 0.50
     # No higher Unit

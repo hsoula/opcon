@@ -3,7 +3,11 @@
 	<models>
 		<!-- C4I models -->
 		<C4I name="base" training_level="regular">
-			<bandwidth/>
+			<bandwidth>0</bandwidth>
+			<wireless>
+				<effective_range>30.0</effective_range>
+				<max_range>100.0</max_range>
+			</wireless>
 		</C4I>
 	</models>
 </templates>
