@@ -94,7 +94,6 @@ class sandbox_entity(dict):
     
     # Logistics ###############################
     self.cargo = supply_package()
-    self.mounted_dismount = False
     
     # Command and Control #####################
     # Human factors in the TOEM format
@@ -124,6 +123,7 @@ class sandbox_entity(dict):
     self.SetPosition( position_descriptor() ) #vect_5D()
     self['stance'] = 'deployed'
     self['readiness'] = 0.0
+    self['dismounted'] = True
     
     # Blank models (In case the templates are incomplete)
     self.SetModelCombat(combat())
@@ -678,7 +678,7 @@ class sandbox_entity(dict):
   def IsDismounted(self):
     ''' Return true is dismounted flag is not logically a no.
     '''
-    return self.mounted_dismount
+    return self['dismounted']
   
   def CanMoveStance(self):
     '''
@@ -823,32 +823,17 @@ class sandbox_entity(dict):
   # Files
   def fromXML(self, doc, node):
     # Read templates and data from XML to populate the data fields.
-    # Name
-    x = doc.Get(node,'identity')
-    if x:
-      self['name'] = x
-      
-    # Size
-    x = doc.Get(node,'size')
-    if x:
-      self['size'] = x
-      
-    # Command echelon
-    x = doc.Get(node,'command_echelon')
-    if x:
-      self['command_echelon'] = x
-      
-    # Combat stance
-    x = doc.Get(node, 'stance')
-    if x:
-      self['stance'] = x
-      
-    # Dismount 
-    x = doc.Get(node, 'dismounted')
-    if x:
-      self.mounted_dismount = not bool(x)
-      
-    # Systems
+    # Identity, size and echelon
+    self['name'] = doc.SafeGet(node, 'identity', self['name'])
+    self['side'] = doc.SafeGet(node, 'side', self['side'])
+    self['size'] = doc.SafeGet(node, 'size', self['size'])
+    self['command_echelon'] = doc.SafeGet(node, 'command_echelon', self['command_echelon'])
+    
+    # Deploment Status
+    self['stance'] = bool(doc.SafeGet(node, 'stance', self['stance']))
+    self['dismounted'] = bool(doc.SafeGet(node, 'dismounted', self['dismounted']))
+    
+    # Systems #####################################################
     models = doc.Get(node,'models')
     for i in ['C4I','combat','intelligence','movement','logistics']:
       # Get the model node
@@ -868,7 +853,7 @@ class sandbox_entity(dict):
       if x:
         self[i].fromXML(doc,x)
       
-    # Systems and components
+    # Systems and components #######################################
     x = doc.Get(node, 'TOE')
     if x:
       z = doc.Get(x,'category')
@@ -889,6 +874,15 @@ class sandbox_entity(dict):
         count = doc.Get(it,'count')
         self.vehicle[kit] = {'kit':self.sim.data.Get('vehicle',kit),'count':count}      
       self['movement'].SetVehicles(self.vehicle.values())
+      
+      # Sensors TODO
+      
+    # Human Factors ################################################
+    x = doc.Get(node, 'human_factors')
+    if x:
+      temp = doc.AttributesAsDict(x)
+      for i in temp.keys():
+        self[i] = temp[i]
       
   def fileAppendLogs(self):
     fout = open(os.path.join(self['folder'],'logs.txt'),'a')
