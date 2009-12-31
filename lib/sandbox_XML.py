@@ -51,7 +51,7 @@ class sandboXML:
         if self.root:
             return str(self.root.tagName)
         
-    def SafeGet(self, node, defaultval=None, tag=''):
+    def SafeGet(self, node, tag='', defaultval=None):
         ''' Returns the value of the defaultval if the node doesn't exist'''
         x = self.Get(node, tag)
         if x != '':

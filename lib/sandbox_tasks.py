@@ -510,7 +510,7 @@ class sandbox_task(dict):
     delta = self.SpeedOnSpot(E)
     
     # Movement suppression
-    E.Suppress(E['movement'].lastNetSuppression)
+    E.AdjustSuppression(E['movement'].lastNetSuppression)
   
     nwp = len(E['OPORD'].GetCurrentWaypoints()) 
     # Steer the formation
@@ -686,7 +686,7 @@ class taskRedeploy(sandbox_task):
     delta = self.MeanSpeedInFootprint(E)
 
     # Movement suppression
-    E.Suppress(E['movement'].lastNetSuppression)
+    E.AdjustSuppression(E['movement'].lastNetSuppression)
     
     
     # Deduce Displacement
