@@ -36,6 +36,7 @@ from sandbox_log import *
 from sandbox_scheduler import *
 from sandbox_position import *
 from sandbox_sensor import *
+from sandbox_TOEM import TOEMargument
 from sandbox_geometry import geometry_rubberband
 import sandbox_keywords
 
@@ -96,8 +97,8 @@ class sandbox_entity(dict):
     self.mounted_dismount = False
     
     # Command and Control #####################
-    # Human factors
-    self['fatigue'] = self['morale'] = self['suppression'] = 1.0
+    # Human factors in the TOEM format
+    self['fatigue'] = self['morale'] = self['suppression'] = 0
     
     # Pointer to HIGHER and TF HIGHER (if any)
     self['HQ'] = None
@@ -243,10 +244,9 @@ class sandbox_entity(dict):
         # Log a message
         # Adjust fatigue penalty
     '''
-    s,f = self.Regroup(self.C2Level())
-    if s > 0.01:
-      self['agent'].log('Recovering suppression by %.2f to %.2f.'%(s,self.GetSuppression()),'operations')
-    
+    # Regroup
+    self['C4I'].Regroup(self)
+
     # Lack of supply
     dailyload = self['logistics'].ProjectSupply(activity_dict = self['logistics']['basic load'], E=self)
     deficit  = self['logistics']['cargo'].IgnoreDeficit()
@@ -264,13 +264,20 @@ class sandbox_entity(dict):
          \note Morale goes some 0.1 times the rate when in the lower half and 1% the rate when above 1.0.
          No negative values are accepted.
     '''
-    self['morale'] = self['C4I'].AdjustHumanFactor(self.GetMorale(), val)
+    self['morale'] += self['C4I'].AdjustHumanFactor(val)
     
   def AdjustFatigue(self, val):
     '''! \brief Adjust fatigue by a value.
          \param val (float) A valid float value.
     '''
-    self['fatigue'] = self['C4I'].AdjustHumanFactor(self.GetFatigue(), val)
+    self['fatigue'] += self['C4I'].AdjustHumanFactor(val)
+    
+  def AdjustSuppression(self, val):
+    '''! \brief  Adjust supression by val.
+         \param val (float) A suppression value. A positive value in this case is 
+         expected to be effective suppression, not unsuppress.
+    '''
+    self['suppression'] += self['C4I'].AdjustHumanFactor(val)
     
   def C2Level(self):
     '''! Command and control'''
@@ -279,63 +286,17 @@ class sandbox_entity(dict):
   def C3Level(self):
     '''! Command, control and communication. Distance to HQ factored in.'''
     return min( 1.0, self.C2Level() * self['C4I'].LevelCommToHQ(self))
-  def Regroup(self, mylevel):
-    '''!
-        Convert some suppresion into fatigue at a rate of 5% per 10 mins, and 0.5% of
-        suppression is converted into fatigue.
-    '''
-    if self.GetHQ() != None:
-      # An average of self and superior
-      target = (mylevel +  self.GetHQ().C3Level()) * 0.5
-    else:
-      target = mylevel * 0.5
-      
-    if target == 1.0:
-      target = 0.99999
-    elif target == 0.0:
-      target = 0.000001
-    
-    # Supre
-    newsup = self.GetSuppression() ** (1.0 - target)
-    recover = newsup - self.GetSuppression()
-    if recover > 0.05:
-      recover = 0.05 + (0.1 * random() * (recover - 0.1))
-      #recover = 0.1
-    frecover = recover * SUP_to_FATG
-   
-    # recover SUP to Fatigue
-    self['suppression'] = min(1.0, self.GetSuppression() + recover)
-    self['fatigue'] = max(0.0 , self.GetFatigue() - frecover)
-    
-    # Dampen moral high @ 0.1% per pulse
-    if self.GetMorale() > 1.0:
-      self['morale'] = max(1.0, self['morale']- 0.001)
-      
-    # Lose morale if fatigued
-    if self.GetFatigue() < MORAL_FATIGUE_TRIGGER:
-      self['morale'] = max(0.0, self['morale'] - 0.001)
-      
-    # recover and fatigue absorbed
-    return recover, frecover    
-    
-  def Suppress(self, val):
-    '''! \brief  Adjust supression by val.
-         \param val (float) A suppression value. A positive value in this case is 
-         expected to be effective suppression, not unsuppress.
-         \note suppression is bounded [0.0, 1.0]
-    '''
-    self['suppression'] = self['suppression'] - val
-    self['suppression'] = min(1.0, self['suppression'])
-    self['suppression'] = max(0.0, self['suppression'])
+  
 
   def GetMorale(self):
-    return self['morale']
+    return self['C4I'].RelativeFactor(self['morale'])
   def GetFatigue(self):
     '''! \bief Access Fatigue
     '''
-    return self['fatigue']   
+    return self['C4I'].RelativeFactor(self['fatigue']) 
   def GetSuppression(self):
-    return self['suppression']
+    return self['C4I'].RelativeFactor(self['suppression'])
+  
   def IsSuppressed(self):
     if random() > self.GetSuppression():
       return 1
@@ -804,7 +765,7 @@ class sandbox_entity(dict):
     
     # Suppression In proportion to RCP
     sup = dv[0] / self.GetRCP()
-    self.Suppress(sup)
+    self.AdjustSuppression(sup)
     sup = min(1.0,sup)
     
     # Casulaties
@@ -1022,7 +983,7 @@ class EntityTest(unittest.TestCase):
     # Will not matter unless implemented differently
     a = sandbox_entity()
     a.SetStance('bogus')
-    self.assertEqual(a.C2Level(),1.0)
+    self.assertEqual(a.C2Level(),0.875)
     
   def testNoAddSelfSubord(self):
     a = sandbox_entity()
@@ -1046,32 +1007,7 @@ class EntityTest(unittest.TestCase):
     # True for as long as the parameters are unchanged.
     self.assertEqual(x,1.5)    
     
-  def testAdjustMoralNormal(self):
-    # Create a unit
-    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
-    unit.AdjustMorale(-0.1)
-    self.assertEqual(0.9,unit.GetMorale())
-    
-  def testAdjustMoralLow(self):
-    # Create a unit
-    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
-    unit['morale'] = 0.45
-    unit.AdjustMorale(-0.1)
-    self.assertEqual(0.44,unit.GetMorale())
-    
-  def testAdjustMoralHighUp(self):
-    # Create a unit
-    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
-    unit['morale'] = 1.1
-    unit.AdjustMorale(0.1)
-    self.assertEqual(1.101,unit.GetMorale())
-    
-  def testAdjustMoralHighDown(self):
-    # Create a unit
-    unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
-    unit['morale'] = 1.1
-    unit.AdjustMorale(-0.1)
-    self.assertEqual(1.0,unit.GetMorale())
+
     
     
 if __name__ == "__main__":

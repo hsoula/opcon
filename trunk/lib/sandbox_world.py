@@ -29,7 +29,6 @@ from math import log, pi
 # Import everything
 from sandbox_entity import *
 from sandbox_scheduler import sandbox_Scheduler
-from sandbox_template import sandbox_templates, sandbox_XML_templates
 from sandbox_cryptography import Encrypt
 from sandbox_map import sandbox_map
 from sandbox_XML import sandboXML
