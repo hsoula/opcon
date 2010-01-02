@@ -828,10 +828,24 @@ class sandbox_entity(dict):
     self['side'] = doc.SafeGet(node, 'side', self['side'])
     self['size'] = doc.SafeGet(node, 'size', self['size'])
     self['command_echelon'] = doc.SafeGet(node, 'command_echelon', self['command_echelon'])
+    self['readiness'] = doc.SafeGet(node, 'readiness', self['readiness'])
     
     # Deploment Status
     self['stance'] = bool(doc.SafeGet(node, 'stance', self['stance']))
     self['dismounted'] = bool(doc.SafeGet(node, 'dismounted', self['dismounted']))
+    # Position descriptor
+    pnode = doc.Get(node, 'position_descriptor')
+    if pnode != '':
+      # There is a node, look for a named location
+      nl = doc.Get(pnode, 'named_location')
+      if nl:
+        # TODO, yet to be supported feature
+        pass
+      # Coordinates
+      cd = doc.Get(pnode, 'coordinates')
+      if cd and self.sim and self.sim.map:
+        # Create a position descriptor from scratch
+        self['position'] = position_descriptor(self.sim.map.MGRS.AsVect(cd))
     
     # Systems #####################################################
     models = doc.Get(node,'models')
@@ -999,10 +1013,27 @@ class EntityTest(unittest.TestCase):
     unit = sandbox_entity(template='US-light-scout-section', sim=self.sim)
     x = unit.GetRCP(unit)
     # True for as long as the parameters are unchanged.
-    self.assertEqual(x,1.5)    
+    self.assertAlmostEqual(x,2.55)    
     
 
     
+
+  def testLoadfromXML(self):
+    # Load an sample file
+    if os.getcwd().endswith('lib'):
+      filename = os.path.join('..','tests','testsavedunit.xml')
+    else:
+      filename = os.path.join('tests','testsavedunit.xml')
+    doc = sandboXML(read=filename)
+    
+    # Read the first node
+    unitnode = doc.Get(doc.root, 'unit')
+    
+    # Create an empty instance
+    unit = sandbox_entity(sim = self.sim)
+    unit.fromXML(doc, unitnode)
+    
+    self.assertEqual(0,1)
     
 if __name__ == "__main__":
     # suite

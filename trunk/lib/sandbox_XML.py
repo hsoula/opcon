@@ -23,6 +23,7 @@ from datetime import datetime
 from vector import vect_5D
 from logistics import supply_package
 from intelligence import sandbox_contact
+from sandbox_position import position_descriptor
 
 class XMLParseError(Exception):
     def __init__(self, subtype='', data=''):
@@ -193,6 +194,7 @@ class sandboXML:
         out = sandbox_contact()
         out.fromXML(self, node)
         return out
+
     # OUTPUT methods
     def write_vector_5D(self, name, v):
         '''! \brief Write a vect_5D as a node.
@@ -215,7 +217,7 @@ class sandboXML:
         '''! \brief Write to a children of node in the LOGPAC format
         '''
         return logpac.toXML(self, name)
-    
+
     # Tree manip
     def AddField(self, tagname, value, parent, type='', name='', sameas=''):
         temp = self.doc.createElement(tagname)

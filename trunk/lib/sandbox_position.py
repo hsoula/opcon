@@ -19,8 +19,10 @@ class position_descriptor(vect_5D):
         if type(self.footprint) == type([]):
             self.footprint = sandbox_geometry.base_polygon(self.footprint)
         if hasattr(X,'x'):
+            # case where a vector is provided as first argument
             vect_5D.__init__(self, X.x, X.y)
         else:
+            # case where the data is passed as intended
             vect_5D.__init__(self,X,Y)
     
     '''    
@@ -94,7 +96,8 @@ class position_descriptor(vect_5D):
     
     
     def SetFootprint(self, fp):
-        # Make sure that the footprint is a geometrical object
+        # Make sure that the footprint is a geometrical object, then attach and set 
+        # position to the new footprint's centroid
         try:
             ref = fp.Centroid()
         except:
@@ -113,3 +116,10 @@ class position_descriptor(vect_5D):
         # Move all the footprint control point
         trans = vect_5D(course=self.course,move=self.rate).Project()
         self.footprint.Translate(trans)
+        
+    def toXML(self, doc, name):
+        pass
+    
+    def fromXML(self, doc, node):
+        # Not in use because it needs to be handled at the sim level (to solve for coordinates).
+        pass 
