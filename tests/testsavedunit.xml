@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<test>
+    <unit>
+        <!-- Identifiers -->
+        <identity>Test Name</identity>
+        <side>BLUE</side>
+        <size>Sec</size>
+        <command_echelon>Plt</command_echelon>
+        
+        <!-- TOE -->
+        <TOE>
+                <category>inf</category>
+                <personel template="base" count="0"/>
+		<vehicle  template="base" count="0"/>
+        </TOE>
+        
+        <!-- State -->
+        <stance>deployed</stance>
+	<readiness>0.0</readiness>
+        <dismounted>True</dismounted>
+	<human_factor morale="0" fatigue="0" suppression="0"/>
+	<cargo type="LOGPAC"/>
+	<position_descriptor>
+		<!-- Either a named location or a coordinate -->
+		<named_location>Blah</named_location>
+		<coordinates>18TUF23232323</coordinates>
+		<footprint>
+			<point type="vect_5D"/>
+			<point type="vect_5D"/>
+		</footprint>
+	</position_descriptor>
+        
+        <!-- Models -->
+	<models>
+		<C4I/>
+		<intelligence/>
+		<combat/>
+		<movement/>
+		<logistics/>
+	</models>
+    </unit>
+</test>
