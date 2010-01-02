@@ -833,7 +833,8 @@ class sandbox_entity(dict):
     # Deploment Status
     self['stance'] = bool(doc.SafeGet(node, 'stance', self['stance']))
     self['dismounted'] = bool(doc.SafeGet(node, 'dismounted', self['dismounted']))
-    # Position descriptor
+    
+    # Position descriptor ###################################
     pnode = doc.Get(node, 'position_descriptor')
     if pnode != '':
       # There is a node, look for a named location
@@ -846,6 +847,7 @@ class sandbox_entity(dict):
       if cd and self.sim and self.sim.map:
         # Create a position descriptor from scratch
         self['position'] = position_descriptor(self.sim.map.MGRS.AsVect(cd))
+      # Footprint TODO ticket#17
     
     # Systems #####################################################
     models = doc.Get(node,'models')
