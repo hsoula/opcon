@@ -17,13 +17,15 @@
         <!-- State -->
         <stance>deployed</stance>
 	<readiness>0.0</readiness>
-        <dismounted>True</dismounted>
-	<human_factor morale="0" fatigue="0" suppression="0"/>
+        <dismounted>1</dismounted> <!-- 1, 0, True, False are all valid values-->
+	<human_factors morale="0" fatigue="0" suppression="0"/> <!-- TOEM factors -->
 	<cargo type="LOGPAC"/>
 	<position_descriptor>
 		<!-- Either a named location or a coordinate -->
 		<named_location>Blah</named_location>
 		<coordinates>18TUF23232323</coordinates>
+		<altitude>0.0</altitude> <!-- In metres -->
+		<!-- In case that the footprint is more important than the 2D position. -->
 		<footprint>
 			<point type="vect_5D"/>
 			<point type="vect_5D"/>
@@ -38,5 +40,19 @@
 		<movement/>
 		<logistics/>
 	</models>
+	
+	<!-- Persistent data required by the AI staff (agent in sandbox jargon) -->
+	<staff_data>
+		<!-- Active OPORD -->
+		<OPORD/>
+	</staff_data>
+	
+	<!-- Command structure by unique identifier-->
+	<chain_of_command>
+		<HIGHER>101Abn</HIGHER>
+		<OPCON>1-150AvBn</OPCON>
+		<subordinate>A/1-101Abn</subordinate>
+		<subordinate>B/1-101Abn</subordinate>
+	</chain_of_command>
     </unit>
 </test>
