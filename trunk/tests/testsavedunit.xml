@@ -41,7 +41,7 @@
 		<logistics/>
 	</models>
 	
-	<!-- Persistent data required by the AI staff (agent in sandbox jargon) -->
+	<!-- Persistent data required by the AI staff (agent in OPsbx jargon) -->
 	<staff_data>
 		<!-- Active OPORD -->
 		<OPORD/>

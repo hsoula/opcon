@@ -948,7 +948,15 @@ class EntityTest(unittest.TestCase):
     from sandbox_world import sandbox
     if __name__ == "__main__":
       os.chdir('..')
+      
+    # An empty simulator
     self.sim = sandbox()
+    
+    # test folder name
+    if os.getcwd().endswith('lib'):
+      self.testfolder = os.path.join('..','tests')
+    else:
+      self.testfolder = os.path.join('tests')
     
   def tearDown(self):
     if __name__ == "__main__":
@@ -1022,10 +1030,8 @@ class EntityTest(unittest.TestCase):
 
   def testLoadfromXML(self):
     # Load an sample file
-    if os.getcwd().endswith('lib'):
-      filename = os.path.join('..','tests','testsavedunit.xml')
-    else:
-      filename = os.path.join('tests','testsavedunit.xml')
+    filename = os.path.join(self.testfolder, 'testsavedunit.xml')
+
     doc = sandboXML(read=filename)
     
     # Read the first node
