@@ -113,14 +113,14 @@ class sandbox_COMM(dict):
     self['sendername'] = ''
     if sndr:
       self.sender = sndr
-      self['sendername'] = sndr['name']
+      self['sendername'] = sndr.GetName()
     
   def SetRecipient(self, rcp):
     self.recipient = None
     self['recipientname'] = ''
     if rcp:
       self.recipient = rcp
-      self['recipientname'] = rcp['name']
+      self['recipientname'] = rcp.GetName()
       
   def Sender(self, sim):
     
@@ -477,7 +477,7 @@ class OPORD(sandbox_COMM):
       HQ = self.sender.sim.AsEntity(self.GetCSS())
       if self.GetCSS():
         addtrain = True
-        supU += html.Tag('strong','Supply Unit : ') + 'Forward all materiel request to %s. <BR>'%(HQ['name']) 
+        supU += html.Tag('strong','Supply Unit : ') + 'Forward all materiel request to %s. <BR>'%(HQ.GetName()) 
       # MSR 
       if self.GetMSR():
         addMSR = True
@@ -535,11 +535,11 @@ class OPORD(sandbox_COMM):
     if self.GetHQ():
       addHigherUnit = True
       HQ = self.sender.sim.AsEntity(self.GetHQ())
-      hqstr += html.Tag('strong','Higher Unit : ') + 'Report to %s.<BR>'%(HQ['name'])
+      hqstr += html.Tag('strong','Higher Unit : ') + 'Report to %s.<BR>'%(HQ.GetName())
     if self.GetHQ('alternate'):
       addHigherUnit = True
       HQ = self.sender.sim.AsEntity(self.GetHQ('alternate'))
-      hqstr += html.Tag('strong','Alternate Higher Unit : ') + 'For contingency, report to %s.<BR>'%(HQ['name'])
+      hqstr += html.Tag('strong','Alternate Higher Unit : ') + 'For contingency, report to %s.<BR>'%(HQ.GetName())
     if addHigherUnit:
       addC3 = True
       out += hqstr
@@ -1075,7 +1075,7 @@ class INTSUM(sandbox_COMM):
   def __init__(self, sender = None):
     sandbox_COMM.__init__(self, sender)
     if sender:
-      self['sendername'] = sender['name']
+      self['sendername'] = sender.GetName()
     self['contacts'] = []
     
   def __str__(self):

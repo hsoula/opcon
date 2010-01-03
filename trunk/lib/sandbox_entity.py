@@ -40,6 +40,8 @@ from sandbox_TOEM import TOEMargument
 from sandbox_geometry import geometry_rubberband
 import sandbox_keywords
 
+from sandbox_exception import SandboxException
+
 
 from vector import *
 from GUIMapSym import MapSym
@@ -165,6 +167,10 @@ class sandbox_entity(dict):
       
     # All else fail  
     raise AttributeError, name
+  
+  def GetName(self):
+    ''' Returns the unit's name. '''
+    return self['name']
   
   # Setting models
   def SetModelCombat(self, M):
@@ -824,14 +830,14 @@ class sandbox_entity(dict):
   def fromXML(self, doc, node):
     # Read templates and data from XML to populate the data fields.
     # Identity, size and echelon
-    self['name'] = doc.SafeGet(node, 'identity', self['name'])
+    self['name'] = doc.SafeGet(node, 'identity', self.GetName())
     self['side'] = doc.SafeGet(node, 'side', self['side'])
     self['size'] = doc.SafeGet(node, 'size', self['size'])
     self['command_echelon'] = doc.SafeGet(node, 'command_echelon', self['command_echelon'])
     self['readiness'] = doc.SafeGet(node, 'readiness', self['readiness'])
     
     # Deploment Status
-    self['stance'] = bool(doc.SafeGet(node, 'stance', self['stance']))
+    self['stance'] = doc.SafeGet(node, 'stance', self['stance'])
     self['dismounted'] = bool(doc.SafeGet(node, 'dismounted', self['dismounted']))
     
     # Position descriptor ###################################
@@ -899,6 +905,39 @@ class sandbox_entity(dict):
       temp = doc.AttributesAsDict(x)
       for i in temp.keys():
         self[i] = temp[i]
+        
+    # Chain of command #############################################
+    coc = doc.Get(node, 'chain_of_command')
+    if coc:
+      # HIGHER (the TOE HQ)
+      hq = doc.Get(coc, 'HIGHER')
+      opcon = doc.Get(coc, 'OPCON')
+      subs = doc.Get(coc, 'subordinate', True)
+      if self.sim:
+        # The HIGHER unit
+        x = self.sim.GetEntity(self['side'],hq)
+        if x:
+          self['HQ'] = x
+        elif hq:
+          self['HQ'] = hq
+        
+        # The OPCON unit
+        x = self.sim.GetEntity(self['side'],opcon)
+        if x:
+          self['OPCON'] = x
+        elif hq:
+          self['OPCON'] = opcon
+          
+        # Subordinates
+        for u in subs:
+          # The subordinates unit
+          x = self.sim.GetEntity(self['side'],u)
+          if x:
+            self.AddSubordinate(x)
+          else:
+            # Will need to be connected to the right pointer after loading the file
+            self['subordinates'] = u
+        
       
   def fileAppendLogs(self):
     fout = open(os.path.join(self['folder'],'logs.txt'),'a')

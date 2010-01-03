@@ -360,7 +360,7 @@ class sandbox_contact(dict):
     return out + '\n'
   def __repr__(self):
     try:
-      return self.TrackName() + ' for ' + self.unit['name']
+      return self.TrackName() + ' for ' + self.unit.GetName()
     except:
       return self.__str__()
   def AsHTML(self):
@@ -471,7 +471,7 @@ class system_intelligence(system_base.system_base):
     '''
     if not unit:
       return None
-    k = unit['side']+unit['name']
+    k = unit['side']+unit.GetName()
     if k in self['contacts'].keys():
       return self['contacts'][k]
     return None
@@ -489,7 +489,7 @@ class system_intelligence(system_base.system_base):
     '''
     if cnt.unit.has_key('delete me'):
       return
-    k = cnt.unit['side']+cnt.unit['name']
+    k = cnt.unit['side']+cnt.unit.GetName()
     self['contacts'][k] = cnt
   
   def Signature(self, stance):

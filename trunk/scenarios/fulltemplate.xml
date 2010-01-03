@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<scenario version="0.7">
+	<reset>1</reset>
+	<name>Test Scenario</name>
+	<clock type="datetime">9/7/1974 1845</clock>
+	<!-- The Map name to load up -->
+	<map>Anzio</map>
+
+	<!-- The head of the data to load -->
+	<data filename="base.xml"/>
+	
+	<!-- Optional network items of external file to add to the standard map -->
+	<infrastructures default="1">
+		<network></network>
+		<network import="filename.xml"/>
+	</infrastructures>
+	
+	<side>
+		<name>Blue</name>
+		<color type="RGB">10,10,255</color>
+		<OOB>
+			<unit template="FireTeam" identity="A/A/1/2-501"><location type="named location">Cisterna Di Latina</location></unit>
+		</OOB>
+	</side>
+	<!-- future functionality -->
+	<time>
+		<clock type="datetime"/>
+		<sunset type="time"/>
+		<sunrise type="time"/>
+		<pulse/>
+	</time>
+	<script>
+		<cmd method="">
+			<other>moo</other>
+		</cmd>
+		<cmd import="guerilla.py"/>
+	</script>
+	<events>
+		<event p_value="1.0"><time type="datetime"/></event>
+	</events>
+</scenario>
