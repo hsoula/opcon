@@ -314,19 +314,24 @@ class sandbox:
     return unit
   
   def AsEntity(self, uid):
+    ''' Return ta pointer regardless of whether uid is a pointer or an integer.
+    '''
     if type(uid) == type(sandbox_entity()):
       return uid
         
+    # Look for the correct unit in the master OOB
     for i in range(len(self.OOB)):
       if self.OOB[i]['uid'] == uid:
         return self.OOB[i]
+      
+    # All else failed, return none.
     return None  
 
   def GetEntity(self, side, name):
-    # Fetch an entity by side and name
+    ''' Fetch an entity by side and name '''
     for i in range(len(self.OOB)):
       j = self.OOB[i]
-      if j['side'] == side and j['name'] == name:
+      if j['side'] == side and j.GetName() == name:
         return self.OOB[i]
     return None
   
@@ -757,7 +762,7 @@ class sandbox:
   def fileNewEntity(self, entity):
     # Create the folder for this unit
     # safe file name
-    tname = entity['name'].split('/')
+    tname = entity.GetName().split('/')
     tname = '.'.join(tname)
     if entity['TOE'] == 'convoy' or entity['TOE'] == 'LOGPAC':
       entity['folder'] = os.path.join(self.OS['savepath'],entity['side'],entity['TOE'],tname)

@@ -1386,7 +1386,7 @@ class taskIndirectFire(sandbox_task):
       return None
     
     # Fires up a strike
-    strike = sandbox_strike.sandbox_strike(self['SRCP'], E['name'],self['ammo'])
+    strike = sandbox_strike.sandbox_strike(self['SRCP'], E.GetName(),self['ammo'])
     strike.sender = E['uid']
     strike.target = tgt['uid']
     
@@ -1397,7 +1397,7 @@ class taskIndirectFire(sandbox_task):
     E.sim.BroadcastStrike(strike)
     
     # Log Shelling activity
-    A.log('| Salvo to %s at Position %s'%(tgt['name'], A.map.MGRS.AsString(tgt.Position().AsVect())),'operations')
+    A.log('| Salvo to %s at Position %s'%(tgt.GetName(), A.map.MGRS.AsString(tgt.Position().AsVect())),'operations')
 
   def SelectTarget(self, E, units):
     '''! \brief Chose on target over elegible.
@@ -1568,7 +1568,7 @@ class taskDropOff(sandbox_task):
     LOGPAC = E.sim.MakeLOGPAC()
     
     # Add to world
-    name = E['name'][E['name'].find('SUPREQ'):]
+    name = E.GetName()[E.GetName().find('SUPREQ'):]
     LOGPAC['name'] = 'LOGPAC.'+ name
     LOGPAC['side'] = E['side']
     
@@ -1729,11 +1729,11 @@ class taskConvoyMerge(sandbox_task):
     # Return unexpanded supply to home
     E.GetHQ().AdjustSupply(E['logistics']['cargo'])
     E.GetHQ()['logistics']['freight'] = E.GetHQ()['logistics']['freight'] + E['logistics']['max_freight']
-    E.GetHQ()['agent'].log('Reabsorbing %s with outstanding %.2f units left'%(E['name'],E['logistics']['cargo']),'logistics')
+    E.GetHQ()['agent'].log('Reabsorbing %s with outstanding %.2f units left'%(E.GetName(),E['logistics']['cargo']),'logistics')
     
     # Free up the detachment's label
-    dt = E['name'].find('/')
-    dt = E['name'][:dt]
+    dt = E.GetName().find('/')
+    dt = E.GetName()[:dt]
     E.GetHQ()['agent'].ReleaseDetachment(dt)
 
     
@@ -1774,8 +1774,8 @@ class taskDispatchSupply(sandbox_task):
       mycargo = E['logistics'].ValidateRequest(self['COMMODITY'])
       E.AdjustSupply(-1*mycargo)
       self['target unit'].AdjustSupply(mycargo)
-      A.log('Transferring directly %.2f STON of material to %s.'%(float(mycargo), self['target unit']['name']),'logistics')
-      self['target unit']['agent'].log('Absorbing directly %.2f STON of material from %s.'%(float(mycargo), E['name']),'logistics')
+      A.log('Transferring directly %.2f STON of material to %s.'%(float(mycargo), self['target unit'].GetName()),'logistics')
+      self['target unit']['agent'].log('Absorbing directly %.2f STON of material from %s.'%(float(mycargo), E.GetName()),'logistics')
       # remove from list
       if not self.has_key('delayed'):
         E['OPORD']['EXECUTION']['SUPPORT TASKS']['sequence'].remove(self)
@@ -1786,7 +1786,7 @@ class taskDispatchSupply(sandbox_task):
     # Assign Detachment
     det = A.CreateDetachment()
     # Assign name
-    newconvoy['name'] = '%s/%s SUPREQ(%s-%s)'%(det,E['name'],self['target unit']['name'],self['uid'])
+    newconvoy['name'] = '%s/%s SUPREQ(%s-%s)'%(det,E.GetName(),self['target unit'].GetName(),self['uid'])
     
     # Supply Overhead ########################
     # How much time to budget to run the train there and back (min 24 hrs)
@@ -1803,7 +1803,7 @@ class taskDispatchSupply(sandbox_task):
     if float(mycargo) < float(self['COMMODITY'] * 0.75) and not self.has_key('EMERGENCY'):
         # Delay the order until later
         self['delayed'] = True
-        A.log('Despatch for %.1f STON to %s is delayed by %.2f hours'%(float(self['COMMODITY']),self['target unit']['name'],(A.clock-self['planned begin time']).seconds/3600.0),'logistics')
+        A.log('Despatch for %.1f STON to %s is delayed by %.2f hours'%(float(self['COMMODITY']),self['target unit'].GetName(),(A.clock-self['planned begin time']).seconds/3600.0),'logistics')
         A.ReleaseDetachment(det)
         # Refold the unit into UID
         self['target unit'] = E.sim.AsUID(self['target unit'])
@@ -1837,7 +1837,7 @@ class taskDispatchSupply(sandbox_task):
         
     # Begin logs
     newconvoy['agent'].clock = A.clock
-    A.log('Creation of %s bound to %s.'%(newconvoy['name'], self['target unit']['name']),'personel')
+    A.log('Creation of %s bound to %s.'%(newconvoy.GetName(), self['target unit'].GetName()),'personel')
     newconvoy['agent'].log('Loading %.1f units as cargo.'%(newconvoy['logistics']['cargo']),'logistics')
     A.log('Allocating %.1f units as cargo. We have :%.2f unit left.'%(float(newconvoy['logistics']['cargo']), float(E['logistics']['cargo'])),'logistics')
     
@@ -1919,7 +1919,7 @@ class taskDispatchSupply(sandbox_task):
     newtask['COMMODITY'] = subpk * 1.0
     newtask['target unit'] = E.sim.AsUID(self['target unit'])
     newtask['splitted from'] = self['uid']
-    newtask['uid'] = E['name'] + A.clock.strftime(".%m%d%H%M")
+    newtask['uid'] = E.GetName() + A.clock.strftime(".%m%d%H%M")
     #self['lock split'] = True # TODO delete locking of splits
     # Add the task to the CSS tasks
     #newtask.Process(E)
@@ -2094,9 +2094,9 @@ class taskRessuply(sandbox_task):
     engine = A.entity.sim
     sender = engine.AsEntity(self['SUPREQ']['UNIT'])
     if self['completion'] == None:
-      out = 'We are awaiting for the supply package %s-%s. '%(sender['name'],self['SUPREQ']['uid'])#(self['uid'])
+      out = 'We are awaiting for the supply package %s-%s. '%(sender.GetName(),self['SUPREQ']['uid'])#(self['uid'])
     else:
-      out = 'We are in the process of ressuplying the lower echelons from request %s-%s. Task completion at %d %%. '%(sender['name'],self['SUPREQ']['uid'],self['completion']*100)       
+      out = 'We are in the process of ressuplying the lower echelons from request %s-%s. Task completion at %d %%. '%(sender.GetName(),self['SUPREQ']['uid'],self['completion']*100)       
     return Tag('p',out)
   def OrderHTML(self, A):
     out = 'Ressuply as per ressuply instructions and according to CSS policies applicable to your TOE.'
@@ -2257,14 +2257,14 @@ class taskSupport(sandbox_task):
         header = ['Detachment','SUPREQ (STON)','Supported Unit']
         table = [header]
         for i in myconvoys:
-            name = i['name'][:i['name'].find('Tk')-1]
+            name = i.GetName()[:i.GetName().find('Tk')-1]
             # Find ressuply task
             qunty = ''
             tgt = ''
             for t in i['OPORD'].GetExpandedTaskList():
                 if t['type'] == 'Drop-Off':
                     qunty = '%.2f STON'%(float(t['cargo']))
-                    tgt = A.entity.sim.AsEntity(t['recipient'])['name']
+                    tgt = A.entity.sim.AsEntity(t['recipient']).GetName()
                     break
             table.append([name,qunty,tgt])
         out = out + cvlist + Table(table)
@@ -2289,7 +2289,7 @@ class taskSupport(sandbox_task):
         else:
           c1 = Tag('B','Delayed')
       # Name
-      c2 = A.entity.sim.AsEntity(i['target unit'])['name']
+      c2 = A.entity.sim.AsEntity(i['target unit']).GetName()
       # Size
       c3 = '%.2f'%(i['COMMODITY'])
       # timestamp

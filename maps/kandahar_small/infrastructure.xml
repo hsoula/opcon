@@ -39,16 +39,16 @@
 		</road>
 		<road name="HWY2"  lanes="2.0" surface="road" curve="1.0">
 			<node name="Khandahar West"/>
-			<node name="Wopaktam"><coord>37R EQ 676819</coord></node>
-			<node name="HWY2- South Entry"><coord>37R EQ 688796</coord></node>
-		</road>
+			<node name="Wopaktam"><coord>37R EQ 676819</coord></node>
+			<node name="HWY2- South Entry"><coord>37R EQ 688796</coord></node>
+		</road>
 		<road name="HWY3"  lanes="1.5" surface="road" curve="0.85">
 			<node name="Khandahar West"/>
 			<node name="Mynna-Annam" kind="bridge"><coord>37R EQ 572891</coord></node>
-			<node name="Tennezap"><coord>37R EQ 560919</coord></node>
-			<node name="Hypaiokapes"><coord>37R ER 637011</coord></node>
-			<node name="Takary"><coord>37R ER 682093</coord></node>
-			<node name="HWY3 - East Entry"><coord>37R ER 704108</coord></node>
+			<node name="Tennezap"><coord>37R EQ 560919</coord></node>
+			<node name="Hypaiokapes"><coord>37R ER 637011</coord></node>
+			<node name="Takary"><coord>37R ER 682093</coord></node>
+			<node name="HWY3 - East Entry"><coord>37R ER 704108</coord></node>
 		</road>
 	</roads>
 </network>

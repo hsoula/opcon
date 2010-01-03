@@ -81,7 +81,7 @@ class agent:
         
     def __str__(self):
         '''! \brief "Agent of [sandbox_entity]"'''
-        return 'Agent of %s'%(self.entity['name'])
+        return 'Agent of %s'%(self.entity.GetName())
     #
     # Interface to I/O
     def Situation(self):
@@ -89,7 +89,7 @@ class agent:
            Analyse the situation and suggest actions points.
         '''
         # Exclude LOGPACs
-        if self.entity['name'].find('LOGPAC') == 0:
+        if self.entity.GetName().find('LOGPAC') == 0:
             return
         
         self.log('--------------------------------------------------------------------------')
@@ -240,7 +240,7 @@ class agent:
         ech = self.entity.Echelon()
         if not ech:
             ech = self.entity.HigherEchelon()
-        title = 'SITREP for %s %s at time %s\n'%(self.entity['name'], ech, self.clock.strftime("%m-%d %H%M ZULU"))
+        title = 'SITREP for %s %s at time %s\n'%(self.entity.GetName(), ech, self.clock.strftime("%m-%d %H%M ZULU"))
         out = html.Tag('H1',title)
         
         # Contact reporting
@@ -313,7 +313,7 @@ class agent:
             request['EMERGENCY'] = True
 
         request['C3 level'] = E.C3Level()
-        A.log('|     CSS Unit : %s'%(E.sim.AsEntity(request['CSS unit'])['name']))
+        A.log('|     CSS Unit : %s'%(E.sim.AsEntity(request['CSS unit']).GetName()))
         A.log('|     DP : MGRS %s'%(A.map.MGRS.AsString(DP)))
         A.log('|     ETA: %s'%(T.strftime('%m%d/%H%M ZULU time')))
         if A.SolveCSSUnit() in E['subordinates']:
@@ -589,7 +589,7 @@ class agent:
         '''!
            Integrate a contact report to the intelligence picture.
         '''
-        self.log('Received a contact report from %s'%(rep.Sender(self.entity.sim)['name']),'communications')
+        self.log('Received a contact report from %s'%(rep.Sender(self.entity.sim).GetName()),'communications')
         # Re-generate the contact's unit pointer
         rep.PostPickle(self.entity.sim)
         rep.cnt.unit = self.entity.sim.AsEntity(rep.cnt.unit)
@@ -615,7 +615,7 @@ class agent:
         self.entity.CacheSITREP(rep.sender['uid'],rep)
         
         
-        self.log('Received a SITREP from %s'%(rep.Sender(self.entity.sim)['name']),'communications')
+        self.log('Received a SITREP from %s'%(rep.Sender(self.entity.sim).GetName()),'communications')
         cnts = rep.contacts + rep.friends
         endline = False
         for i in cnts:
@@ -682,16 +682,16 @@ class agent:
             if cssunit in self.entity.AllSubordinates():
                 # Get the chain of command, chain 1 HAS to be the next unit in line
                 chain = self.entity.ChainOfCommandTo(cssunit)
-                self.log('Forward Supply request from %s to %s'%(tgtunit['name'], chain[1]['name']),'communications')
+                self.log('Forward Supply request from %s to %s'%(tgtunit.GetName(), chain[1].GetName()),'communications')
                 self.entity.Send(request,chain[1])
             else:
                 # Relay up the chain
                 if self.entity.GetHQ():
-                    self.log('Relay Supply request from %s to %s'%(tgtunit['name'], cssunit['name']),'communications')
+                    self.log('Relay Supply request from %s to %s'%(tgtunit.GetName(), cssunit.GetName()),'communications')
                     self.entity.Send(request)
                 # Else, shred the request.
                 else:
-                    self.log('SUPREQ from %s cannot be passed to %s. It has been thrown in the shredder.'%(tgtunit['name'], cssunit['name']),'communications')
+                    self.log('SUPREQ from %s cannot be passed to %s. It has been thrown in the shredder.'%(tgtunit.GetName(), cssunit.GetName()),'communications')
     
     
     def MatchCodewords(self, CW):
@@ -835,7 +835,7 @@ class agent:
         for LOGPAC in LOGPAClist:
           # Emergency switch to a Ressuply task
           # Find the pending task
-          waybill = LOGPAC['name']
+          waybill = LOGPAC.GetName()
           for i in self.issuedSUPREQs:
             if waybill.find(i['uid']) != -1:
               task = i
@@ -981,7 +981,7 @@ class agent:
         #cnt.UpdateField('movement arrow', val, mytime = self.clock)
         cnt.UpdateField('mobility', self.entity.GetStance(), mytime = self.clock)
         #cnt.UpdateField('locating indicator', val, mytime = self.clock)
-        cnt.UpdateField('unique designation', self.entity['name'], mytime = self.clock)
+        cnt.UpdateField('unique designation', self.entity.GetName(), mytime = self.clock)
         cnt.timestamp = deepcopy(self.clock)
         cnt.UpdateField('datetime', cnt.timestamp.strftime('%d%H%M%SZ%b%y'), mytime = self.clock) #DDHHMMSSZMONYY
         #cnt.UpdateField('altitude/depth', val, mytime = self.clock)
@@ -1275,7 +1275,7 @@ class agent:
                 ttime = '%dh%02d min'%(hr,min)
             else:
                 ttime = '%02d min'%(min)
-            cssunit = 'Our current CSS unit is %s. We are located some %.2f Km from the ressuply area and should plan for a train transit time of %s. '%(css['name'], (self.entity['position']-css['position']).length(),ttime)
+            cssunit = 'Our current CSS unit is %s. We are located some %.2f Km from the ressuply area and should plan for a train transit time of %s. '%(css.GetName(), (self.entity['position']-css['position']).length(),ttime)
             
         pol = 'We are currently required to maintain between %.2f and %.2f basic loads. Here follows our current inventory:'%(policies[0],policies[1])
         
@@ -1292,7 +1292,7 @@ class agent:
                 header = ['Detachment','SUPREQ (STON)','Supported Unit']
                 table = [header]
                 for i in myconvoys:
-                    name = i['name'][:i['name'].find('Tk')-1]
+                    name = i.GetName()[:i.GetName().find('Tk')-1]
                     # Find ressuply task
                     qunty = ''
                     tgt = ''
@@ -1300,7 +1300,7 @@ class agent:
                         if t['type'] == 'Drop-Off':
                             # Retrieve the package to load
                             qunty = '%.2f STON'%(float(t['cargo']))
-                            tgt = self.entity.sim.AsEntity(t['recipient'])['name']
+                            tgt = self.entity.sim.AsEntity(t['recipient']).GetName()
                             break
                     table.append([name,qunty,tgt])
                 out = out + cvlist + html.Tag('small',html.Table(table))
@@ -2071,7 +2071,7 @@ class agent_CO(agent):
        # HTML render
        nm = self.entity.Echelon()
        if not nm:
-           nm = self.entity['name']
+           nm = self.entity.GetName()
        title = 'SITREP for %s at time %s\n'%(nm, self.clock.strftime("%m-%d %H%M ZULU"))
        out = html.Tag('H1',title)
         
