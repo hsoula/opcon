@@ -138,9 +138,8 @@ class SandboxDataServer(unittest.TestCase):
     def testGetBaseCombat(self):
         from combat import *
         x = system_combat()
-        x['readiness'] = 0.1
         self.server.FetchData(x,'combat','base')
-        self.assertEqual(x['readiness'],1.0)
+        self.assertEqual(x.unit_skill,'untrained')
 
     def testGetBaseIntelligence(self):
         from intelligence import *
@@ -152,9 +151,9 @@ class SandboxDataServer(unittest.TestCase):
     def testGetBaseLogistics(self):
         from logistics import *
         x = system_logistics()
-        x['hardware'] = 'boo'
+        x['crew_size'] = 10
         self.server.FetchData(x,'logistics','base')
-        self.assertNotEqual(x['hardware'],'boo')
+        self.assertNotEqual(x['crew'],10)
 
     def testGetBaseMovement(self):
         from movement import *

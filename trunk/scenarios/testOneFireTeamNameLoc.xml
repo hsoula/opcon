@@ -15,7 +15,7 @@
 		<name>Blue</name>
 		<color type="RGB">10,10,255</color>
 		<OOB>
-			<unit template="FireTeam" identity="A/A/1/2-501"><location type="named location">Cisterna Di Latina</location></unit>
+			<unit template="FireTeam" identity="A/A/1/2-501"><location type="named_location">LIRL</location></unit>
 		</OOB>
 	</side>
 </scenario>

@@ -952,8 +952,7 @@ class sandbox_entity(dict):
     self['agent'].PrePickle()
     # OPORD
     self['OPORD'].PrePickle()
-    # C4I pointers
-    self['C3'].PrePickle(self.sim)
+
     # Contacts
     for i in self['intelligence']['contacts'].keys():
         self['intelligence']['contacts'][i].unit =  self.sim.AsUID(self['intelligence']['contacts'][i].unit)
@@ -969,8 +968,7 @@ class sandbox_entity(dict):
   def PostPickle(self, sim):
     self.sim = sim
     self['agent'].PostPickle(self)
-    # C4I Pointers
-    self['C3'].PostPickle(self.sim)
+
     # contacts
     for i in self['intelligence']['contacts'].keys():
         self['intelligence']['contacts'][i].unit =  self.sim.AsEntity(self['intelligence']['contacts'][i].unit)
@@ -1080,7 +1078,7 @@ class EntityTest(unittest.TestCase):
     unit = sandbox_entity(sim = self.sim)
     unit.fromXML(doc, unitnode)
     
-    self.assertEqual(0,1)
+    self.assertTrue(unit.GetName())
     
 if __name__ == "__main__":
     # suite

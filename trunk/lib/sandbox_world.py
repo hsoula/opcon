@@ -239,11 +239,6 @@ class sandbox:
     entity['uid'] = self.next_uid
     self.next_uid = self.next_uid + 1
     
-    # Set the cargo to a single day of High intensity battle
-    # Refresh these in case that they are different than at construction
-    entity['logistics']['initRCP'] = entity['combat']['RCP']
-    entity['logistics']['climate'] = self.map.GetClimate()
-    
     # Generate a footprint
     entity.SetFootprint(entity['combat'].GetFootprint(entity))
     
@@ -289,15 +284,15 @@ class sandbox:
 
   def MakeConvoy(self):
     '''
-       Make a generic convoy.
+       Make a generic convoy. TODO: right now, this is just a pair of HMVEEs (placeholder)
     '''
-    return sandbox_templates().CreateUnitConvoy()
+    return sandbox_entity(template='US-light-scout-section', sim=self)
 
   def MakeLOGPAC(self):
     '''
       Create a generic supply LOGPAC
     '''
-    out = sandbox_templates().CreateUnitLOGPAC()
+    out = sandbox_entity(template='LOGPAC', sim=self)
     
     out['OPORD'] = OPORD(out,out)
     out['OPORD']['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']['minimum'] = 0.01
