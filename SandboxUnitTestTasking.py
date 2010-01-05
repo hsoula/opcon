@@ -1,10 +1,11 @@
 import unittest
-import sandbox_template
 import datetime
 
+import syspath
 import sandbox_comm
 import sandbox_world
 import sandbox_tasks
+import sandbox_entity
 
 from vector import vect_3D
 
@@ -12,7 +13,7 @@ class SandBoxEmptyWorld(unittest.TestCase):
   def setUp(self):
     self.W = sandbox_world.sandbox()
     # Create a single unit.
-    self.W.AddEntity( sandbox_template.sandbox_templates().CreateUnitArmorBn('TestUnit') )
+    self.W.AddEntity( sandbox_entity.sandbox_entity(template="FireTeam", sim=self.W) )
     
   def GetUnit(self):
     return self.W.OOB[0]

@@ -190,6 +190,8 @@ class OPORD(sandbox_COMM):
     self['EXECUTION']['CONCEPT']['FIRE'] = ''
     self['EXECUTION']['CONCEPT']['SUPPORT']= ''
     self['EXECUTION']['MANEUVER TASKS'] = {}
+    self['EXECUTION']['MANEUVER TASKS']['cursor'] = None
+    self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
     self['EXECUTION']['SUPPORT TASKS'] = {}
     self['EXECUTION']['COORDINATING INSTRUCTION'] = {}
     self['EXECUTION']['COORDINATING INSTRUCTION']['H-hour'] = {}
