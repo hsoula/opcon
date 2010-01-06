@@ -9,7 +9,7 @@
   * [intelligence]
 
 = Units =
-Units contain [state data] (unique to each unit), and is a collation of models that are derived from [entity templates]. A unit that is the command element of an echelon will be defined by its size and identity as well as by the command_echelon and the echelon_name. 
+Units is modeled as an [entity] that contains a [state] data (unique to each unit), and is a collation of models that are derived from templates. A unit that is the command element of an echelon will be defined by its size and identity as well as by the command_echelon and the echelon_name. 
 
 = Scenarios =
 
