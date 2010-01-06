@@ -1,27 +1,45 @@
 <?xml version="1.0"?>
 <scenario version="0.7">
+	<!-- Set this flag to 1 if loading this file should overwrite the folder structure.-->
 	<reset>1</reset>
+	
+	<!-- Must be unique on the server-->
 	<name>Test Scenario</name>
+	
+	<!-- The current time, this format is important, time is in Juliet TZ (local)) -->
 	<clock type="datetime">9/7/1974 1845</clock>
+	
 	<!-- The Map name to load up -->
 	<map>Anzio</map>
 
-	<!-- The head of the data to load -->
+	<!-- The head of the data to load. Base should always be there unless you really know what you are doing,
+	more data nodes can be added. The order in which they will be read matters. 
+	  -->
 	<data filename="base.xml"/>
 	
 	<!-- Optional network items of external file to add to the standard map -->
 	<infrastructures default="1">
+		<!-- A scenario designer can define its own scenario specific network in this file. -->
 		<network></network>
+		<!-- Importing another file is also possible for infrastructure shared amongst many scenarios. -->
 		<network import="filename.xml"/>
 	</infrastructures>
 	
+	<!-- Define a side to play. Standards are BLUE and RED. But any string will work. There can be many side nodes
+	     in one scenario definition. 
+	  -->
 	<side>
+		<!-- An arbitrary string, no white space.-->
 		<name>Blue</name>
+		<!-- Optional RGB color definition for this side. -->
 		<color type="RGB">10,10,255</color>
-		<OOB>
+		<!-- Container for the entities to be included.-->
+		<OOB>	
+			<!-- Preferably, load from template then add unit-specific state information. -->
 			<unit template="FireTeam" identity="A/A/1/2-501"><location type="named location">Cisterna Di Latina</location></unit>
 		</OOB>
 	</side>
+	
 	<!-- future functionality -->
 	<time>
 		<clock type="datetime"/>
@@ -29,13 +47,24 @@
 		<sunrise type="time"/>
 		<pulse/>
 	</time>
+	
+	<!-- Execution commands.-->
+	<execute>
+		<!-- Will run the simulation for 1 hour.-->
+		<cmd method="Simulate"/>
+	</execute>
+	
+	<!-- Future functionality, do not use.-->
+	<!-- Extension part -->
 	<script>
 		<cmd method="">
-			<other>moo</other>
-		</cmd>
+			<arg1>moo</arg1>
+		</cmd> 
 		<cmd import="guerilla.py"/>
 	</script>
+	
+	<!-- Simulation event listener-->
 	<events>
-		<event p_value="1.0"><time type="datetime"/></event>
+		<event p_value="1.0"><time type="datetime"/>guerilla.IEDblast</event>
 	</events>
 </scenario>
