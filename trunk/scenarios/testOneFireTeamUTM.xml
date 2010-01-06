@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <scenario version="0.7">
 	<reset>1</reset>
-	<name>Single Unit Scenario</name>
+	<name>One Fire Team UTM</name>
 	<clock type="datetime">3/1/2010 0700</clock>
 	
 	<!-- The Map name to load up -->
@@ -18,4 +18,11 @@
 			<unit template="FireTeam" identity="A/A/1/2-501"><location type="coordinates">33T UG 2500</location></unit>
 		</OOB>
 	</side>
+	
+	<!-- Execution commands.-->
+	<execute>
+		<!-- Will run the simulation for 1 hour.-->
+		<cmd method="Simulate"/>
+		<cmd method="Save"/>
+	</execute>
 </scenario>

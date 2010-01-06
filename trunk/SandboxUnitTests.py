@@ -4,6 +4,8 @@
 import syspath
 import unittest
 import datetime
+import os
+import os.path
 import sandbox_graphics
 import sandbox_geometry
 import sandbox_entity
@@ -15,6 +17,7 @@ class SandboxTest(unittest.TestCase):
   def setUp(self):
     pass
   
+  # Milestone 1
   def testLoadBasicWorldDefault(self):
     sbox = sandbox_world.sandbox()
     self.assertTrue(sbox.OS['gametag'],'Blank World')
@@ -31,7 +34,48 @@ class SandboxTest(unittest.TestCase):
     sbox = sandbox_world.sandbox('testOneFireTeamUTM.xml')
     self.assertTrue(sbox.OS['gametag'],'One Fire Team with Named Location')
 
-
+  def testCreateFileSystem(self):
+    sbox = sandbox_world.sandbox('testOneFireTeamUTM.xml')
+    # Check for file system override
+    rootexists = os.path.exists(os.path.join('Simulations','One_Fire_Team_UTM'))
+    blue = os.path.exists(os.path.join('Simulations','One_Fire_Team_UTM','blue'))
+    self.assertEqual([rootexists,blue],[True,True])
+    
+  def testExecuteFromXML(self):
+    sbox = sandbox_world.sandbox('testOneFireTeamUTM.xml')
+    # Retrieve the clock 
+    clock = sbox.GetClock()
+    # It should be 0800 after execution
+    self.assertEqual(clock, datetime.datetime(2010,1,3,8,0))
+    
+  def testLoadSavedGame(self):
+    # Create a blank world
+    sbox = sandbox_world.sandbox('blankworld.xml')
+    # Run it once for 1 hour then save
+    sbox.Simulate()
+    sbox.Save()
+    clock1 = sbox.GetClock()
+    
+    # Load most recent save for this game
+    sbox = sandbox_world.sandbox('Blank World')
+    # Get Clock
+    clock2 = sbox.GetClock()
+    
+    self.assertEqual(clock1, clock2)
+    
+  def testLoadSavedGameWithUnit(self):
+    # Create a blank world
+    sbox = sandbox_world.sandbox('testOneFireTeamUTM.xml')
+    # Run it once for 1 hour then save
+    sbox.Simulate()
+    sbox.Save()
+    ooblen = len(sbox.GetOOB)
+    
+    # Load most recent save for this game
+    sbox = sandbox_world.sandbox('One Fire Team UTM')
+    
+    self.assertEqual(ooblen, len(sbox.GetOOB()))
+    
 # suite
 testsuite = []
 
