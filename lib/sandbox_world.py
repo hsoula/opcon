@@ -419,6 +419,8 @@ class sandbox:
         
 
     
+  def GetClock(self):
+    return self.clock
   # Broadcast and Signals
   #
   def BroadcastSignal(self, signal):
