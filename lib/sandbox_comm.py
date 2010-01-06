@@ -190,7 +190,7 @@ class OPORD(sandbox_COMM):
     self['EXECUTION']['CONCEPT']['FIRE'] = ''
     self['EXECUTION']['CONCEPT']['SUPPORT']= ''
     self['EXECUTION']['MANEUVER TASKS'] = {}
-    self['EXECUTION']['MANEUVER TASKS']['cursor'] = None
+    self['EXECUTION']['MANEUVER TASKS']['cursor'] = 0
     self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
     self['EXECUTION']['SUPPORT TASKS'] = {}
     self['EXECUTION']['COORDINATING INSTRUCTION'] = {}
@@ -834,7 +834,7 @@ class OPORD(sandbox_COMM):
       self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
       
     if self['EXECUTION']['MANEUVER TASKS'].has_key('cursor') == 0:
-      self['EXECUTION']['MANEUVER TASKS']['cursor'] = None
+      self['EXECUTION']['MANEUVER TASKS']['cursor'] = 0
     
     self['EXECUTION']['MANEUVER TASKS']['sequence'].append(task)
     if self['EXECUTION']['MANEUVER TASKS']['cursor'] == None:

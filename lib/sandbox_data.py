@@ -153,7 +153,7 @@ class SandboxDataServer(unittest.TestCase):
         x = system_logistics()
         x['crew_size'] = 10
         self.server.FetchData(x,'logistics','base')
-        self.assertNotEqual(x['crew'],10)
+        self.assertNotEqual(x['crew_size'],10)
 
     def testGetBaseMovement(self):
         from movement import *

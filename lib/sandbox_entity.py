@@ -83,6 +83,7 @@ class sandbox_entity(dict):
     
     # Command echelon level
     self['command_echelon'] = command_echelon
+    self['echelon_name'] = command_echelon
     
     # Actual unit size
     self['size'] = 'Team'
