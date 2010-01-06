@@ -7,6 +7,7 @@ import datetime
 import sandbox_graphics
 import sandbox_geometry
 import sandbox_entity
+import sandbox_world
 
 from vector import vect_5D
 
@@ -14,8 +15,21 @@ class SandboxTest(unittest.TestCase):
   def setUp(self):
     pass
   
-  def testEmpty(self):
-    self.assertEqual(1,1)
+  def testLoadBasicWorldDefault(self):
+    sbox = sandbox_world.sandbox()
+    self.assertTrue(sbox.OS['gametag'],'Blank World')
+    
+  def testLoadBasicWorld(self):
+    sbox = sandbox_world.sandbox('blankworld.xml')
+    self.assertTrue(sbox.OS['gametag'],'Blank World')
+    
+  def testLoadOneFireTeamNamedLoc(self):
+    sbox = sandbox_world.sandbox('testOneFireTeamNameLoc.xml')
+    self.assertTrue(sbox.OS['gametag'],'One Fire Team with Named Location')
+    
+  def testLoadOneFireTeamUTM(self):
+    sbox = sandbox_world.sandbox('testOneFireTeamUTM.xml')
+    self.assertTrue(sbox.OS['gametag'],'One Fire Team with Named Location')
 
 
 # suite

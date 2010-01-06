@@ -300,6 +300,7 @@ class InfrastructureTest(unittest.TestCase):
     def testParseAnzioFile(self):
         xml = self.OpenFile(self.anziofile)
         
+        
         net = sandbox_network()
         net.LoadFromXML(xml)
         
