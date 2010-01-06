@@ -13,7 +13,8 @@
 
 = Milestones =
 
-  * MilestoneXmlConversion
-  * MileStoneRelease1
+  * Milestone 1 : Refactor such that a simulation can be loaded, ran and saved from XML files input and returns everything to XML. The simulation must be able to include one or no entity.
+ 
+  * Milestone 2 : Increment on MS1 by allowing multiple entities and thus restore the ability to handle chains of commands and contacts.
 
 = User Interface(s) =
