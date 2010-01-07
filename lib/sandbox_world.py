@@ -94,8 +94,7 @@ class sandbox:
     self.sides['Red']  = [255,0,0]
     
     # Load the Scenario definition
-    xml = sandboXML(read=os.path.join('scenarios',scenario))
-    self.fromXML(xml, xml.root)
+    self.LoadFromFile(scenario)
 
 
   # Interface at the Unit level
@@ -248,6 +247,7 @@ class sandbox:
     
     # Make folder
     self.fileNewEntity(entity)  
+    
   def RemoveEntity(self, entity):
     '''!
        Remove entity
@@ -637,16 +637,13 @@ class sandbox:
   # Files and OS ops
   def Save(self):
     ''' 
-       Save a copy of self on auto.
-       Return the file name of the snapshot.
+       Write itself as a XML file in the simulation's folder
     '''
-    fname = '%s.%s.wre'%(self.OS['gametag'],self.clock.strftime('%m%d.%H%M'))
-    fout = open(os.path.join(self.OS['savepath'],'Autosave',fname),'wb')
-    self.PrePickle()
-    fout.write(dumps(self,HIGHEST_PROTOCOL))
-    fout.close()
-    self.PostPickle()
-    return fname
+    # define the file name to write to
+    current = os.path.join(self.OS['savepath'],'current.xml')
+    archive = os.path.join(self.OS['savepath'],'Autosave','%s.xml'%(self.GetClock().strftime('%H%MZ.%d%b%y')))
+    print self.ToXML()
+    
     
   def PrePickle(self):
     # Disconnect Map
@@ -689,10 +686,6 @@ class sandbox:
     for i in self.OOB:
       self.fileNewEntity(i)
       
-    # Add folder for each player
-    for i in self.players:
-      self.fileNewPlayer(self.players[i])
-      
     # Save the world into a new arcive
     self.Save()
   
@@ -711,7 +704,7 @@ class sandbox:
     if not savegame:
       return None
     self.OS['gametag'] = savegame
-    self.OS['savepath'] = os.path.join(os.getcwd(),'Simulations',savegame)
+    self.OS['savepath'] = os.path.join(os.getcwd(),'Simulations',savegame.replace(' ','_'))
     # Test to create the folder
     try:
       self.DeleteFolder(self.OS['savepath'])
@@ -724,9 +717,8 @@ class sandbox:
       pass
   
     try:
-      self.OS['savegame'] = savegame
       # Blue
-      for color in ['Blue','Red']:
+      for color in ['BLUE','RED']:
         os.mkdir(os.path.join(self.OS['savepath'],color))
         for tp in ['LOGPAC','convoy']:
           os.mkdir(os.path.join(self.OS['savepath'],color,tp))
@@ -736,25 +728,18 @@ class sandbox:
       os.mkdir(os.path.join(self.OS['savepath'],'Autosave'))
     except:
       pass
-    # Players local folder
-    try:
-      os.mkdir(os.path.join(self.OS['savepath'],'Players'))
-    except:
-      pass
+
     
   def DeleteFolder(self, folder):
     for root, dirs, files in os.walk(folder):
+        if root != folder:
+          continue
         for name in files:
           os.remove(os.path.join(root, name))
         for name in dirs:
           self.DeleteFolder(os.path.join(root,name))
-          os.rmdir(os.path.join(root, name))
-  def fileNewPlayer(self, P):
-    # Create Folder
-    try:
-      os.mkdir(os.path.join(self.OS['savepath'],'Players',P.username))
-    except:
-      pass
+    os.rmdir(folder)
+
     
   def fileNewEntity(self, entity):
     # Create the folder for this unit
@@ -770,6 +755,48 @@ class sandbox:
       os.mkdir(entity['folder'])
     except:
       print "failure to create folder for %s"%(entity['folder'])   
+      
+
+  def LoadFromFile(self, filename):
+    ''' Load a scenario and execute the command in the XML, if any. 
+    '''
+    # Determine whether it is a scenario or a savegame.
+    if filename.endswith('.xml'):
+      # This should be read from the scenario folder
+      fname = os.path.join('.','scenarios',filename)
+      if not os.path.exists(fname):
+        raise SandboxException('ScenarioNotFound', filename)
+      
+      # Read from XML
+      # Load the Scenario definition
+      xml = sandboXML(read=fname)
+      self.fromXML(xml, xml.root)
+
+      # Create a folder structure
+      pass
+    
+      return True
+    
+    else:
+      # Opens and existing scenario for which there should be a folder.
+      fname = os.path.join('.','Simulations', filename.replace(' ', '_'))
+      if not os.path.exists(fname):
+        raise SandboxException('SaveGameNotFound', filename)
+      
+      # Find the most recent savegame
+      fname = os.path.join('.',fname, 'current.xml')
+      if not os.path.exists(fname):
+        raise SandboxException('SaveGameFileNotFound', fname)
+      
+      # Load the file
+      xml = sandboXML(read=fname)
+      self.fromXML(xml, xml.root)
+      
+      # Ensure that all COC pointers are valid
+      pass
+    
+      return True
+    
       
   def fromXML(self, doc, scenario):
     '''! \brief Either parse a XML scenario document at the scenario node level.
@@ -809,9 +836,22 @@ class sandbox:
           # Directly load node into infrastructure
           self.network.LoadFromXML(doc, n)
           
-      # Load sides and OOB
-      for side in doc.Get(scenario, 'side', True):
-        self.LoadSide(doc, side)
+    # Load sides and OOB
+    for side in doc.Get(scenario, 'side', True):
+      self.LoadSide(doc, side)
+
+    # Check for an execute node
+    exe = doc.Get(scenario, 'execute')
+    if exe:
+      for cmd in doc.Get(exe, 'cmd', True):
+        # A list of command
+        methodname = doc.Get(cmd, 'method')
+        # If the method exists, call it right away.
+        if hasattr(self, methodname):
+          getattr(self, methodname)()
+        else:
+          raise SandboxException('ExecuteScenarioError',methodname)
+      
       
         
   def LoadSide(self, doc, node):
@@ -841,7 +881,7 @@ class sandbox:
           coord = nd.Coordinates()
         else:
           # Coordinates
-          coord = nodetype
+          coord = doc.Get(loc)
         
         # convert to a position vector
         x.SetPosition(self.map.MGRS.AsVect(coord))
@@ -864,13 +904,6 @@ class sandbox:
     
     # Map
     doc.AddField('map',self.map.mapenv, doc.root)
-    
-    # Players
-    players = doc.NewNode('players')
-    players.appendChild(doc.NewComment('Implement me!'))
-    for i in self.players:
-      doc.AddField('username',self.players[i].username,players)
-    doc.AddNode(players)
     
     # Clock
     doc.AddNode(doc.DateTime('clock',self.clock))
