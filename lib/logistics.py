@@ -405,7 +405,7 @@ class system_logistics(system_base.system_base):
     cons = doc.Get(node, 'consumption_rate')
     if cons:
       for i in ['idle','transit','combat','service']:
-        nd = doc.Get(cons, i)
+        nd = doc.SafeGet(cons, i, supply_package())
         self['consumption_rate'][i] = nd
         
 
@@ -454,13 +454,13 @@ class system_logistics(system_base.system_base):
     for i in E.vehicle:
       cnt = E.vehicle[i]['count']
       vh  = E.vehicle[i]['kit']
-      out = out + i.GetCapacity()
+      out = out + vh.logistics.GetCapacity()
       
     # Personel
     for i in E.personel:
       cnt = E.personel[i]['count']
       vh  = E.personel[i]['kit']
-      out = out + i.GetCapacity()
+      out = out + vh.logistics.GetCapacity()
       
     return out
   
@@ -529,6 +529,9 @@ class system_logistics(system_base.system_base):
      
     
   # Computation of expenses - Interface
+  def _GetConsumptionRate(self, activity):
+    '''Returns the consumption rate or an empty supply object'''
+    return self['consumption_rate'].get(activity,supply_package())
   def SupplyExpenditure(self, N=1, activity_code = ['idle'], deltatime = 1.0/6, E=None):
     '''
        Compute the Expenditure of supply for this logistic model provided a multiplier of N,
@@ -553,7 +556,7 @@ class system_logistics(system_base.system_base):
     # The model itself
     for act in activity_code:
       if act in self['consumption_rate']:
-        out = out + (self['consumption_rate'][act] * N * deltatime)
+        out = out + (self._GetConsumptionRate(act) * N * deltatime)
         
     return out
        

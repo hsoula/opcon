@@ -388,8 +388,6 @@ class sandbox:
     while nextime and nextime <= endtime:
       # Update the clock
       self.clock = copy(nextime)
-      if self.verbose:
-        print 'New Event series at %s'%(self.clock.strftime('%H%M:%S ZULU'))
       # Execute the queue
       for ev in self.scheduler.EventList(self.clock):
         ev.Execute()
@@ -642,7 +640,9 @@ class sandbox:
     # define the file name to write to
     current = os.path.join(self.OS['savepath'],'current.xml')
     archive = os.path.join(self.OS['savepath'],'Autosave','%s.xml'%(self.GetClock().strftime('%H%MZ.%d%b%y')))
-    print self.ToXML()
+    
+    # Get the XML string for it.
+    out = self.ToXML()
     
     
   def PrePickle(self):
@@ -747,9 +747,9 @@ class sandbox:
     tname = entity.GetName().split('/')
     tname = '.'.join(tname)
     if entity['TOE'] == 'convoy' or entity['TOE'] == 'LOGPAC':
-      entity['folder'] = os.path.join(self.OS['savepath'],entity['side'],entity['TOE'],tname)
+      entity['folder'] = os.path.join(self.OS['savepath'],entity['side'].upper(),entity['TOE'],tname)
     else:
-      entity['folder'] = os.path.join(self.OS['savepath'],entity['side'],tname)
+      entity['folder'] = os.path.join(self.OS['savepath'],entity['side'].upper(),tname)
 
     try:
       os.mkdir(entity['folder'])
@@ -808,6 +808,7 @@ class sandbox:
     
     # Set clock
     self.clock = doc.Get(scenario, 'clock')
+    self.lastpulse = doc.Get(scenario, 'clock')
     
     # Map
     x = doc.Get(scenario,'map')
@@ -818,9 +819,8 @@ class sandbox:
     if inf:
       if doc.Get(inf,'default') == 1:
         # Load the map definition infrastructure
-        fname = os.path.join(os.getcwd(),'maps',self.map.Name(),'infrastructure.xml')
-        if os.access(fname,os.F_OK):
-          self.network.LoadFromXML(sandboXML(read=fname))
+        if os.access(self.map.infrastructurefile,os.F_OK):
+          self.network.LoadFromXML(sandboXML(read=self.map.infrastructurefile))
         else:
           raise "DefaultInfrastructureNotFound"
         
@@ -836,6 +836,13 @@ class sandbox:
           # Directly load node into infrastructure
           self.network.LoadFromXML(doc, n)
           
+    else:
+      # Load the map definition infrastructure
+      if os.access(self.map.infrastructurefile,os.F_OK):
+        self.network.LoadFromXML(sandboXML(read=self.map.infrastructurefile))
+      else:
+        raise "DefaultInfrastructureNotFound"
+      
     # Load sides and OOB
     for side in doc.Get(scenario, 'side', True):
       self.LoadSide(doc, side)
@@ -873,7 +880,7 @@ class sandbox:
       if loc:
         # Recognize the type
         nodetype = doc.Get(loc, 'type')
-        if nodetype == 'named location':
+        if nodetype == 'named_location':
           # Get the coordinate from the network
           nd = self.network.GetNode(doc.Get(loc))
           

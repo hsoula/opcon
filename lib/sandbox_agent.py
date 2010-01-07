@@ -770,10 +770,15 @@ class agent:
            Estimate the number of KIA/MIA, WIA, destroyed vehicle and dammaged ones.
            Return as a tuple
         '''
-        D = 1.0 - self.entity['combat'].RawRCP()/self.entity['combat']['TOE RCP']
-        C =  self.entity['combat'].UnavailableRCP() / self.entity['combat']['TOE RCP']
-        Nv = self.entity['logistics']['Nv']
-        Np = self.entity['logistics']['Np']
+        # FIXME
+        #D = 1.0 - self.entity['combat'].RawRCP()/self.entity['combat']['TOE RCP']
+        #C =  self.entity['combat'].UnavailableRCP() / self.entity['combat']['TOE RCP']
+        D = 0.0
+        C = 0.0
+        #Nv = self.entity['logistics']['Nv']
+        #Np = self.entity['logistics']['Np']
+        Nv = 1
+        Np = 1
         
         W = int(C * Np)
         K = int(D * Np) - W
@@ -969,7 +974,8 @@ class agent:
         #cnt.UpdateField('staff comment', val, mytime = self.clock)
         #cnt.UpdateField('additional information', val, mytime = self.clock)
         cnt.UpdateField('evaluation rating', 'A1', mytime = self.clock)
-        cnt.UpdateField('combat effectiveness', self.entity['combat']['RCP'], mytime = self.clock)
+        #cnt.UpdateField('combat effectiveness', self.entity['combat']['RCP'], mytime = self.clock)
+        cnt.UpdateField('combat effectiveness', 1.0, mytime = self.clock)
         #cnt.UpdateField('signature equipment', val, mytime = self.clock)
         try:
             cnt.UpdateField('higher formation', self.entity.GetHQ()['echelon'], mytime = self.clock)
@@ -1279,7 +1285,7 @@ class agent:
             
         pol = 'We are currently required to maintain between %.2f and %.2f basic loads. Here follows our current inventory:'%(policies[0],policies[1])
         
-        out = out + html.Tag('P',cssunit+pol) + html.Tag('blockquote',self.entity['logistics'].Report())
+        out = out + html.Tag('P',cssunit+pol) + html.Tag('blockquote',self.entity['logistics'].Report(self.entity))
         
         if type(self.entity['logistics']) == type(CSSlogistics()):
             # burden and available freight
@@ -1381,7 +1387,8 @@ class agent:
         out = html.Tag('H3', 'Capacity and Strenght')
         
         # Relative Combat strenght
-        R = self.entity['combat'].RawRCP()/self.entity['combat']['TOE RCP']
+        #R = self.entity['combat'].RawRCP()/self.entity['combat']['TOE RCP']
+        R = 0.0
         temp = 'We are operating at %d%% of our TOE allocation. '%(int(100*R))
         
         KIA,WIA,dst,dmg = self.EstimateCasulatiesFigures()
@@ -1469,7 +1476,7 @@ class agent:
         if not 'idle' in act:
             act.append('idle')
         
-        return self.entity['logistics'].ComputePulseSupply(act,ctime,self.entity['combat'].RawRCP())
+        return self.entity['logistics'].SupplyExpenditure(1,act,ctime, self.entity)
 
     def EstimateTimeAtCargo(self, tcargo):
         '''! \brief Estimate when a entity will be down to the levels in arg tcargo

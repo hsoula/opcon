@@ -9,4 +9,11 @@
 
 	<!-- The head of the data to load -->
 	<data filename="base.xml"/>
+	
+	<!-- Execution commands.-->
+	<execute>
+		<!-- Will run the simulation for 1 hour.-->
+		<cmd method="Simulate"/>
+		<cmd method="Save"/>
+	</execute>
 </scenario>

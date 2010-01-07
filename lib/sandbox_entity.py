@@ -256,7 +256,7 @@ class sandbox_entity(dict):
 
     # Lack of supply
     dailyload = self['logistics'].ProjectSupply(activity_dict = self['logistics']['basic load'], E=self)
-    deficit  = self['logistics']['cargo'].IgnoreDeficit()
+    deficit  = self.cargo.IgnoreDeficit()
     if deficit:
       ratio = deficit / dailyload
       dmg = sum(ratio.values())
