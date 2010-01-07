@@ -96,6 +96,7 @@ class system_movement(system_base.system_base):
             x = i.GetMode()
             if not x in out:
                 out.append(x)
+        return out
     def command_exponent(self, command):
         return 1.0/float(command)
     

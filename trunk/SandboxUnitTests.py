@@ -42,7 +42,14 @@ class SandboxTest(unittest.TestCase):
     self.assertEqual([rootexists,blue],[True,True])
     
   def testExecuteFromXML(self):
-    sbox = sandbox_world.sandbox('testOneFireTeamUTM.xml')
+    sbox = sandbox_world.sandbox('testOneFireTeamUTMexec.xml')
+    # Retrieve the clock 
+    clock = sbox.GetClock()
+    # It should be 0800 after execution
+    self.assertEqual(clock, datetime.datetime(2010,1,3,8,0))
+
+  def testExecuteBlankFromXML(self):
+    sbox = sandbox_world.sandbox('blankworldexec.xml')
     # Retrieve the clock 
     clock = sbox.GetClock()
     # It should be 0800 after execution

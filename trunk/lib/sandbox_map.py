@@ -428,6 +428,9 @@ class sandbox_map:
     for i in self.code_terrain:
       self.frictions[''][i] = 1.0
       
+    # Infrastructure file
+    self.infrastructurefile = os.path.join(self.path,'infrastructure.xml')
+      
     # TODO, write as a XML instead.
     # Create the data and fill in with default values
     if not os.access(os.path.join(self.path,'main.xml'),os.F_OK):
