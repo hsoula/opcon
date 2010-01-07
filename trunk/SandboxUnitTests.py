@@ -38,7 +38,7 @@ class SandboxTest(unittest.TestCase):
     sbox = sandbox_world.sandbox('testOneFireTeamUTM.xml')
     # Check for file system override
     rootexists = os.path.exists(os.path.join('Simulations','One_Fire_Team_UTM'))
-    blue = os.path.exists(os.path.join('Simulations','One_Fire_Team_UTM','blue'))
+    blue = os.path.exists(os.path.join('Simulations','One_Fire_Team_UTM','BLUE'))
     self.assertEqual([rootexists,blue],[True,True])
     
   def testExecuteFromXML(self):
