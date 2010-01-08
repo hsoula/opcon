@@ -90,8 +90,6 @@ class sandbox:
     
     # Sides registration (rgb colors)
     self.sides = {}
-    self.sides['Blue'] = [0,0,255]
-    self.sides['Red']  = [255,0,0]
     
     # Load the Scenario definition
     self.LoadFromFile(scenario)
@@ -750,10 +748,11 @@ class sandbox:
   def fileNewEntity(self, entity):
     # Create the folder for this unit
     # safe file name
-    tname = entity.GetName().split('/')
-    tname = '.'.join(tname)
+    tname = entity.GetName(filenamesafe=True)
+    # Special folders for convoys and LOGPAC
     if entity['TOE'] == 'convoy' or entity['TOE'] == 'LOGPAC':
       entity['folder'] = os.path.join(self.OS['savepath'],entity['side'].upper(),entity['TOE'],tname)
+    # All other units are in the base folder
     else:
       entity['folder'] = os.path.join(self.OS['savepath'],entity['side'].upper(),tname)
 
@@ -809,6 +808,7 @@ class sandbox:
     '''
     # Name and file system
     self.OS['gametag'] = doc.Get(scenario,'name')
+    self.OS['savepath'] = os.path.join(os.getcwd(),'Simulations',self.OS['gametag'].replace(' ','_'))
     if doc.Get(scenario,'reset'):
       self.fileStructure(self.OS['gametag'])
     
@@ -880,18 +880,38 @@ class sandbox:
     '''! \brief Load a side and all associated information into the simulator.
     '''
     # Color name
-    self.sides[doc.Get(node,'name')] = doc.Get(node,'color')
+    self.sides[doc.Get(node,'name').upper()] = doc.Get(node,'color')
     
     # OOB 
     oob = doc.Get(node,'OOB')
     # Make sure that there is a OOB node in the side node
     if oob != '':
       for unit in doc.Get(oob,'unit', True):
-        # Add Side information
-        doc.AddField('side', doc.Get(node,'name'), unit)
-        # Build unit from template
-        x = sandbox_entity(sim=self,template=doc.Get(unit,'template'))
-  
+        # CASE 1: The unit must be imported
+        if doc.Get(unit, 'import'):
+          name = doc.Get(unit, 'import').replace('/','.')
+          # Form a correct path
+          path = os.path.join(self.OS['savepath'], doc.Get(node,'name'), name, 'current.xml')
+          # Read in the unit's description
+          if os.path.exists(path):
+            udoc = sandboXML(read=path)
+            x = udoc.Get(udoc.root, 'unit')
+            # Look for a template definition
+            x = sandbox_entity(sim=self,template=udoc.Get(x,'template'))
+            del udoc
+          else:
+            raise SandboxException('UnitDescriptionNotFound',path)
+        
+        # CASE 2: The units must be loaded from this file
+        else:
+          # Add Side information
+          doc.AddField('side', doc.Get(node,'name').upper(), unit)
+          # Build unit from template
+          x = sandbox_entity(sim=self,template=doc.Get(unit,'template'))
+    
+        # Read in the state data
+        x.fromXML(doc, unit)
+        
         # Define location
         loc = doc.Get(unit, 'location')
         if loc:
@@ -952,6 +972,13 @@ class sandbox:
         doc.SetAttribute('import', unit.GetName(),unode)
         doc.AddNode(unode,oob)
         # Triggers the writing of the unit's state
+        path = os.path.join(self.OS['savepath'],side_name,unit.GetName(True),'current.xml')
+        unitdoc = sandboXML('sandbox')
+        unitdoc.AddNode(unit.toXML(unitdoc),unitdoc.root)
+        with open(path,'w') as fout:
+          fout.write(str(unitdoc))
+        
+        
       doc.AddNode(oob, side)
       
       # Add to the main document

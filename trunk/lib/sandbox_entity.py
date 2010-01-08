@@ -73,7 +73,7 @@ from datetime import datetime
            
 ''' 
 class sandbox_entity(dict):
-  def __init__(self, name = '', command_echelon = 'Team', side = 'Blue', template=None, sim = None):    
+  def __init__(self, name = '', command_echelon = 'Team', side = 'BLUE', template=None, sim = None):    
     # Pointer to Simulator (non-templated)
     self.sim = sim
     
@@ -169,8 +169,10 @@ class sandbox_entity(dict):
     # All else fail  
     raise AttributeError, name
   
-  def GetName(self):
+  def GetName(self, filenamesafe="False"):
     ''' Returns the unit's name. '''
+    if filenamesafe:
+      return self['name'].replace('/','.')
     return self['name']
   
   # Setting models
@@ -828,6 +830,15 @@ class sandbox_entity(dict):
     self.AdjustSupply(cost * -1.0)
   
   # Files
+  def toXML(self, doc):
+    '''! Create and populate a unit's node. Returns the node.'''
+    out = doc.NewNode('unit')
+    # Template information
+    if self.template:
+      doc.SetAttribute('template', self.template, out)
+    
+    return out
+  
   def fromXML(self, doc, node):
     # Read templates and data from XML to populate the data fields.
     # Identity, size and echelon
