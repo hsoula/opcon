@@ -76,7 +76,7 @@ class SandboxTest(unittest.TestCase):
     # Run it once for 1 hour then save
     sbox.Simulate()
     sbox.Save()
-    ooblen = len(sbox.GetOOB)
+    ooblen = len(sbox.GetOOB())
     
     # Load most recent save for this game
     sbox = sandbox_world.sandbox('One Fire Team UTM')

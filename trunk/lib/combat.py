@@ -704,7 +704,7 @@ import unittest
 class EngagementTest(unittest.TestCase):
     def setUp(self):
       pass
-if __name__ == "__main__":
+if __name__ == '__main__':
     # suite
     testsuite = []
 

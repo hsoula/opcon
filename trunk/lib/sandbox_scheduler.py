@@ -177,7 +177,7 @@ class sandbox_Scheduler:
     if type(key) == type(datetime()):
       return self.EventList(key)
     else:
-      print "Key of type %s not implemented"%(str(type(key)))
+      print 'Key of type %s not implemented'%(str(type(key)))
     
 
   def PrePickle(self):

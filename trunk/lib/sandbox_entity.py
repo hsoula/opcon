@@ -16,7 +16,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 '''
-if __name__ == "__main__":
+if __name__ == '__main__':
   import syspathlib
 
 # import  models
@@ -220,7 +220,7 @@ class sandbox_entity(dict):
   
     # Suppresion because of unclear OPORDs -- Suppression may be duplicated somewhere else. If so, it makes the suppression more burdensome.
     if self['OPORD'].IsSuppressed():
-      self['agent'].log("Confusion with HQ incurs delays!",'operations')
+      self['agent'].log('Confusion with HQ incurs delays!','operations')
       return
     
     # Get current maneuver task -- Fancy recursive method call which digs the active subtask of a task.
@@ -452,12 +452,12 @@ class sandbox_entity(dict):
     '''
     # Step 1 - Avoid circular connection
     if HQ == self:
-      self['agent'].log("Can't subordinate to itself.",'personel')
+      self['agent'].log('Can\'t subordinate to itself.','personel')
       return False
       
     # Cannot subordinate to a subordinate (prevent loops in chain of command)
     if HQ in self.AllSubordinates():
-      self['agent'].log("Can't subordinate to a lower echelon.",'personel')
+      self['agent'].log('Can\'t subordinate to a lower echelon.','personel')
       return False  
     
     # Disconnect self from current OPCON
@@ -489,12 +489,12 @@ class sandbox_entity(dict):
     '''
     # Step 1 - Avoid circular connection
     if HQ == self:
-      self['agent'].log("Can't subordinate to itself.",'personel')
+      self['agent'].log('Can\'t subordinate to itself.','personel')
       return False
       
     # Cannot subordinate to a subordinate (prevent loops in chain of command)
     if HQ in self.AllSubordinates():
-      self['agent'].log("Can't subordinate to a lower echelon.")
+      self['agent'].log('Can\'t subordinate to a lower echelon.')
       return False  
     
     # Disconnect self from current HQ
@@ -984,7 +984,7 @@ import unittest
 class EntityTest(unittest.TestCase):
   def setUp(self):
     from sandbox_world import sandbox
-    if __name__ == "__main__":
+    if __name__ == '__main__':
       os.chdir('..')
       
     # An empty simulator
@@ -997,7 +997,7 @@ class EntityTest(unittest.TestCase):
       self.testfolder = os.path.join('tests')
     
   def tearDown(self):
-    if __name__ == "__main__":
+    if __name__ == '__main__':
       os.chdir('./lib')
       
   def testBaseUnit(self):
@@ -1005,7 +1005,7 @@ class EntityTest(unittest.TestCase):
     self.assertFalse(False)
     
   def testWrongEchelonLabel(self):
-    unit = sandbox_entity(command_echelon= "bogus", template='FireTeam')
+    unit = sandbox_entity(command_echelon= 'bogus', template='FireTeam')
     self.assertFalse(unit['command_echelon']=='Team')
 
   def testSendNoWorld(self):
@@ -1081,7 +1081,7 @@ class EntityTest(unittest.TestCase):
     
     self.assertTrue(unit.GetName())
     
-if __name__ == "__main__":
+if __name__ == '__main__':
     # suite
     testsuite = []
 

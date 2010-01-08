@@ -23,6 +23,5 @@
 	<execute>
 		<!-- Will run the simulation for 1 hour.-->
 		<cmd method="Simulate"/>
-		<cmd method="Save"/>
 	</execute>
 </scenario>

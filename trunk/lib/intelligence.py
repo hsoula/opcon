@@ -371,7 +371,7 @@ class sandbox_contact(dict):
     # First line
     firstline = html.Tag('STRONG','Track ID: ') + self.fields['unique designation']
     if self.fields['higher formation']:
-      firstline = firstline + html.Tag("STRONG", ' (%s)'%(self.fields['higher formation']))
+      firstline = firstline + html.Tag('STRONG', ' (%s)'%(self.fields['higher formation']))
     if self.fields['IFF/SIF']:
       firstline = firstline + html.Tag('STRONG', ' [%s]'%(self.fields['IFF/SIF']))
     firstline = html.Tag('span', firstline) + '<BR>'

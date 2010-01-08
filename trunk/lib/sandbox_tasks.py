@@ -391,7 +391,7 @@ class sandbox_task(dict):
     '''
     if len(self.sequence) <= self.cursor:
       # This should not happen
-      print "Task of type %s doesn't have a valid cursor [%d]"%(str(self.__class__),self.cursor)
+      print 'Task of type %s doesn\'t have a valid cursor [%d]'%(str(self.__class__),self.cursor)
       return self
     
     if self.cursor != None:
@@ -587,7 +587,7 @@ class taskSustain(sandbox_task):
     
     # Routine SITREP
   def OrderHTML(self, A):
-    return "Maintain readiness on site until further notice."
+    return 'Maintain readiness on site until further notice.'
 #
 # Maneuvers (Movement)
 '''!
@@ -659,7 +659,7 @@ class taskRedeploy(sandbox_task):
     
     # Supression cancelling the pulse
     if E.IsSuppressed():
-      E['agent'].log("Pausing for 10 minutes to regroup.",'personel')
+      E['agent'].log('Pausing for 10 minutes to regroup.','personel')
       return
     
     # convert readiness (Abort prematurely if readiness isn't at 0)
@@ -700,7 +700,7 @@ class taskRedeploy(sandbox_task):
         E['readiness'] = min( E['readiness'] + E.sim.Pulse(), self['final readiness'])
         if E['readiness'] != self['final_stance']:
           return
-      E['agent'].log("Fully redeployed to %s at time %s [Planned: %s]"%(self['final_stance'],E['agent'].clock.strftime("(%m-%d)%H%M ZULU"), self.PlannedEndTime().strftime("(%m-%d)%H%M ZULU")),'personel')
+      E['agent'].log('Fully redeployed to %s at time %s [Planned: %s]'%(self['final_stance'],E['agent'].clock.strftime('(%m-%d)%H%M ZULU'), self.PlannedEndTime().strftime('(%m-%d)%H%M ZULU')),'personel')
       E['agent'].log('Current position MGRS %s'%(E['agent'].map.MGRS.AsString(E['position'])),'operations')
       if E['OPORD'].NextTaskCanBegin(E['agent'].clock):
         self['completion'] = True
@@ -841,7 +841,7 @@ class taskRelocate(sandbox_task):
     
     # Supression cancelling the pulse
     if E.IsSuppressed():
-      E['agent'].log("Pausing for 10 minutes to regroup.",'personel')
+      E['agent'].log('Pausing for 10 minutes to regroup.','personel')
       return
     
     # Recompute path
@@ -853,7 +853,7 @@ class taskRelocate(sandbox_task):
     
     # Check for end of task
     if E['OPORD'].GetCurrentWaypoints() == []:
-      E['agent'].log("Plotted movement completed at time %s ( %s )"%(E['agent'].clock.strftime("(%m-%d) %H%M:%S"), E['OPORD'].GetCurrentTask().PlannedEndTime().strftime("(%m-%d) %H%M:%S")),'operations')
+      E['agent'].log('Plotted movement completed at time %s ( %s )'%(E['agent'].clock.strftime('(%m-%d) %H%M:%S'), E['OPORD'].GetCurrentTask().PlannedEndTime().strftime('(%m-%d) %H%M:%S')),'operations')
       E['agent'].log('Current position MGRS %s'%(E['agent'].map.MGRS.AsString(E['position'])),'operations')
       # Look for next task
       E['OPORD'].GetCurrentTask()['end time'] = E['agent'].clock
@@ -884,7 +884,7 @@ class taskRelocate(sandbox_task):
     if self['stance']:
       out = out + ' in %s stance. '%(self['stance'])
     else:
-      out = out + ". "
+      out = out + '. '
       
     # Route (optional)
     if 'route'in self and self['route']:
@@ -1534,7 +1534,7 @@ class taskDropOff(sandbox_task):
       
     # Make sure that the DP is in E's footprint
     if not E.PointInFootprint(self['DP']):
-      E['agent'].Log("Can't Drop-off package because DP isn't in the footprint. Bypass task.")
+      E['agent'].Log('Can\'t Drop-off package because DP isn\'t in the footprint. Bypass task.')
       self['completion'] = True
       return
       
@@ -1721,7 +1721,7 @@ class taskConvoyMerge(sandbox_task):
   
   def _Step(self, E):
     A = E['agent']
-    A.log("Merging convoy to home CSS unit.",'operations')
+    A.log('Merging convoy to home CSS unit.','operations')
     
     # Activity code
     E['activities this pulse'].extend(self.ConsumptionCodes())
@@ -1919,7 +1919,7 @@ class taskDispatchSupply(sandbox_task):
     newtask['COMMODITY'] = subpk * 1.0
     newtask['target unit'] = E.sim.AsUID(self['target unit'])
     newtask['splitted from'] = self['uid']
-    newtask['uid'] = E.GetName() + A.clock.strftime(".%m%d%H%M")
+    newtask['uid'] = E.GetName() + A.clock.strftime('.%m%d%H%M')
     #self['lock split'] = True # TODO delete locking of splits
     # Add the task to the CSS tasks
     #newtask.Process(E)

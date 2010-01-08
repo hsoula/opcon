@@ -18,7 +18,7 @@
 '''
 
 # For unit testing only
-if __name__ == "__main__":
+if __name__ == '__main__':
     import syspathlib
     
 # import section
@@ -311,14 +311,14 @@ class InfrastructureTest(unittest.TestCase):
         
         net = sandbox_network()
         net.LoadFromXML(xml)
-        a = net.Path('Aprilia',"Borgo Faiti")
+        a = net.Path('Aprilia','Borgo Faiti')
         
         self.assertTrue(net)
         
 
 #
 #
-if __name__ == "__main__":
+if __name__ == '__main__':
     # suite
     testsuite = []
 

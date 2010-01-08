@@ -63,7 +63,7 @@ class operational_graphic:
         '''! \brief Assemble the name together.
         '''
         if self.type != 'DATUM':
-            return "%s %s"%(self.type,self.name)
+            return '%s %s'%(self.type,self.name)
         return self.name
     
     def GetShape(self):
@@ -320,7 +320,7 @@ class GraphicsTest(unittest.TestCase):
         self.assertEqual(box, [0.0,0.0,1.0,2.0])             
 #
 #
-if __name__ == "__main__":
+if __name__ == '__main__':
     # suite
     testsuite = []
 

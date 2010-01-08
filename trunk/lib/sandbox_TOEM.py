@@ -293,7 +293,7 @@ class TOEMTesting(unittest.TestCase):
         x.Resolve(0.24)
         self.assertEqual(x.Blame(),[])         
         
-if __name__ == "__main__":
+if __name__ == '__main__':
     # suite
     testsuite = []
 

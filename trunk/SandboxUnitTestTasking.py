@@ -13,7 +13,7 @@ class SandBoxEmptyWorld(unittest.TestCase):
   def setUp(self):
     self.W = sandbox_world.sandbox()
     # Create a single unit.
-    self.W.AddEntity( sandbox_entity.sandbox_entity(template="FireTeam", sim=self.W) )
+    self.W.AddEntity( sandbox_entity.sandbox_entity(template='FireTeam', sim=self.W) )
     
   def GetUnit(self):
     return self.W.OOB[0]

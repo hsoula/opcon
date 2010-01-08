@@ -240,7 +240,7 @@ class agent:
         ech = self.entity.Echelon()
         if not ech:
             ech = self.entity.HigherEchelon()
-        title = 'SITREP for %s %s at time %s\n'%(self.entity.GetName(), ech, self.clock.strftime("%m-%d %H%M ZULU"))
+        title = 'SITREP for %s %s at time %s\n'%(self.entity.GetName(), ech, self.clock.strftime('%m-%d %H%M ZULU'))
         out = html.Tag('H1',title)
         
         # Contact reporting
@@ -408,7 +408,7 @@ class agent:
                 if self.entity['log'].lines[-1][a:] == entry:
                     return
         out = SO
-        out += self.clock.strftime("(%m-%d) %H%M:%S | ") + entry
+        out += self.clock.strftime('(%m-%d) %H%M:%S | ') + entry
         self.entity['log'].Add(out)
         
   
@@ -469,13 +469,13 @@ class agent:
         '''
         # Time Stamp
         if not opord.has_key('sent timestamp'): 
-            self.log("=====================================================")
-            self.log("| Processing New OPORD at %s"%(self.clock),'operations')
+            self.log('=====================================================')
+            self.log('| Processing New OPORD at %s'%(self.clock),'operations')
             
         opord['sent timestamp'] = copy(self.clock)
         # Redirect FRAGO to current OPORD
         if opord.has_key('FRAGO'):
-            self.log("| Processing New FRAGO at %s"%(self.clock),'operations')
+            self.log('| Processing New FRAGO at %s'%(self.clock),'operations')
             self.entity['OPORD'].MergeFRAGO(opord)
             self.entity['agent'].ProcessOPORD(self.entity['OPORD'], nointel = True)
             return
@@ -506,7 +506,7 @@ class agent:
         # COMMAND #######################################################
         # Set HQ 
         tHQ = self.entity.sim.AsEntity(opord.GetHQ())
-        if tHQ != self.entity["HQ"] and tHQ != None:
+        if tHQ != self.entity['HQ'] and tHQ != None:
             self.entity.ReportToHQ(tHQ)
             
         # Timing and Projected logistics
@@ -566,7 +566,7 @@ class agent:
                 endline = True
                 self.log('\t| Updating contact %s in our intelligence picture.'%(temp.TrackName()),'intelligence')
         if endline:
-            self.log("\t--- End INTSUM ---",'intelligence')
+            self.log('\t--- End INTSUM ---','intelligence')
 
     def IntegrateContactList(self, cntl):
         for i in cntl:
@@ -1220,7 +1220,7 @@ class agent:
         # Location and Stance
         us = self.ContactDefineSelf()
         out = out + html.Tag('H2','B. Friendly Forces') + '<HR>'
-        tout = html.Tag('STRONG','Reporting Unit: ') +  " <BR>"
+        tout = html.Tag('STRONG','Reporting Unit: ') +  ' <BR>'
         tout +=  us.AsHTML()
         if friends:
             tout += html.Tag('H3','Other Friendlies:') +'\n'
@@ -1344,7 +1344,7 @@ class agent:
             bear[0] = (bear[0] / 3.14159) * 180
             if bear[0] < 0.0:
                 bear[0] = bear[0] + 360
-            out = out + "Some %.1f Km bearing %s from your position. "%(bear[1],('00'+str(int(bear[0])))[-3:])
+            out = out + 'Some %.1f Km bearing %s from your position. '%(bear[1],('00'+str(int(bear[0])))[-3:])
         # terrain report
         terrain = self.map.SampleTerrain(self.entity.Footprint())
         out = out + 'We are deployed over %.1f km^2. The terrain profile in our footprint is: '%(self.entity.Footprint().Area())
@@ -1716,7 +1716,7 @@ class agent:
         '''
         # tag only
         if name.find('*'):
-            tag = name.split(" ")[0]
+            tag = name.split(' ')[0]
             return self.overlay.GetElementByTag(tag)
     
         # exact name
@@ -2007,8 +2007,8 @@ class agent:
         # Initialize cursor to first non-completed task
         self.entity['OPORD'].AutoCursor()
         if self.entity['OPORD']['sent timestamp'] == self.clock:
-            self.log("=====================================================")
-            self.log("Begin Executing OPORD", 'operations')
+            self.log('=====================================================')
+            self.log('Begin Executing OPORD', 'operations')
         
 
     def CreateDetachment(self):
@@ -2079,7 +2079,7 @@ class agent_CO(agent):
        nm = self.entity.Echelon()
        if not nm:
            nm = self.entity.GetName()
-       title = 'SITREP for %s at time %s\n'%(nm, self.clock.strftime("%m-%d %H%M ZULU"))
+       title = 'SITREP for %s at time %s\n'%(nm, self.clock.strftime('%m-%d %H%M ZULU'))
        out = html.Tag('H1',title)
         
        # Contacts
@@ -2183,22 +2183,22 @@ class agent_CO(agent):
        out += html.Tag('H2','B. Friendly Forces') + '<HR>'
        # Location and Stance (self)
        us = self.ContactDefineSelf()
-       tout = html.Tag('STRONG','Reporting Unit: ') +  " <BR>"
+       tout = html.Tag('STRONG','Reporting Unit: ') +  ' <BR>'
        tout +=  us.AsHTML()
        
        # Echelon Subordinates
        if subord:
-           tout += html.Tag('STRONG','Subordinate Unit(s): ') +  " <BR>"
+           tout += html.Tag('STRONG','Subordinate Unit(s): ') +  ' <BR>'
            for i in subord:
                tout += i.AsHTML()
        if attch:
-           tout += html.Tag('STRONG','Attached Unit(s): ') +  " <BR>"
+           tout += html.Tag('STRONG','Attached Unit(s): ') +  ' <BR>'
            for i in attch:
                tout += i.AsHTML() 
                
        # Others friends 
        if others:
-           tout += html.Tag('STRONG','Attached Unit(s): ') +  " <BR>"
+           tout += html.Tag('STRONG','Attached Unit(s): ') +  ' <BR>'
            for i in others:
                tout += i.AsHTML()
                
@@ -2317,7 +2317,7 @@ class agent_CO(agent):
             bear[0] = (bear[0] / 3.14159) * 180
             if bear[0] < 0.0:
                 bear[0] = bear[0] + 360
-            out = out + "Some %.1f Km bearing %s from your position. "%(bear[1],('00'+str(int(bear[0])))[-3:])
+            out = out + 'Some %.1f Km bearing %s from your position. '%(bear[1],('00'+str(int(bear[0])))[-3:])
             
         # terrain report
         footprint = self.SolveFootprint()
@@ -2357,7 +2357,7 @@ class agent_CO(agent):
    
    
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import syspathlib
     
 import unittest
@@ -2365,7 +2365,7 @@ import unittest
 class AgentTest(unittest.TestCase):
     pass
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # suite
     testsuite = []
 
