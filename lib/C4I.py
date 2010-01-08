@@ -180,9 +180,9 @@ class system_C4I(system_base.system_base):
     # overall
     report = 'Overall Command and Control : %d%%. '%(100 * self.LevelHumanFactor(E))
     # Morale
-    report = report + "Morale is at %d %%, "%(100*E.GetMorale())
-    report = report + "fatigue is at %d %% and "%(100*(1-E.GetFatigue()))
-    report = report + "suppression is at %d %%.\n"%(100*(1-E.GetSuppression()))
+    report = report + 'Morale is at %d %%, '%(100*E.GetMorale())
+    report = report + 'fatigue is at %d %% and '%(100*(1-E.GetFatigue()))
+    report = report + 'suppression is at %d %%.\n'%(100*(1-E.GetSuppression()))
     return report
     
       
@@ -218,7 +218,7 @@ class C4ITest(unittest.TestCase):
       C = system_C4I()
       self.assertEqual(1.0, C.LevelDeployState('deployed'))
       
-if __name__ == "__main__":
+if __name__ == '__main__':
     # suite
     testsuite = []
 

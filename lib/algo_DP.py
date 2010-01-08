@@ -98,7 +98,7 @@ class Dynamic_Programming:
         
     
     
-if __name__ == "__main__":
+if __name__ == '__main__':
     a = [[0,1,2,3],[0,2,1,2],[1,0,1,2],[3,2,1,0],[3,3,1,1]]
     b = Dynamic_Programming(1,0.5,1)
     x = b.Solve(a)

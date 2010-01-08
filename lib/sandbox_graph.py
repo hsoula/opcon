@@ -71,7 +71,7 @@ class G:
         '''
         v = self.Vertex(v)
         if not v.name in self.V:
-            raise "VerticeNotFound"
+            raise 'VerticeNotFound'
 
         out = []
         for i in self.E:
@@ -285,7 +285,7 @@ class edge(list):
     def Length(self):
         return self.length
     
-if __name__ == "__main__":
+if __name__ == '__main__':
     a = G()
     a.directed = True
     a.AddEdge('A','B',2)

@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 '''
-if __name__ == "__main__":
+if __name__ == '__main__':
   import syspathlib
   import os
   os.chdir('..')
@@ -48,7 +48,7 @@ from sandbox_XML import sandboXML
 class sandbox:
   def __init__(self, scenario='blankworld.xml'):
     # compatibility
-    self.version = '0.7.X'
+    self.version = '0.1'
     self.OS = {}
     
     # Initialize all sorts of variables
@@ -644,6 +644,12 @@ class sandbox:
     # Get the XML string for it.
     out = self.ToXML()
     
+    with open(current,'w') as cf:
+      cf.write(out)
+      
+    with open(archive,'w') as af:
+      af.write(out)
+    
     
   def PrePickle(self):
     # Disconnect Map
@@ -754,7 +760,7 @@ class sandbox:
     try:
       os.mkdir(entity['folder'])
     except:
-      print "failure to create folder for %s"%(entity['folder'])   
+      print 'failure to create folder for %s'%(entity['folder'])   
       
 
   def LoadFromFile(self, filename):
@@ -831,7 +837,7 @@ class sandbox:
         if os.access(self.map.infrastructurefile,os.F_OK):
           self.network.LoadFromXML(sandboXML(read=self.map.infrastructurefile))
         else:
-          raise "DefaultInfrastructureNotFound"
+          raise 'DefaultInfrastructureNotFound'
         
       for n in doc.Get(inf, 'network', True):
         # Case of import network nodes
@@ -850,7 +856,7 @@ class sandbox:
       if os.access(self.map.infrastructurefile,os.F_OK):
         self.network.LoadFromXML(sandboXML(read=self.map.infrastructurefile))
       else:
-        raise "DefaultInfrastructureNotFound"
+        raise 'DefaultInfrastructureNotFound'
       
     # Load sides and OOB
     for side in doc.Get(scenario, 'side', True):
@@ -878,32 +884,34 @@ class sandbox:
     
     # OOB 
     oob = doc.Get(node,'OOB')
-    for unit in doc.Get(oob,'unit', True):
-      # Add Side information
-      doc.AddField('side', doc.Get(node,'name'), unit)
-      # Build unit from template
-      x = sandbox_entity(sim=self,template=doc.Get(unit,'template'))
-
-      # Define location
-      loc = doc.Get(unit, 'location')
-      if loc:
-        # Recognize the type
-        nodetype = doc.Get(loc, 'type')
-        if nodetype == 'named_location':
-          # Get the coordinate from the network
-          nd = self.network.GetNode(doc.Get(loc))
+    # Make sure that there is a OOB node in the side node
+    if oob != '':
+      for unit in doc.Get(oob,'unit', True):
+        # Add Side information
+        doc.AddField('side', doc.Get(node,'name'), unit)
+        # Build unit from template
+        x = sandbox_entity(sim=self,template=doc.Get(unit,'template'))
+  
+        # Define location
+        loc = doc.Get(unit, 'location')
+        if loc:
+          # Recognize the type
+          nodetype = doc.Get(loc, 'type')
+          if nodetype == 'named_location':
+            # Get the coordinate from the network
+            nd = self.network.GetNode(doc.Get(loc))
+            
+            # Get the coordinate from the node
+            coord = nd.Coordinates()
+          else:
+            # Coordinates
+            coord = doc.Get(loc)
           
-          # Get the coordinate from the node
-          coord = nd.Coordinates()
-        else:
-          # Coordinates
-          coord = doc.Get(loc)
-        
-        # convert to a position vector
-        x.SetPosition(self.map.MGRS.AsVect(coord))
-
-      # Add to world
-      self.AddEntity(x)
+          # convert to a position vector
+          x.SetPosition(self.map.MGRS.AsVect(coord))
+  
+        # Add to world
+        self.AddEntity(x)
       
   def ToXML(self):
     '''! Return a XML version of the simulator
@@ -930,7 +938,25 @@ class sandbox:
       doc.AddNode(imprt, infra)
       doc.AddNode(infra, doc.root)
     
-    # OOB
+    # sides
+    for side_name in self.sides.keys():
+      # Create side node and add a few pieces of information
+      side = doc.NewNode('side')
+      doc.AddField('name',side_name,side)
+      doc.AddField('color',self.sides[side_name],side,type='RGB')
+      # Write the OOB
+      oob = doc.NewNode('OOB')
+      for unit in self.GetOOB(color=side_name):
+        # Create a link in the Scenario definition
+        unode = doc.NewNode('unit')
+        doc.SetAttribute('import', unit.GetName(),unode)
+        doc.AddNode(unode,oob)
+        # Triggers the writing of the unit's state
+      doc.AddNode(oob, side)
+      
+      # Add to the main document
+      doc.AddNode(side, doc.root)
+      
     
     
     return str(doc)
@@ -968,14 +994,14 @@ class SandboxMain(unittest.TestCase):
       
   def testLoadSpecificScenarioFile(self):
     try:
-      self.box = sandbox("testscenario.xml")
+      self.box = sandbox('testscenario.xml')
       self.assertTrue(True)
     except:
       self.assertTrue(False)
     
     
     
-if __name__ == "__main__":
+if __name__ == '__main__':
     # suite
     testsuite = []
 

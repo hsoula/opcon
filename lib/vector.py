@@ -77,7 +77,7 @@ class vect_3D:
     return not dist <= 0.0000001
   
   def __str__(self):
-    return "vect_3D( %f, %f, %f )"%(self.x,self.y,self.z)
+    return 'vect_3D( %f, %f, %f )'%(self.x,self.y,self.z)
     
   def length(self):
     '''
@@ -164,7 +164,7 @@ class vect_5D(vect_3D):
     self.rate = move
     
   def __str__(self):
-    return "vect_5D( %f, %f, %f, course= %f, rate= %f )"%(self.x,self.y,self.z,self.course, self.rate)
+    return 'vect_5D( %f, %f, %f, course= %f, rate= %f )'%(self.x,self.y,self.z,self.course, self.rate)
   def asBearing(self, mult = 1.0):
     return [self.course,self.rate*mult]
 

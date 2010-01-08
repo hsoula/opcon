@@ -16,8 +16,8 @@ class sandbox_log:
     '''Must reconstitute from file in the low memory version!! TODO'''
     out = ''
     for i in self.lines:
-      out = out + i + "\n"
-    return out + "\n"
+      out = out + i + '\n'
+    return out + '\n'
   
   def fileUpdate(self, fh):
     '''Wite to file handle the leftover part of the logs'''

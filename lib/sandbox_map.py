@@ -1040,7 +1040,7 @@ class sandbox_map:
     indexofmin = samples.index(mid)
     if indexofmin == 0 or indexofmin == len(samples)-1:
       # Should be obsolete
-      print "midpoint matches ends"
+      print 'midpoint matches ends'
       print fr
       if len(samples) > 4:
         indexofmin = int(len(samples)/2.0)

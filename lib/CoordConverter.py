@@ -256,30 +256,30 @@ class CoordTranslator:
         #  id, Ellipsoid name, Equatorial Radius, square of eccentricity	
         # first once is a placeholder only, To allow array indices to match id numbers
         self._ellipsoid = [
-	[ -1, "Placeholder", 0, 0],
-	[ 1, "Airy", 6377563, 0.00667054],
-	[ 2, "Australian National", 6378160, 0.006694542],
-	[ 3, "Bessel 1841", 6377397, 0.006674372],
-	[ 4, "Bessel 1841 (Nambia] ", 6377484, 0.006674372],
-	[ 5, "Clarke 1866", 6378206, 0.006768658],
-	[ 6, "Clarke 1880", 6378249, 0.006803511],
-	[ 7, "Everest", 6377276, 0.006637847],
-	[ 8, "Fischer 1960 (Mercury] ", 6378166, 0.006693422],
-	[ 9, "Fischer 1968", 6378150, 0.006693422],
-	[ 10, "GRS 1967", 6378160, 0.006694605],
-	[ 11, "GRS 1980", 6378137, 0.00669438],
-	[ 12, "Helmert 1906", 6378200, 0.006693422],
-	[ 13, "Hough", 6378270, 0.00672267],
-	[ 14, "International", 6378388, 0.00672267],
-	[ 15, "Krassovsky", 6378245, 0.006693422],
-	[ 16, "Modified Airy", 6377340, 0.00667054],
-	[ 17, "Modified Everest", 6377304, 0.006637847],
-	[ 18, "Modified Fischer 1960", 6378155, 0.006693422],
-	[ 19, "South American 1969", 6378160, 0.006694542],
-	[ 20, "WGS 60", 6378165, 0.006693422],
-	[ 21, "WGS 66", 6378145, 0.006694542],
-	[ 22, "WGS-72", 6378135, 0.006694318],
-	[ 23, "WGS-84", 6378137, 0.00669438]]
+	[ -1, 'Placeholder', 0, 0],
+	[ 1, 'Airy', 6377563, 0.00667054],
+	[ 2, 'Australian National', 6378160, 0.006694542],
+	[ 3, 'Bessel 1841', 6377397, 0.006674372],
+	[ 4, 'Bessel 1841 (Nambia] ', 6377484, 0.006674372],
+	[ 5, 'Clarke 1866', 6378206, 0.006768658],
+	[ 6, 'Clarke 1880', 6378249, 0.006803511],
+	[ 7, 'Everest', 6377276, 0.006637847],
+	[ 8, 'Fischer 1960 (Mercury] ', 6378166, 0.006693422],
+	[ 9, 'Fischer 1968', 6378150, 0.006693422],
+	[ 10, 'GRS 1967', 6378160, 0.006694605],
+	[ 11, 'GRS 1980', 6378137, 0.00669438],
+	[ 12, 'Helmert 1906', 6378200, 0.006693422],
+	[ 13, 'Hough', 6378270, 0.00672267],
+	[ 14, 'International', 6378388, 0.00672267],
+	[ 15, 'Krassovsky', 6378245, 0.006693422],
+	[ 16, 'Modified Airy', 6377340, 0.00667054],
+	[ 17, 'Modified Everest', 6377304, 0.006637847],
+	[ 18, 'Modified Fischer 1960', 6378155, 0.006693422],
+	[ 19, 'South American 1969', 6378160, 0.006694542],
+	[ 20, 'WGS 60', 6378165, 0.006693422],
+	[ 21, 'WGS 66', 6378145, 0.006694542],
+	[ 22, 'WGS-72', 6378135, 0.006694318],
+	[ 23, 'WGS-84', 6378137, 0.00669438]]
         
         # Obscure constant that need to be computed only once
         self.a = self._ellipsoid[self.datum][self._EquatorialRadius]
@@ -287,7 +287,7 @@ class CoordTranslator:
         self.k0 = 0.9996
         self.eccPrimeSquared = (self.eccSquared)/(1-self.eccSquared)
         
-        self.re_mgrs = re.compile("[0-9]{1,2}\s?[C-T]\s?[A-Z][A-V]\s?[0-9]{2,10}")
+        self.re_mgrs = re.compile('[0-9]{1,2}\s?[C-T]\s?[A-Z][A-V]\s?[0-9]{2,10}')
         self.re_utm = re.compile('[0-9]{1,2}\s?[C-T]\s?[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?\s?[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?')
         self.re_degminosec = re.compile('[+-]?\d+[d]?\s?\d+[\']?(\s?\d+[\"]?)?') # Only One deg min sec group (secs are optional)
         self.re_degminsec = re.compile('[+-]?\d+[d]?\s?\d+[\']?\s?\d+[\"]?') # Only One deg min sec group (secs are not optional)

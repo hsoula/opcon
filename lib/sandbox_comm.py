@@ -385,7 +385,7 @@ class OPORD(sandbox_COMM):
     
     # Free text General
     if self['EXECUTION']['INTENTS']:
-      out += html.Tag('H3',"a. Commander's intent") + html.Tag('p', self['EXECUTION']['INTENTS'])
+      out += html.Tag('H3','a. Commander\'s intent') + html.Tag('p', self['EXECUTION']['INTENTS'])
       addExecution = True
       
     # Concepts

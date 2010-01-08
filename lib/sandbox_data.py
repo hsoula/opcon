@@ -2,7 +2,7 @@
    OPCON sandbox data server.
    
 '''
-if __name__ == "__main__":
+if __name__ == '__main__':
     import syspathlib
     import os
     os.chdir('..')
@@ -115,7 +115,7 @@ class sandbox_data_server:
         if template_name in self.constructor_map:
             return self.constructor_map[template_name]()
         else:
-            raise SandboxException("Data Server Instanciation Failure", template_name)
+            raise SandboxException('Data Server Instanciation Failure', template_name)
         
         
 # ##################################################################
@@ -169,7 +169,7 @@ class SandboxDataServer(unittest.TestCase):
         self.server.FetchData(x,'movement','air')
         self.assertEqual(x['mode'],'air')        
         
-if __name__ == "__main__":    
+if __name__ == '__main__':    
     # suite
     testsuite = []
 

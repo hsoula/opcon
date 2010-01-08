@@ -196,10 +196,17 @@ class sandboXML:
         return out
 
     # OUTPUT methods
+    def write_RGB(self, name, rgb):
+        out = self.NewNode(name)
+        self.SetAttribute('type', 'RGB', out)
+        x = '%d,%d,%d'%(tuple(rgb))
+        out.appendChild(self.doc.createTextNode(x))
+        return out
     def write_vector_5D(self, name, v):
         '''! \brief Write a vect_5D as a node.
         '''
         out = self.NewNode(name, 'vect_5D')
+        self.SetAttribute('type', 'vector_5D', out)
         self.AddField('x', v.x, out)
         self.AddField('y', v.y, out)
         self.AddField('z', v.z, out)
@@ -220,23 +227,24 @@ class sandboXML:
 
     # Tree manip
     def AddField(self, tagname, value, parent, type='', name='', sameas=''):
-        temp = self.doc.createElement(tagname)
-        if type:
-            self.SetAttribute('type',type,temp)
+        # Explicit XML writer
+        if hasattr(self, 'write_' + type):
+            _fn = getattr(self, 'write_' + type)
+            temp = _fn(tagname, value)
+        # Implicit XML render
+        elif hasattr(value, 'toXML'):
+            temp = value.toXML(self, tagname)
+        # Treat as string instead.
+        else:
+            temp = self.doc.createElement(tagname)
+            temp.appendChild(self.doc.createTextNode(str(value)))
+        # Overriding attributes.
         if name:
             self.SetAttribute('name', name, temp)
         if sameas:
             self.SetAttribute('sameas', sameas, temp)
-        # Explicit XML writer
-        if hasattr(self, 'write_' + type):
-            _fn = getattr(self, 'write_' + type)
-            temp.appendChild(_fn(tagname, value))
-        # Implicit XML render
-        elif hasattr(value, 'toXML'):
-            temp.appendChild(value.toXML(self, tagname))
-        # Treat as string instead.
-        else:
-            temp.appendChild(self.doc.createTextNode(str(value)))
+            
+        # Grafting here
         parent.appendChild(temp)
     
     def DateTime(self, tagname, dt):
@@ -244,7 +252,8 @@ class sandboXML:
         '''
         n = self.doc.createElement(tagname)
         n.setAttribute('type','datetime')
-        n.appendChild(self.doc.createTextNode('%d/%d/%d %d:%d:%d'%(dt.day,dt.month,dt.year,dt.hour,dt.minute,dt.second)))
+        miltime = '%s%s'%(str(dt.hour).zfill(2),str(dt.minute).zfill(2))
+        n.appendChild(self.doc.createTextNode('%d/%d/%d %s'%(dt.day,dt.month,dt.year,miltime)))
         return n
         
         
@@ -299,7 +308,7 @@ class sandboXML:
         return out
 
     
-if __name__ == "__main__":
+if __name__ == '__main__':
     a = sandboXML(rootname='world')
     a.AttributeDictionary({'sim':'sandbox','version':'0.7.1'})
     print a
