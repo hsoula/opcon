@@ -817,6 +817,15 @@ class sandbox:
     # Infrastructure to load
     inf = doc.Get(scenario,'infrastructures')
     if inf:
+      self.serializeinfrastructure = True
+      # Make a Copy of this node to the savegame
+      if not os.path.exists(self.OS['savegame'],'infrastructure.xml'):
+        fout = open(os.path.exists(self.OS['savegame'],'infrastructure.xml'),'w')
+        fout.write('<?xml version="1.0"?>\n')
+        fout.write(doc.WriteNode(inf))
+        fout.close()
+      
+      # Read the data
       if doc.Get(inf,'default') == 1:
         # Load the map definition infrastructure
         if os.access(self.map.infrastructurefile,os.F_OK):
@@ -899,21 +908,29 @@ class sandbox:
   def ToXML(self):
     '''! Return a XML version of the simulator
     '''
-    doc = sandboXML('world')
+    # House keeping data
+    doc = sandboXML('scenario')
     doc.root.setAttribute('simulator','sandbox')
     doc.root.setAttribute('version', self.version)
 
-    # OS
-    OS = doc.NewNode('OS')
-    for i in self.OS:
-      doc.AddField(i, self.OS[i],OS)
-    doc.AddNode(OS)
+    # Identifiers
+    doc.AddField('name',self.OS['gametag'],doc.root)
     
     # Map
     doc.AddField('map',self.map.mapenv, doc.root)
     
     # Clock
     doc.AddNode(doc.DateTime('clock',self.clock))
+    
+    # Infrastructure
+    if hasattr(self, 'serializeinfrastructure'):
+      infra = doc.NewNode('infrastructures')
+      imprt = doc.NewNode('network')
+      doc.SetAttribute('import', 'infrastructure.xml',imprt)
+      doc.AddNode(imprt, infra)
+      doc.AddNode(infra, doc.root)
+    
+    # OOB
     
     
     return str(doc)
