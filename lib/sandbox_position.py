@@ -13,10 +13,7 @@ class position_descriptor(vect_5D):
     Regardless, point manips can still be done on the positition descriptor as they get applied to he centroid of the polygon instead.
 
     '''
-    def __init__(self, X=0.0, Y=0.0, footprint = None, translator=None):
-        # The coordinate translator
-        self.MGRS = translator
-
+    def __init__(self, X=0.0, Y=0.0, footprint = None):
         # the footprint
         self.footprint = footprint
         if type(self.footprint) == type([]):
@@ -124,24 +121,10 @@ class position_descriptor(vect_5D):
     def fromXML(self, doc, node):
         # Not in use because it needs to be handled at the sim level (to solve for coordinates).
         # Location node
-        loc = doc.Get(node, 'location')
-        if loc != '':
-            self.fromXMLlocation(doc, loc)
+        pass
             
-    def fromXMLlocation(self, doc, node):
+    def fromXMLocation(self, doc, node):
         ''' Load in the location node only (useful as it is an option in scenario deifinition.
         '''
-        # Full PD node
-        nl = doc.Get(node, 'named_location')
-        if nl:
-            # TODO, yet to be supported feature
-            pass
-        
-        # Coordinates
-        cd = doc.Get(node, 'coordinates')
-        if cd and self.sim and self.sim.map:
-            # Create a position descriptor from scratch
-            vec = self.translator.AsVect(cd)
-            self.x = vec.x
-            self.y = vec.y
+        pass
         

@@ -911,24 +911,6 @@ class sandbox:
     
         # Read in the state data
         x.fromXML(doc, unit)
-        
-        # Define location
-        loc = doc.Get(unit, 'location')
-        if loc:
-          # Recognize the type
-          nodetype = doc.Get(loc, 'type')
-          if nodetype == 'named_location':
-            # Get the coordinate from the network
-            nd = self.network.GetNode(doc.Get(loc))
-            
-            # Get the coordinate from the node
-            coord = nd.Coordinates()
-          else:
-            # Coordinates
-            coord = doc.Get(loc)
-          
-          # convert to a position vector
-          x.SetPosition(self.map.MGRS.AsVect(coord))
   
         # Add to world
         self.AddEntity(x)

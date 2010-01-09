@@ -881,16 +881,25 @@ class sandbox_entity(dict):
     self['readiness'] = doc.SafeGet(node, 'readiness', self['readiness'])
     
     # Position descriptor ###################################
-    # Create a PD instance which is aware of the MGRS translator
-    self['position'] = position_descriptor(translator=self.sim.map.MGRS)
-    
     # Fetch the node, either a pos_desc or location
-    pnode = doc.Get(node, 'position_descriptor')
-    if pnode != '':
-      self['position'].fromXML(doc, pnode)
-    # For convenience, a location node can be used in the nude...
-    elif doc.Get(node, 'location') != '':
-      self['position'].fromXMLLocation(doc, doc.Get(node, 'location'))
+    ploc = doc.Get(node, 'location')
+    if ploc != '':
+      # Check for type of location
+      loctype = doc.Get(ploc, 'type')
+      if loctype == '':
+        raise SandboxException('NoTypedLocation',self.GetName())
+      if loctype == 'coordinates':
+        # Get the content of the node
+        coord = doc.Get(ploc)
+      elif loctype == 'named_location':
+        # Get the coordinate from the network
+        nd = self.sim.network.GetNode(doc.Get(ploc))
+        # Get the coordinate from the node
+        coord = nd.Coordinates()
+      else:
+        raise SandboxException('UnsupportedLocationType',[loctype,self.GetName()])
+      # convert to a position vector
+      self.SetPosition(self.sim.map.MGRS.AsVect(coord))
     
     # Systems #####################################################
     models = doc.Get(node,'models')
