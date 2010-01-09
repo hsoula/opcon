@@ -1,5 +1,5 @@
 #summary One-sentence summary of this page.
-#labels Featured,Phase-Design,designer-docs,XML
+#labels XML,Phase-Design,designer-docs
 
 = Defining Scenario =
 Scenarios are identical to savegame files excepts that they usually hand-prepared. A complete sample of a designed scenario can be found [https://code.google.com/p/opcon/source/browse/trunk/scenarios/fulltemplate.xml here].
