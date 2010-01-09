@@ -89,6 +89,19 @@ class system_movement(system_base.system_base):
         return friction
     #
     # Model elements ###########################################################
+    def GetFriction(self, mode, terrain):
+        ''' Return the correct friction. Reverts to base mode if mode isn't defined
+            and unrestricted for terrain.
+        '''
+        # base mode?
+        if not mode in self.map_frictions:
+            mode = ''
+        # use unrestricted if not found, should we raise an exception?
+        if not terrain in self.map_frictions[mode]:
+            terrain = 'unrestricted'
+            
+        return self.map_frictions[mode][terrain]
+            
     def GetModes(self):
         ''' Returns a list of modes for this entity (and vehicles'''
         out = [self['mode']]
@@ -122,9 +135,9 @@ class system_movement(system_base.system_base):
         # Try frictions for each mode and keep the worst
         out = 1.0
         for mode in self.GetModes():
-            if self.map_frictions[mode].has_key(terrain):
-                if self.map_frictions[mode][terrain] < out:
-                    out = self.map_frictions[mode][terrain]
+            x = self.GetFriction(mode, terrain)
+            if x < out:
+                out = x
         return out
         
     def friction_dict(self):

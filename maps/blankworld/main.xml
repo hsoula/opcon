@@ -22,6 +22,6 @@
 			<terrain name="severely restricted">1.0</terrain>
 			<terrain name="unrestricted">1.0</terrain>
 			<terrain name="impassable">1.0</terrain>
-</mode>
-</friction>
+		</mode>
+	</friction>
 </map>

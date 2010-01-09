@@ -149,7 +149,9 @@ class FlatLand(CoordTranslator):
         if internal:
             return [ zone, subzone, XY.x, XY.y ]
         else:
-            return self.ValidateUTM(self.AsUTM([ zone, subzone, XY.x, XY.y ],internal = True))
+            # Get UTM
+            out = self.ValidateUTM(self.AsUTM([ zone, subzone, XY.x, XY.y ],internal = True))
+            return self.AsUTM(out)
         
     
     def ValidateUTM(self, utm):

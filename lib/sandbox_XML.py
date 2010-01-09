@@ -304,7 +304,7 @@ class sandboXML:
         for i in node.childNodes:
             out += self.WriteNode(i,indent+1)
         
-        out += '</%s>\n'%(node.tagName)
+        out += '\t'*indent + '</%s>\n'%(node.tagName)
         return out
 
     
