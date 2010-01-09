@@ -883,13 +883,14 @@ class sandbox_entity(dict):
     # Position descriptor ###################################
     # Create a PD instance which is aware of the MGRS translator
     self['position'] = position_descriptor(translator=self.sim.map.MGRS)
+    
     # Fetch the node, either a pos_desc or location
     pnode = doc.Get(node, 'position_descriptor')
     if pnode != '':
       self['position'].fromXML(doc, pnode)
     # For convenience, a location node can be used in the nude...
     elif doc.Get(node, 'location') != '':
-      self['position'].fromXML(doc, doc.Get(node, 'location'))
+      self['position'].fromXMLLocation(doc, doc.Get(node, 'location'))
     
     # Systems #####################################################
     models = doc.Get(node,'models')
