@@ -13,11 +13,15 @@ class position_descriptor(vect_5D):
     Regardless, point manips can still be done on the positition descriptor as they get applied to he centroid of the polygon instead.
     
     '''
-    def __init__(self, X=0.0, Y=0.0, footprint = None):
+    def __init__(self, X=0.0, Y=0.0, footprint = None, translator=None):
+        # The coordinate translator
+        self.MGRS = translator
+        
         # the footprint
         self.footprint = footprint
         if type(self.footprint) == type([]):
             self.footprint = sandbox_geometry.base_polygon(self.footprint)
+            
         if hasattr(X,'x'):
             # case where a vector is provided as first argument
             vect_5D.__init__(self, X.x, X.y)
@@ -117,9 +121,32 @@ class position_descriptor(vect_5D):
         trans = vect_5D(course=self.course,move=self.rate).Project()
         self.footprint.Translate(trans)
         
-    def toXML(self, doc, name):
-        pass
+    def toXML(self, doc, node, coord_translator):
+        '''Unusual interface that doesn't create a node, but add to an existing one.'''
+        # Case of location defined as a coordinate
+        mycoord = coord_translator.XYtoUTM(self)
+        nd = doc.NewNode('location')
+        doc.SetAttribute('type', 'coordinates', nd)
+        nd.appendChild(doc.doc.createTextNode(mycoord))
+        # Add location to position descriptor
+        doc.AddNode(nd, node)
+        
+        # Altitude TODO
+        
+        # FOOTPRINT TODO
     
     def fromXML(self, doc, node):
-        # Not in use because it needs to be handled at the sim level (to solve for coordinates).
-        pass 
+      # Not in use because it needs to be handled at the sim level (to solve for coordinates).
+      # Special case where the node is a (naked) location node.
+        
+      # Full PD node
+      nl = doc.Get(node, 'named_location')
+      if nl:
+        # TODO, yet to be supported feature
+        pass
+      # Coordinates
+      cd = doc.Get(node, 'coordinates')
+      if cd and self.sim and self.sim.map:
+        # Create a position descriptor from scratch
+        self['position'] = position_descriptor(self.sim.map.MGRS.AsVect(cd))
+      # Footprint TODO ticket#17

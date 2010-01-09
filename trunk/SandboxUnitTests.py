@@ -131,7 +131,7 @@ testsuite.append(unittest.TestLoader().loadTestsFromModule(C4I))
 
 # Overall testing of tasks
 import SandboxUnitTestTasking
-testsuite.append(unittest.TestLoader().loadTestsFromModule(SandboxUnitTestTasking))
+#testsuite.append(unittest.TestLoader().loadTestsFromModule(SandboxUnitTestTasking))
 
 import sandbox_TOEM
 testsuite.append(unittest.TestLoader().loadTestsFromModule(sandbox_TOEM))

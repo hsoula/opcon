@@ -1018,14 +1018,6 @@ class SandboxMain(unittest.TestCase):
       self.assertTrue(True)
     except:
       self.assertTrue(False)
-      
-  def testLoadSpecificScenarioFile(self):
-    try:
-      self.box = sandbox('testscenario.xml')
-      self.assertTrue(True)
-    except:
-      self.assertTrue(False)
-    
     
     
 if __name__ == '__main__':

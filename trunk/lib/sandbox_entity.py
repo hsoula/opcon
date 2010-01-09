@@ -169,7 +169,7 @@ class sandbox_entity(dict):
     # All else fail  
     raise AttributeError, name
   
-  def GetName(self, filenamesafe="False"):
+  def GetName(self, filenamesafe=False):
     ''' Returns the unit's name. '''
     if filenamesafe:
       return self['name'].replace('/','.')
@@ -836,7 +836,35 @@ class sandbox_entity(dict):
     # Template information
     if self.template:
       doc.SetAttribute('template', self.template, out)
+      # Identity and Echelons
+      doc.AddField('identity', self.GetName(), out)
+      doc.AddField('size', self['size'], out)
+      doc.AddField('command_echelon', self['command_echelon'], out)
+      
+      # deployment status
+      doc.AddField('stance', self['stance'], out)
+      doc.AddField('readiness', self['readiness'],out)
+      doc.AddField('dismounted', int(self['dismounted']),out)
+      
+      # Systems
     
+      # Positions
+      pd = doc.NewNode('position_descriptor')
+      self['position'].toXML(doc, pd, self.sim.map.MGRS)
+      
+      doc.AddNode(pd, out)
+      
+      # Systems and components
+      
+      # Human Factors
+      node = doc.NewNode('human_factors')
+      doc.SetAttribute('morale',self['morale'], node)
+      doc.SetAttribute('fatigue',self['fatigue'], node)
+      doc.SetAttribute('suppression',self['suppression'], node)
+      doc.AddNode(node, out)
+      
+      # Chain of command
+      
     return out
   
   def fromXML(self, doc, node):
@@ -846,46 +874,43 @@ class sandbox_entity(dict):
     self['side'] = doc.SafeGet(node, 'side', self['side'])
     self['size'] = doc.SafeGet(node, 'size', self['size'])
     self['command_echelon'] = doc.SafeGet(node, 'command_echelon', self['command_echelon'])
-    self['readiness'] = doc.SafeGet(node, 'readiness', self['readiness'])
     
     # Deploment Status
     self['stance'] = doc.SafeGet(node, 'stance', self['stance'])
     self['dismounted'] = bool(doc.SafeGet(node, 'dismounted', self['dismounted']))
+    self['readiness'] = doc.SafeGet(node, 'readiness', self['readiness'])
     
     # Position descriptor ###################################
+    # Create a PD instance which is aware of the MGRS translator
+    self['position'] = position_descriptor(translator=self.sim.map.MGRS)
+    # Fetch the node, either a pos_desc or location
     pnode = doc.Get(node, 'position_descriptor')
     if pnode != '':
-      # There is a node, look for a named location
-      nl = doc.Get(pnode, 'named_location')
-      if nl:
-        # TODO, yet to be supported feature
-        pass
-      # Coordinates
-      cd = doc.Get(pnode, 'coordinates')
-      if cd and self.sim and self.sim.map:
-        # Create a position descriptor from scratch
-        self['position'] = position_descriptor(self.sim.map.MGRS.AsVect(cd))
-      # Footprint TODO ticket#17
+      self['position'].fromXML(doc, pnode)
+    # For convenience, a location node can be used in the nude...
+    elif doc.Get(node, 'location') != '':
+      self['position'].fromXML(doc, doc.Get(node, 'location'))
     
     # Systems #####################################################
     models = doc.Get(node,'models')
-    for i in ['C4I','combat','intelligence','movement','logistics']:
-      # Get the model node
-      x = doc.Get(models,i)
-      
-      # No model specified
-      if x == '':
-        self.sim.data.FetchData(self[i],i,'base')
-      elif doc.Get(x,'template') in ['', 'base']:
-        # Load base model
-        self.sim.data.FetchData(self[i],i,'base')
-      else:
-        # Load correct template
-        self.sim.data.FetchData(self[i],i,doc.Get(x,'template'))
+    if models != '':
+      for i in ['C4I','combat','intelligence','movement','logistics']:
+        # Get the model node
+        x = doc.Get(models,i)
         
-      # Read the node itself
-      if x:
-        self[i].fromXML(doc,x)
+        # No model specified
+        if x == '':
+          self.sim.data.FetchData(self[i],i,'base')
+        elif doc.Get(x,'template') in ['', 'base']:
+          # Load base model
+          self.sim.data.FetchData(self[i],i,'base')
+        else:
+          # Load correct template
+          self.sim.data.FetchData(self[i],i,doc.Get(x,'template'))
+          
+        # Read the node itself
+        if x:
+          self[i].fromXML(doc,x)
       
     # Systems and components #######################################
     x = doc.Get(node, 'TOE')
