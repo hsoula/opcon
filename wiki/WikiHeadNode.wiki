@@ -1,6 +1,8 @@
 #summary Head Node of the Wiki
 #labels Featured
 
+If you want a quick gist of the project, please look at the [BasicPrinciple principle] page, or browse a list of [features] for this project.
+
 = Guides =
   * [DesignerGuide] - for scenario designer and umpires
   * [PlayerGuide] - for players and observers.
