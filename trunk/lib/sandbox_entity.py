@@ -849,10 +849,9 @@ class sandbox_entity(dict):
       # Systems
     
       # Positions
-      pd = doc.NewNode('position_descriptor')
-      self['position'].toXML(doc, pd, self.sim.map.MGRS)
-      
-      doc.AddNode(pd, out)
+      # For now, only returns as coordinates
+      current_coordinates = self.sim.map.MGRS.XYtoUTM(self['position'])
+      doc.AddField('location', current_coordinates, out, 'coordinates')
       
       # Systems and components
       

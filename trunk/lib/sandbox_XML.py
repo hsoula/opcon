@@ -238,6 +238,8 @@ class sandboXML:
         else:
             temp = self.doc.createElement(tagname)
             temp.appendChild(self.doc.createTextNode(str(value)))
+            if type:
+                self.SetAttribute('type', type, temp)
         # Overriding attributes.
         if name:
             self.SetAttribute('name', name, temp)
