@@ -58,7 +58,8 @@ class sandbox_contact(dict):
   
   def fromXML(self, doc, node):
     pass
-  
+  def toXML(self, doc):
+    pass
   def DefineFields(self):
     ''' 
        fields according to FM 101-5-1 of the US army.
@@ -414,7 +415,6 @@ class sandbox_contact(dict):
   System to model situational awareness and detection routines.
 '''
 class system_intelligence(system_base.system_base):
-  sensortypes = ['visual']
   def __init__(self): 
     system_base.system_base.__init__(self)
     # counter-intelligence
