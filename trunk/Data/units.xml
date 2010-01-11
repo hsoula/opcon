@@ -4,8 +4,8 @@
 		<unit name="LOGPAC" stance="deployed" dismounted="False">
 			<TOE>
 				<category>LOGPAC</category>
-				<personel template="base" count="0"/>
-				<vehicle  template="base" count="0"/>
+				<personel template="base" authorized="0"/>
+				<vehicle  template="base" authorized="0"/>
 			</TOE>
 			<models>
 				<C4I template="base"/>
@@ -24,7 +24,7 @@
 			<size>Team</size>
 			<TOE>
 				<category>inf</category>
-				<personel template="US-Infantry-2009" count="4"/>
+				<personel template="US-Infantry-2009" authorized="4"/>
 			</TOE>
 			<models>
 				<movement template="leg"/>
@@ -44,9 +44,9 @@
 			<!-- Definition of the TOE type, and a description of its personel and vehicles -->
 			<TOE>
 				<category>scout</category>
-				<personel template="US-Infantry-2009" count="6"/>
-				<vehicle template="HMMWV + .50cal BMG" count="1"/>
-				<vehicle template="HMMWV + Mk-19 40mm MG" count="1"/>
+				<personel template="US-Infantry-2009" authorized="6"/>
+				<vehicle template="HMMWV + .50cal BMG" authorized="1"/>
+				<vehicle template="HMMWV + Mk-19 40mm MG" authorized="1"/>
 			</TOE>
 			<!-- Model plugins/parameters to use to handle C4I, combat, movement, logistics and intelligence -->
 			<models>
@@ -71,9 +71,9 @@
 			<!-- Definition of the TOE type, and a description of its personel and vehicles -->
 			<TOE>
 				<category>scout</category>
-				<personel template="US-Infantry-2009" count="6"/>
-				<vehicle template="HMMWV + .50cal BMG" count="1"/>
-				<vehicle template="HMMWV + Mk-19 40mm MG" count="1"/>
+				<personel template="US-Infantry-2009" authorized="6"/>
+				<vehicle template="HMMWV + .50cal BMG" authorized="1"/>
+				<vehicle template="HMMWV + Mk-19 40mm MG" authorized="1"/>
 			</TOE>
 			<!-- Model plugins/parameters to use to handle C4I, combat, movement, logistics and intelligence -->
 			<models>
@@ -106,8 +106,8 @@
 			<!-- Definition of the TOE type, and a description of its personel and vehicles -->
 			<TOE>
 				<category>inf</category>
-				<personel template="US-Infantry-2009" count="4"/>
-				<vehicle template="civilian car" count="0"/>
+				<personel template="US-Infantry-2009" authorized="4"/>
+				<vehicle template="civilian car" authorized="0"/>
 			</TOE>
 			<!-- Model plugins/parameters to use to handle C4I, combat, movement, logistics and intelligence -->
 			<models>

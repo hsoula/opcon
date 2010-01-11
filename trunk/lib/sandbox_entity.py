@@ -846,7 +846,8 @@ class sandbox_entity(dict):
       doc.AddField('readiness', self['readiness'],out)
       doc.AddField('dismounted', int(self['dismounted']),out)
       
-      # Systems
+      # Models
+      # Models are not modifiable at the moment and thus will not be written to file.
     
       # Positions
       # For now, only returns as coordinates
@@ -854,6 +855,26 @@ class sandbox_entity(dict):
       doc.AddField('location', current_coordinates, out, 'coordinates')
       
       # Systems and components
+      # Create a TOE node
+      toe = doc.NewNode('TOE')
+      doc.AddNode(toe, out)
+      # Add the category
+      doc.AddField('category', self['TOE'], toe)
+      # Write the personel and vehicles
+      for p in self.personel.keys():
+        x = doc.NewNode('personel')
+        doc.SetAttribute('template', p, x)
+        doc.SetAttribute('authorized', self.personel[p]['authorized'],x)
+        if self.personel[p]['authorized'] != self.personel[p]['count']:
+          doc.SetAttribute('count', self.personel[p]['count'],x)
+        doc.AddNode(x, toe)
+      for p in self.vehicle.keys():
+        x = doc.NewNode('vehicle')
+        doc.SetAttribute('template', p, x)
+        doc.SetAttribute('authorized', self.vehicle[p]['authorized'],x)
+        if self.vehicle[p]['authorized'] != self.vehicle[p]['count']:
+          doc.SetAttribute('count', self.vehicle[p]['count'],x)
+        doc.AddNode(x, toe)
       
       # Human Factors
       node = doc.NewNode('human_factors')
@@ -932,15 +953,21 @@ class sandbox_entity(dict):
       z = doc.Get(x,'personel', True)
       for it in z:
         kit = doc.Get(it,'template')
+        auth = doc.Get(it,'authorized')
         count = doc.Get(it,'count')
-        self.personel[kit] = {'kit':self.sim.data.Get('personel',kit),'count':count}
+        if count == '':
+          count = auth
+        self.personel[kit] = {'kit':self.sim.data.Get('personel',kit),'count':count, 'authorized':auth}
         
       # vehicle
       z = doc.Get(x,'vehicle', True)
       for it in z:
         kit = doc.Get(it,'template')
+        auth = doc.Get(it,'authorized')
         count = doc.Get(it,'count')
-        self.vehicle[kit] = {'kit':self.sim.data.Get('vehicle',kit),'count':count}      
+        if count == '':
+          count = auth
+        self.vehicle[kit] = {'kit':self.sim.data.Get('vehicle',kit),'count':count,'authorized':auth}      
       self['movement'].SetVehicles(self.vehicle.values())
       
       # Sensors TODO
