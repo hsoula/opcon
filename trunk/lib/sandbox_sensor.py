@@ -45,6 +45,20 @@ class sandbox_sensor:
         return []
     
     # Private methods.
+
+    # New interface
+    def Requires(self):
+        return self.requires
+    
+    def DegradedBy(self):
+        return self.degraded_by
+    
+    def EnhancedBy(self):
+        return self.enhanced_by
+    
+    def ClassifyProb(self, infoitem):
+        '''Returns the probability of classifying an item by this sensor.'''
+        return 'neutral'
     
 class SensorVisual(sandbox_sensor):
     def __init__(self, NAI=None, direct = True):
@@ -249,8 +263,33 @@ class SensorVisual(sandbox_sensor):
         pass
     
 import unittest
+from sandbox_data import sandbox_data_server
 
 class SensorTest(unittest.TestCase):
     def setUp(self):
-        pass
+        self.database = sandbox_data_server()
+        
+    def testLoadVisualSensor(self):
+        x = self.database.GetInstance('sensor', 'visual')
+        self.assertTrue(bool(x))
+    
+    def testLoadLowLightSensor(self):
+        x = self.database.GetInstance('sensor', 'low-light')
+        self.assertTrue(not 'light' in x.Requires())
+    
+    def testGetRequiredVisual(self):
+        x = self.database.GetInstance('sensor', 'visual')
+        self.assertEqual(['LOS','light'],x.Requires())
+    
+    def testGetDegradedLowLight(self):
+        x = self.database.GetInstance('sensor', 'low-light')
+        self.assertTrue('light' in x.DegradedBy())
+    
+    def testGetEnhancedThermal(self):
+        x = self.database.GetInstance('sensor', 'thermal')
+        self.assertTrue('cold_temperature' in x.EnhancedBy())
+        
+    def testClassifyProb(self):
+        x = self.database.GetInstance('sensor', 'ear')
+        self.assertEqual('very unlikely', x.ClassifyProb('location'))
     
