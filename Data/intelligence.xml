@@ -1,23 +1,31 @@
 <?xml version="1.0"?>
 <templates>
 	<models>
-		<!-- Intelligence models -->
+		<!-- A fully defined template -->
 		<intelligence name="base">
-			<signature>
-				<stance name="deployed">0.75</stance>
-				<stance name="transit">0.9</stance>
+			<signature type="visual" level="likely">
+				<!-- Possible Stances are: 
+				     deployed, transit, offense, 
+				     hasty defense, prepared defense, 
+				     service
+				     
+				     Possible activities:
+				     transit, combat, service, idle
+				  -->
+				  <very_likely>combat,transit</very_likely>
+				  <neutral>deployed,hasty defense</neutral>
+				  <unlikely>prepared defense</unlikely>
 			</signature>
-			<sensors>
-				<sensor name="visual"/>
-			</sensors>
+			<signature type="thermal" sameas="visual">
+			<signature type="sound" level="unlikely">
+				<likely>transit</likely>
+				<very_likely>combat</very_likely>
+			</signature>
 		</intelligence>
+		
+		<!-- Static LOGPAC -->
 		<intelligence name="LOGPAC">
-			<!-- Not automatically detectable, but almost. -->
-			<signature> <stance name="deployed">0.95</stance> </signature>
-		</intelligence>		
-		<intelligence name="LOGPAC-concealed">
-			<!-- Not automatically undetectable, but almost. -->
-			<signature> <stance name="deployed">0.05</stance> </signature>
+			<signature type="visual" level="unlikely">
 		</intelligence>
 	</models>
 </templates>

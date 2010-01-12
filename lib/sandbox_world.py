@@ -267,7 +267,7 @@ class sandbox:
     self.OOB.remove(entity)
     for unit in self.OOB:
       # Contacts
-      unit['intelligence'].DeleteContact(entity)
+      unit.DeleteContact(entity)
       # Staff queue
       toremove = []
       for comm in unit['staff queue']:

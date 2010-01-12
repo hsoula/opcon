@@ -457,45 +457,17 @@ class system_intelligence(system_base.system_base):
     # Direct detection through visuals
     if self['sensors'].has_key('visual') and E.Footprint():
       E['sensors'].append(SensorVisual(E.Footprint()))
-  
-  def ContactList(self):
-    '''! \brief Return the complete Contact list
-    '''
-    return self['contacts'].values()
-  
-
-  
-  def Contact(self, unit):
-    '''! \brief Return a contact from the pointer of the unit.
-         \return None if the contact doesn't exist
-    '''
-    if not unit:
-      return None
-    k = unit['side']+unit.GetName()
-    if k in self['contacts'].keys():
-      return self['contacts'][k]
-    return None
       
     
-  def DeleteContact(self, unit):
-    for i in self['contacts']:
-      if self['contacts'][i].unit == unit or self['contacts'][i] == unit:
-        del self['contacts'][i]
-        return
-      
-  def WriteContact(self, cnt):
-    '''
-       Alter the contact list
-    '''
-    if cnt.unit.has_key('delete me'):
-      return
-    k = cnt.unit['side']+cnt.unit.GetName()
-    self['contacts'][k] = cnt
+
+
   
   def Signature(self, stance):
+    ''' Returns the signature for a given unit's stance. '''
     if self['signature'].has_key(stance):
       return self['signature'][stance]
     return self['signature']['deployed']
+  
   def SituationalAwareness(self, other, real = True):
       '''!
          If real set to false, will return the percieved SA instead of the real SA
