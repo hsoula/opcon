@@ -415,7 +415,7 @@ class sandbox_engagement(dict):
    
   def ForceContact(self, E, e):
     # Force a direct contact of e by E
-    cnt = E['intelligence'].Contact(e)
+    cnt = E.Contact(e)
     # If the contact doesn't exist
     if cnt == None:
       cnt = intelligence.sandbox_contact(e)

@@ -156,7 +156,7 @@ class agent:
         '''
         # Intelligence section
         cntlist = []
-        for i in self.entity['intelligence']['contacts'].values() + [self.ContactDefineSelf()]:
+        for i in self.entity['contacts'].values() + [self.ContactDefineSelf()]:
             if i.fields['nature'] != 'undetected':
                 cntlist.append(i.Duplicate('encode'))
         for i in cntlist:
@@ -182,7 +182,7 @@ class agent:
         self.log('Preparing a new INTSUM.','intelligence')
         # It is time for a report
         intsum = INTSUM(self.entity)
-        for i in self.entity['intelligence']['contacts'].values():
+        for i in self.entity['contacts'].values():
             if i.fields['nature'] != 'undetected':
                 temp = i.Duplicate('encode')
                 intsum.ContactList(temp)
@@ -916,10 +916,10 @@ class agent:
     #
     # contacts
     def GetContact(self, E):
-        return self.entity['intelligence'].Contact(E)
+        return self.entity.Contact(E)
     
     def GetContactList(self):
-        return self.entity['intelligence']['contacts'].values()
+        return self.entity['contacts'].values()
     
     def ContactAbsorb(self, cnt, fromwithin = False):
         '''!
@@ -929,7 +929,7 @@ class agent:
         '''
         if cnt.unit == self.entity:
             return
-        contact = self.entity['intelligence'].Contact(cnt.unit)
+        contact = self.entity.Contact(cnt.unit)
         if contact != None:
             if cnt.IsDirectObs() and fromwithin:
                 contact.AddDirect(fromwithin)
@@ -1015,7 +1015,7 @@ class agent:
         '''
         if cnt == self.entity:
             return
-        contact = self.entity['intelligence'].Contact(cnt)
+        contact = self.entity.Contact(cnt)
         if note == '':
             note = 'Undetermined'
         if contact != None:
@@ -1051,15 +1051,15 @@ class agent:
             if cnt.unit['delete me']:
                 return
         # Get contact
-        contact = self.entity['intelligence'].Contact(cnt.unit)
+        contact = self.entity.Contact(cnt.unit)
         if contact != None:
             contact.Merge(cnt)
             del cnt
             # TODO check to see whether the contact should be reported.
         else:
-            # Case where non-logged contact are not be detected, but should be
+            # Case where non-logged contact are not detected, but should be
             cnt.timestamp = copy(self.clock)
-            self.entity['intelligence'].WriteContact(cnt)
+            self.entity.WriteContact(cnt)
             if self.ContactPolicy('new') and cnt.IsDirectObs():
                 # report only if HQ
                 if self.entity.GetHQ():
@@ -1118,7 +1118,7 @@ class agent:
         for i in self.entity['ground engagements']:
             units = units + i.ListActiveENY(self.entity)
         for i in units:
-            cnt = self.entity['intelligence'].Contact(i)
+            cnt = self.entity.Contact(i)
             cntloc = cnt.location
             if cntloc != None:
                 cntlist.append(cnt)
@@ -1198,7 +1198,7 @@ class agent:
         out = ''
         eny = []
         friends = []
-        for i in self.entity['intelligence']['contacts'].values():
+        for i in self.entity['contacts'].values():
             if i.IsDirectObs():
                 temp = i.Duplicate('encode')
                 if self.SolveIFF(i.fields['side']) != 'FR':
@@ -1235,7 +1235,7 @@ class agent:
         # Fish out all subordinates at all levels
         subs = self.entity.AllSubordinates()
         for i in range(len(subs)):
-            cnt = self.entity['intelligence'].Contact(subs[i])
+            cnt = self.entity.Contact(subs[i])
             if cnt != None and cnt.Type() != 'undetected':
                 temp = cnt.Duplicate('encode')
                 temp.UpdateField('nature','reported')
@@ -2113,7 +2113,7 @@ class agent_CO(agent):
        # Fish out all subordinates at all levels
        subs = self.entity.AllSubordinates()
        for i in range(len(subs)):
-           cnt = self.entity['intelligence'].Contact(subs[i])
+           cnt = self.entity.Contact(subs[i])
            if cnt != None:
                temp = cnt.Duplicate('encode')
                temp.UpdateField('nature','reported')

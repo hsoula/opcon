@@ -110,6 +110,9 @@ class sandbox_entity(dict):
     self['subordinates'] = []
     self['detached'] = []
     
+    # Intelligence state data
+    self['contacts'] = {}
+    
     # Communications and Situations
     self['SITREP'] = {}
     
@@ -659,7 +662,37 @@ class sandbox_entity(dict):
       
     
   
-  # Intelligence  
+  # Intelligence 
+  def ContactList(self):
+    ''' Returns a list of contact instances.
+    '''
+    return self['contacts'].values()
+  
+  def Contact(self, unit):
+    '''! \brief Return a contact from the pointer of the unit.
+         \return None if the contact doesn't exist
+    '''
+    if not unit:
+      return None
+    k = unit['side']+unit.GetName()
+    if k in self['contacts'].keys():
+      return self['contacts'][k]
+    return None
+  
+  def DeleteContact(self, unit):
+    ''' Remove a contact from the contact list altogether.'''
+    for i in self['contacts']:
+      if self['contacts'][i].unit == unit or self['contacts'][i] == unit:
+        del self['contacts'][i]
+        return
+  def WriteContact(self, cnt):
+    '''
+       Overwrite a contact in the contact list
+    '''
+    if cnt.unit.has_key('delete me'):
+      return
+    k = cnt.unit['side']+cnt.unit.GetName()
+    self['contacts'][k] = cnt
   def Detection(self, other):
     '''!
        Handle all the detection and classification as called by the simulator
@@ -668,7 +701,7 @@ class sandbox_entity(dict):
       return
     
     # fetch the contact
-    contact = self['intelligence'].Contact(other)
+    contact = self.Contact(other)
     if contact == None:
       contact = sandbox_contact(other)
       
@@ -1027,11 +1060,11 @@ class sandbox_entity(dict):
     self['OPORD'].PrePickle()
 
     # Contacts
-    for i in self['intelligence']['contacts'].keys():
-        self['intelligence']['contacts'][i].unit =  self.sim.AsUID(self['intelligence']['contacts'][i].unit)
+    for i in self['contacts'].keys():
+        self['contacts'][i].unit =  self.sim.AsUID(self['contacts'][i].unit)
         # remove undetected with p_right == 0.5
-        if self['intelligence']['contacts'][i].Type() == 'undetected' and abs(self['intelligence']['contacts'][i].p_right - 0.5) <= 0.01:
-          del self['intelligence']['contacts'][i]
+        if self['contacts'][i].Type() == 'undetected' and abs(self['contacts'][i].p_right - 0.5) <= 0.01:
+          del self['contacts'][i]
 
     self.sim = None
     
@@ -1043,8 +1076,8 @@ class sandbox_entity(dict):
     self['agent'].PostPickle(self)
 
     # contacts
-    for i in self['intelligence']['contacts'].keys():
-        self['intelligence']['contacts'][i].unit =  self.sim.AsEntity(self['intelligence']['contacts'][i].unit)
+    for i in self['contacts'].keys():
+        self['contacts'][i].unit =  self.sim.AsEntity(self['contacts'][i].unit)
     # OPORD
     self['OPORD'].PostPickle(self.sim)
 

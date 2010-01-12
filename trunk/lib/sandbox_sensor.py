@@ -159,7 +159,7 @@ class SensorVisual(sandbox_sensor):
         cnt.Merge(cnt.unit['agent'].ContactDefineSelf())
         E['agent'].ContactUpdate(cnt)
         # Transfer self to cnt
-        ocnt = cnt.unit['intelligence'].Contact(E)
+        ocnt = cnt.unit.Contact(E)
         # If the contact doesn't exists
         if ocnt == None:
           ocnt = sandbox_contact(E)

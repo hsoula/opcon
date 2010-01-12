@@ -2077,7 +2077,7 @@ class taskRessuply(sandbox_task):
          \return the first LOGPAC in the list
     '''
     # Local copy
-    for i in E['intelligence'].ContactList():
+    for i in E.ContactList():
       if i.unit['TOE'] == 'LOGPAC' and i.IsDirectObs() and not i.unit.has_key('Processing'):
         # Check for the right SUPREQ
         if self['SUPREQ']:
