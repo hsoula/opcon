@@ -39,8 +39,19 @@
             <very_unlikely>effectiveness,moral,fatigue,supply levels,unit ID</very_likely>
             <unlikely>augmentation,HIGHER unit ID</unlikely>
             <neutral>side,size,course,speed,activity</neutral>
-            <likely>personel,vehicles,location,altitude,stance</likely>
+            <likely>personel,vehicle,location,altitude,stance</likely>
             <very_likely>TOE</very_likely>
+        </classify>
+    </sensor>
+    
+    <!-- Hearing-->
+    <sensor name="ear" signature="sound">
+        <degraded_by>combat</degraded_by>
+        <degraded_by>terrain</degraded_by>
+        <classify>
+            <neutral>TOE,vehicle,bearing</neutral>
+            <unlikely>side,size,activity,range</unlikely>
+            <very_unlikely>location</very_unlikely>
         </classify>
     </sensor>
     

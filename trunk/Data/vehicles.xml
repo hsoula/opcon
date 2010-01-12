@@ -10,6 +10,7 @@
                 <critical penetrating="True" effect="mobility"/>
                 <critical penetrating="False" effect="dismount" weight="2"/>
             </criticals>
+	    <sensor type="visual"/>
         </vehicle>
 	
 	<!-- Empty HMVEE -->
@@ -21,6 +22,7 @@
                 <critical penetrating="True" effect="mobility"/>
                 <critical penetrating="True" effect="dismount"/>
             </criticals>
+	    <sensor type="visual"/>
         </vehicle>
 	
 	<!-- HMVEE with .50cal BMG on top.-->
