@@ -11,6 +11,8 @@
                 <critical penetrating="False" effect="shock" weight="2"/>
                 <critical penetrating="False" effect="wound" weight="2"/>
             </criticals>
+	    <sensor type="visual"/>
+	    <sensor type="ear">
         </personel>
 	<!-- Trigger puller US (2009). -->
         <personel name="US-Infantry-2009" template="human_being">
