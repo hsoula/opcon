@@ -121,6 +121,10 @@ testsuite.append(unittest.TestLoader().loadTestsFromModule(sandbox_graphics))
 import sandbox_infrastructure
 #testsuite.append(unittest.TestLoader().loadTestsFromModule(InfrastructureTest))
 
+# Sensors
+import sandbox_sensor
+testsuite.append(unittest.TestLoader().loadTestsFromModule(sandbox_sensor))
+
 # Combat
 import combat
 testsuite.append(unittest.TestLoader().loadTestsFromModule(combat))
@@ -128,6 +132,9 @@ testsuite.append(unittest.TestLoader().loadTestsFromModule(combat))
 # Combat
 import C4I
 testsuite.append(unittest.TestLoader().loadTestsFromModule(C4I))
+
+import intelligence
+testsuite.append(unittest.TestLoader().loadTestsFromModule(intelligence))
 
 # Overall testing of tasks
 import SandboxUnitTestTasking

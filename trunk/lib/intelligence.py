@@ -417,16 +417,10 @@ class sandbox_contact(dict):
 class system_intelligence(system_base.system_base):
   def __init__(self): 
     system_base.system_base.__init__(self)
-    # counter-intelligence
-    # Chance of detection while footprints are touching
-    self['signature'] = {'transit':0.9, 'deployed':0.8}
-    
-    # Data gathering
-    # radius for testing in km -- OBSOLETE
-    self['sensors'] = {'visual':True}
-    
-    # Contacts (use pointers as keys)
-    self['contacts'] = {}
+   
+    # Two-layers signature, first level is the signature's kind.The second level is a label
+    # A signature is a likelihood of being detected.
+    self.signature = {}
     
     
   def fromXML(self, doc, node):
@@ -435,16 +429,42 @@ class system_intelligence(system_base.system_base):
                - signature under a series of stances.
                - sensors listing.
     '''
-    # Signature
-    sig = doc.Get(node, 'signature',True)
-    for s in sig:
-      for st in doc.Get(s, 'stance', True):
-        self['signature'][doc.Get(st,'name')] = doc.Get(st)
+    # Signatures
+    for sig in doc.Get(node, 'signature', True):
+      tp = doc.Get(sig, 'type')
+      level = doc.Get(sig, 'level')
+      
+      # Basal level has an empty label
+      self.SetSignature(tp, level)
+      
+      # Read labels exeptions
+      for pr in ['very_likely', 'likely', 'neutral', 'unlikely', 'very_unlikely']:
+        x = doc.Get(sig, pr)
+        if x != '':
+          for label in x.split(','):
+            label = label.strip()
+            self.SetSignature(tp, pr.replace('_',' '), label)
+      
+    def SetSignature(self, gtype, level, label=''):
+      ''' Add this info to the signature. '''
+      # Create the signature type if it doesn't exists.
+      if not gtype in self.signature:
+        self.signature[gtype] = {}
         
-    # Sensors
-    for s in doc.Get(node, 'sensors', True):
-      for sn in doc.Get(s, 'sensor', True):
-        self['sensors'][doc.Get(sn,'name')] = doc.Get(sn)
+      # Override the label
+      self.signature[gtype][label] = level
+      
+    def GetSignature(self, gtype, label=''):
+      ''' Return the TOEM level.'''
+      # No signature
+      if not gtype in self.signature:
+        return 'impossible'
+      
+      # Fetch the label
+      if not label in self.signature[gtype]:
+        label = ''
+      return self.signature[gtype][label]
+    
       
       
   def InitializeSensors(self, E):
@@ -462,10 +482,10 @@ class system_intelligence(system_base.system_base):
 
 
   
-  def Signature(self, stance):
-    ''' Returns the signature for a given unit's stance. '''
-    if self['signature'].has_key(stance):
-      return self['signature'][stance]
+  def Signature(self, label):
+    ''' Returns the signature for a given unit's stance as a TOEM probability. '''
+    if self['signature'].has_key(label):
+      return self['signature'][label]
     return self['signature']['deployed']
   
   def SituationalAwareness(self, other, real = True):
@@ -490,4 +510,26 @@ class system_intelligence(system_base.system_base):
             tot += cnt.IntelReliability()
             
       return tot / len(other)
-   
+
+import unittest
+class IntelligenceModelTest(unittest.TestCase):
+  def setUp(self):
+    import sandbox_data
+    self.database = sandbox_data.sandbox_data_server()
+    
+  def testBlah(self):
+    self.assertEqual(1,1)
+  
+if __name__ == '__main__':
+    # Change folder
+    os.chdir('..')
+    
+    # suite
+    testsuite = []
+
+    # basic tests on sandbox instance
+    testsuite.append(unittest.makeSuite(IntelligenceModelTest))
+    
+    # collate all and run
+    allsuite = unittest.TestSuite(testsuite)
+    unittest.TextTestRunner(verbosity=2).run(allsuite)
