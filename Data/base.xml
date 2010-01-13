@@ -13,6 +13,9 @@
 	<!-- Weapon system definitions -->
 	<import name="weapon_systems.xml"/>
 	
+	<!-- Sensors -->
+	<import name="sensors.xml"/>
+	
 	<!-- defense system -->
 	<import name="defense_systems.xml"/>
 	

@@ -15,6 +15,7 @@ from sandbox_XML import *
 from sandbox_TOE import sandbox_personel, sandbox_weapon_system, sandbox_defense_system, sandbox_vehicle
 from movement import system_movement
 from logistics import system_logistics
+from sandbox_sensor import sandbox_sensor
 
 from sandbox_exception import SandboxException
 
@@ -44,8 +45,8 @@ class sandbox_data_server:
         # Read in the file and index the instances into the data dictionary
         # Test for the file's existance 
         x = os.path.join(self.datafolder,fname)
-        if not os.access(x, os.R_OK):
-            raise
+        if not os.path.exists(x):
+            raise SandboxException('DataFileNotFound',x)
         
         # Create a XML document
         x = sandboXML(read=x)
@@ -110,6 +111,7 @@ class sandbox_data_server:
         x['vehicle'] = sandbox_vehicle
         x['movement'] = system_movement
         x['logistics'] = system_logistics
+        x['sensor'] = sandbox_sensor
         
     def GetInstance(self, template_name):
         if template_name in self.constructor_map:
