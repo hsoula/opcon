@@ -16,7 +16,7 @@
 				  <neutral>deployed,hasty defense</neutral>
 				  <unlikely>prepared defense</unlikely>
 			</signature>
-			<signature type="thermal" sameas="visual">
+			<signature type="thermal" sameas="visual"/>
 			<signature type="sound" level="unlikely">
 				<likely>transit</likely>
 				<very_likely>combat</very_likely>
@@ -25,7 +25,7 @@
 		
 		<!-- Static LOGPAC -->
 		<intelligence name="LOGPAC">
-			<signature type="visual" level="unlikely">
+			<signature type="visual" level="unlikely"/>
 		</intelligence>
 	</models>
 </templates>

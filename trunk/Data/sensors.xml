@@ -1,58 +1,59 @@
 <?xml version="1.0"?>
 <templates>
-    <!-- Visual sensor include eyes and photo/TV equipment. Almost ALL units have this sensor. -->
-    <sensor name="visual" signature="visual">
-        <!-- Requirements and degradation are labels that will be handled by the INTEL model -->
-        <requires>LOS</requires>
-        <requires>light</requires>
-        <degraded_by>rain</degraded_by>
-        <degraded_by>fog</degraded_by>
-        <degraded_by>smoke</degraded_by>
-        <degraded_by>terrain</degraded_by>
-        <!-- Which type of information can be classified by this sensor -->
-        <classify>
-            <not_used>bearing,range</not_used>
-            <very_unlikely>effectiveness,moral,fatigue,supply levels</very_unlikely>
-            <unlikely>augmentation,unit ID</unlikely>
-            <neutral>side,size,HIGHER unit ID,course,speed,activity</neutral>
-            <likely>personel,vehicles,location,altitude,stance</likely>
-            <very_likely>TOE</very_likely>
-        </classify>
-    </sensor>
-    
-    <!-- Night-vision equipment based in enhancing the ambient light (not thermal). -->
-    <sensor name="low-light" template="visual">
-        <requires_not>light</requires_not>
-        <degraded_by>light</degraded_by>
-    </sensor>
-    
-    <!-- thermal sensor -->
-    <sensor name="thermal" signature="thermal">
-        <requires>LOS</requires>
-        <degraded_by>rain</degraded_by>
-        <degraded_by>terrain</degraded_by>
-        <degraded_by>light</degraded_by>
-        <enhanced_by>cold_temperature</enhanced_by>
-        <!-- Which type of information can be classified by this sensor -->
-        <classify>
-            <not_used>bearing,range</not_used>
-            <very_unlikely>effectiveness,moral,fatigue,supply levels,unit ID</very_unlikely>
-            <unlikely>augmentation,HIGHER unit ID</unlikely>
-            <neutral>side,size,course,speed,activity</neutral>
-            <likely>personel,vehicle,location,altitude,stance</likely>
-            <very_likely>TOE</very_likely>
-        </classify>
-    </sensor>
-    
-    <!-- Hearing-->
-    <sensor name="ear" signature="sound">
-        <degraded_by>combat</degraded_by>
-        <degraded_by>terrain</degraded_by>
-        <classify>
-            <neutral>TOE,vehicle,bearing</neutral>
-            <unlikely>side,size,activity,range</unlikely>
-            <very_unlikely>location</very_unlikely>
-        </classify>
-    </sensor>
-    
+    <sensors>
+        <!-- Visual sensor include eyes and photo/TV equipment. Almost ALL units have this sensor. -->
+        <sensor name="visual" signature="visual" classname="SensorVisual">
+            <!-- Requirements and degradation are labels that will be handled by the INTEL model -->
+            <requires>LOS</requires>
+            <requires>light</requires>
+            <degraded_by>rain</degraded_by>
+            <degraded_by>fog</degraded_by>
+            <degraded_by>smoke</degraded_by>
+            <degraded_by>terrain</degraded_by>
+            <!-- Which type of information can be classified by this sensor -->
+            <classify>
+                <not_used>bearing,range</not_used>
+                <very_unlikely>effectiveness,moral,fatigue,supply levels</very_unlikely>
+                <unlikely>augmentation,unit ID</unlikely>
+                <neutral>side,size,HIGHER unit ID,course,speed,activity</neutral>
+                <likely>personel,vehicles,location,altitude,stance</likely>
+                <very_likely>TOE</very_likely>
+            </classify>
+        </sensor>
+        
+        <!-- Night-vision equipment based in enhancing the ambient light (not thermal). -->
+        <sensor name="low-light" template="visual">
+            <requires_not>light</requires_not>
+            <degraded_by>light</degraded_by>
+        </sensor>
+        
+        <!-- thermal sensor -->
+        <sensor name="thermal" signature="thermal">
+            <requires>LOS</requires>
+            <degraded_by>rain</degraded_by>
+            <degraded_by>terrain</degraded_by>
+            <degraded_by>light</degraded_by>
+            <enhanced_by>cold_temperature</enhanced_by>
+            <!-- Which type of information can be classified by this sensor -->
+            <classify>
+                <not_used>bearing,range</not_used>
+                <very_unlikely>effectiveness,moral,fatigue,supply levels,unit ID</very_unlikely>
+                <unlikely>augmentation,HIGHER unit ID</unlikely>
+                <neutral>side,size,course,speed,activity</neutral>
+                <likely>personel,vehicle,location,altitude,stance</likely>
+                <very_likely>TOE</very_likely>
+            </classify>
+        </sensor>
+        
+        <!-- Hearing-->
+        <sensor name="ear" signature="sound">
+            <degraded_by>combat</degraded_by>
+            <degraded_by>terrain</degraded_by>
+            <classify>
+                <neutral>TOE,vehicle,bearing</neutral>
+                <unlikely>side,size,activity,range</unlikely>
+                <very_unlikely>location</very_unlikely>
+            </classify>
+        </sensor>
+    </sensors>
 </templates>
