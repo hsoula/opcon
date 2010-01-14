@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<test>
+    <contact>
+        <!-- Data NOT for the user to see -->
+        <unit>test unit</unit>
+        <rating>0</rating>
+        <bandwidth>0</bandwidth>
+        <!-- Can be: unknown, new, ...-->
+        <status></status>
+        <!-- Last update to the contact -->
+        <timestamp></timestamp>
+        
+        <!-- Information fields. Only non-empty one should be provided. -->
+        <fields>
+            <!-- Identity -->
+            <TOE>infantry</TOE>
+            <side>RED</side>
+            <size>Coy</size>
+            <higher_formation>A/1-501</higher_formation>
+            <identity>3/A/1-501</identity>
+            <augmentation>(+)</augmentation>
+            
+            <!-- Actual Sighting. -->
+            <equipment count="10" type="personel">M16/M4</equipment>
+            <equipment count="4" type="personel">HMVEE</equipment>
+            
+            <!-- Capability and intentions -->
+            <location type="coordinates">33T UG 2500</location>
+            <stance>deployed</stance>
+            <activities>hasty defense,combat</activities>
+            <course>0</course>
+            <speed>0</speed>
+            <range min="800" max="1000"/>
+            <bearing left="0" right="30"/>
+            <altitude>0</altitude>
+            
+            <!-- Other factors --> 
+            <casualty_level>100</casualty_level>
+            <morale>good</morale>
+            <fatigue>good</fatigue>
+            <suppression>good</suppression>
+            <supply_level>100</supply_level>
+            
+        </fields>
+    </contact>
+</test>
