@@ -480,6 +480,27 @@ class system_intelligence(system_base.system_base):
   
 
     
+
+  # Simulation Interface
+  def AcquireTarget(self, E, tgt):
+    ''' Process the detection of each sensor owned by E on target tgt.
+        Returns the contact to tgt.
+    '''
+    return sandbox_contact(tgt)
+  
+  # Private Methods
+  def EnumerateSensors(self, E):
+    ''' Returns a list of sensors owned by E from the personel and vehicle components.
+        The list is in fact a dictionary which uses the count as value and instances as keys.
+    '''
+    out = {}
+    # Personel
+    
+    # Vehicles
+    
+    return out
+  
+  # Legacy Methods to eliminate
   def InitializeSensors(self, E):
     '''
        Build sensors.
@@ -563,6 +584,12 @@ class IntelligenceModelTest(unittest.TestCase):
     
     
   
+class ContactTest(unittest.TestCase):
+  def setUp(self):
+    pass
+  def testBlah(self):
+    self.assertEqual(True, True)
+    
 if __name__ == '__main__':
   import os
   # Change folder
@@ -573,6 +600,7 @@ if __name__ == '__main__':
 
   # basic tests on sandbox instance
   testsuite.append(unittest.makeSuite(IntelligenceModelTest))
+  testsuite.append(unittest.makeSuite(ContactTest))
   
   # collate all and run
   allsuite = unittest.TestSuite(testsuite)

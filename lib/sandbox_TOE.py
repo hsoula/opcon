@@ -13,32 +13,45 @@ class sandbox_components:
         and vehicles.
     '''
     def __init__(self):
-        self.weapon_systems = []
-        
-    def GetWeapons(self):
-        return self.weapon_systems
-
-class sandbox_personel(sandbox_components):
-    def __init__(self):
-        # Parent class
-        sandbox_components.__init__(self)
-        
-        # Kit name (if any)
+        # Name label
         self.name = ''
         
-        # Allowance count
-        self.count = 0
+        # Weapon systems
+        self.weapon_systems = []
         
-        # Logistic model
+        # Logistics
         self.logistics = None
-    
-    def fromXML(self, doc, node):
-        # Kit name
-        self.kit = doc.Get(node, 'name')
         
-        # Read in kit's weapons
-        for x in doc.Get(node, 'weapon_system',True):
-            self.weapon_systems.append(self.datasource.Get('weapon_system',doc.Get(x,'template')))
+        # Sensors
+        self.sensors = []
+        
+        self.defense_system = None
+        self.movement = None
+        self.criticals = {'penetrating':[], 'non penetrating':[]}
+        
+    def fromXML(self, doc, node):
+        ''' Base methods for component (personel, vehicle).
+        '''
+        # Kit name
+        self.name = doc.Get(node, 'name')
+        
+        # Sensors
+        for nd in doc.Get(node, 'sensor', True):
+            template = doc.Get(node, 'template')
+            if template:
+                x = self.datasource.Get('sensor', template)
+            # Read from XML
+            x.fromXML(doc, nd)
+            
+            # Count
+            count = doc.Get(nd, 'count')
+            if not count:
+                count = 1
+            else:
+                count = float(count)
+            
+            # Add to list
+            self.sensors.append([x,count])
             
         # Read in logistics parameters
         temp = doc.Get(node, 'logistics')
@@ -47,26 +60,15 @@ class sandbox_personel(sandbox_components):
             if not template:
                 template = 'base'
             self.logistics = self.datasource.Get('logistics', template)
-    
-    def GetWeapons(self):
-        return self.weapon_systems
-    
-class sandbox_vehicle(dict,sandbox_components):
-    def __init__(self):
-        # Parent class
-        sandbox_components.__init__(self)
-        
-        self['defense_system'] = None
-        self['movement'] = None
-        self['criticals'] = {'penetrating':[], 'non penetrating':[]}
-        # Logistics
-        self.logistics = None
-    
-    def fromXML(self, doc, node):
+            
+        # Read in kit's weapons
+        for x in doc.Get(node, 'weapon_system',True):
+            self.weapon_systems.append(self.datasource.Get('weapon_system',doc.Get(x,'template')))
+            
         # defense
         x = doc.Get(node,'defense_system')
         if x:
-            self['defense_system'] = self.datasource.Get('defense_system', doc.Get(x,'template'))
+            self.defense_system = self.datasource.Get('defense_system', doc.Get(x,'template'))
         
         # Movement
         x = doc.Get(node, 'movement')
@@ -76,7 +78,7 @@ class sandbox_vehicle(dict,sandbox_components):
                 template = 'base'
         else:
             template = 'base'
-        self['movement'] = self.datasource.Get('movement', template)
+        self.movement = self.datasource.Get('movement', template)
         
         # Criticals
         x = doc.Get(node, 'criticals')
@@ -96,24 +98,34 @@ class sandbox_vehicle(dict,sandbox_components):
                         pen = 'penetrating'
                     else:
                         pen = 'non-penetrating'
-                    self['criticals'][pen].append((effect, float(wt)))
+                    self.criticals[pen].append((effect, float(wt)))
                     
-        # Read in logistics parameters
-        temp = doc.Get(node, 'logistics')
-        if temp:
-            template = doc.Get(temp, 'template')
-            if not template:
-                template = 'base'
-            self.logistics = self.datasource.Get('logistics', template)
         
-        # Read in kit's weapons
-        for x in doc.Get(node, 'weapon_system',True):
-            self.weapon_systems.append(self.datasource.Get('weapon_system',doc.Get(x,'template')))
-
-            
-
+        
+    def GetWeapons(self):
+        return self.weapon_systems
     def GetMode(self):
-        return self['movement']['mode']
+        return self.movement['mode']
+class sandbox_personel(sandbox_components):
+    def __init__(self):
+        # Parent class
+        sandbox_components.__init__(self)
+    
+    def fromXML(self, doc, node):
+        sandbox_components.fromXML(self, doc, node)
+        
+
+
+    
+class sandbox_vehicle(sandbox_components):
+    def __init__(self):
+        # Parent class
+        sandbox_components.__init__(self)
+
+    
+    def fromXML(self, doc, node):
+        sandbox_components.fromXML(self, doc, node)
+    
 class sandbox_weapon_system(dict):
     def __init__(self):
         # Range
