@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 <test>
-    <contact>
+    <contact label="fulldescription">
         <!-- Data NOT for the user to see -->
         <unit>test unit</unit>
         <rating>0</rating>
-        <bandwidth>0</bandwidth>
-        <!-- Can be: unknown, new, ...-->
-        <status></status>
+        
+        <!-- Can be: unknown, new, lost, current ...-->
+        <status>current</status>
+        
         <!-- Last update to the contact -->
-        <timestamp></timestamp>
+        <timestamp type="datetime">3/1/2010 0800</timestamp>
         
         <!-- Information fields. Only non-empty one should be provided. -->
         <fields>
@@ -34,12 +35,15 @@
             <bearing left="0" right="30"/>
             <altitude>0</altitude>
             
-            <!-- Other factors --> 
+            <!-- Other factors that are more analytical and apply best to friends. --> 
             <casualty_level>100</casualty_level>
             <morale>good</morale>
             <fatigue>good</fatigue>
             <suppression>good</suppression>
             <supply_level>100</supply_level>
+            
+            <!-- Free Text for umpire, and players-->
+            <notes>This section is made of free text.</notes>
             
         </fields>
     </contact>
