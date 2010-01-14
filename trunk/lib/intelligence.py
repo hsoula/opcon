@@ -23,6 +23,7 @@ from copy import copy
 
 from sandbox_log import *
 from sandbox_sensor import *
+from sandbox_exception import SandboxException
 
 import Renderer_html as html
 
@@ -434,6 +435,15 @@ class system_intelligence(system_base.system_base):
       tp = doc.Get(sig, 'type')
       level = doc.Get(sig, 'level')
       
+      # Sameas attribute
+      sameas = doc.Get(sig, 'sameas')
+      if sameas:
+        if sameas in self.signature:
+          self.signature[tp] = self.signature[sameas]
+        else:
+          raise SandboxException('XMLParseSameAsInvalid',['intelligence', tp, sameas])
+        continue
+      
       # Basal level has an empty label
       self.SetSignature(tp, level)
       
@@ -445,28 +455,31 @@ class system_intelligence(system_base.system_base):
             label = label.strip()
             self.SetSignature(tp, pr.replace('_',' '), label)
       
-    def SetSignature(self, gtype, level, label=''):
-      ''' Add this info to the signature. '''
-      # Create the signature type if it doesn't exists.
-      if not gtype in self.signature:
-        self.signature[gtype] = {}
-        
-      # Override the label
-      self.signature[gtype][label] = level
+  def SetSignature(self, gtype, level, label=''):
+    ''' Add this info to the signature. '''
+    # Create the signature type if it doesn't exists.
+    if not gtype in self.signature:
+      self.signature[gtype] = {}
       
-    def GetSignature(self, gtype, label=''):
-      ''' Return the TOEM level.'''
-      # No signature
-      if not gtype in self.signature:
-        return 'impossible'
-      
-      # Fetch the label
-      if not label in self.signature[gtype]:
-        label = ''
-      return self.signature[gtype][label]
+    # Override the label
+    self.signature[gtype][label] = level
+    
+  def GetSignature(self, gtype, label=''):
+    ''' Return the TOEM level.'''
+    # No signature
+    if not gtype in self.signature:
+      return 'impossible'
+    
+    # Fetch the label
+    if not label in self.signature[gtype]:
+      label = ''
+    return self.signature[gtype][label]
     
       
       
+  
+
+    
   def InitializeSensors(self, E):
     '''
        Build sensors.
@@ -517,19 +530,50 @@ class IntelligenceModelTest(unittest.TestCase):
     import sandbox_data
     self.database = sandbox_data.sandbox_data_server()
     
-  def testBlah(self):
-    self.assertEqual(1,1)
+    os.chdir
+    
+  def testLoadBaseINTEL(self):
+    x = self.database.Get('intelligence', 'base')
+    self.assertTrue(len(x.signature) != 0)
+    
+  def testBaseVizINTEL(self):
+    x = self.database.Get('intelligence', 'base')
+    self.assertEqual(x.GetSignature('visual'), 'likely')
+    
+  def testBaseVizINTELdeployed(self):
+    x = self.database.Get('intelligence', 'base')
+    self.assertEqual(x.GetSignature('visual','deployed'), 'neutral')
+    
+  def testBaseVizINTELunkLabel(self):
+    x = self.database.Get('intelligence', 'base')
+    self.assertEqual(x.GetSignature('visual', 'latrine'), 'likely')
+    
+  def testBaseThermalINTEL(self):
+    x = self.database.Get('intelligence', 'base')
+    self.assertEqual(x.GetSignature('thermal'), 'likely')
+    
+  def testBaseSoundINTEL(self):
+    x = self.database.Get('intelligence', 'base')
+    self.assertEqual(x.GetSignature('sound'), 'unlikely')
+    
+  def testBaseSoundINTELcombat(self):
+    x = self.database.Get('intelligence', 'base')
+    self.assertEqual(x.GetSignature('sound', 'combat'), 'very likely')
+    
+    
+    
   
 if __name__ == '__main__':
-    # Change folder
-    os.chdir('..')
-    
-    # suite
-    testsuite = []
+  import os
+  # Change folder
+  os.chdir('..')
+  
+  # suite
+  testsuite = []
 
-    # basic tests on sandbox instance
-    testsuite.append(unittest.makeSuite(IntelligenceModelTest))
-    
-    # collate all and run
-    allsuite = unittest.TestSuite(testsuite)
-    unittest.TextTestRunner(verbosity=2).run(allsuite)
+  # basic tests on sandbox instance
+  testsuite.append(unittest.makeSuite(IntelligenceModelTest))
+  
+  # collate all and run
+  allsuite = unittest.TestSuite(testsuite)
+  unittest.TextTestRunner(verbosity=2).run(allsuite)
