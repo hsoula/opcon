@@ -2,7 +2,7 @@
 <templates>
     <vehicles>
         <!-- A nothing special wheeled vehicle. No armor.-->
-        <vehicle name="civilian car" crew="1" dismount="4" weight="1000.0" lift="250.0">
+        <vehicle name="civilian car" weight="1000.0" lift="250.0">
             <defense_system template="base"/>
             <movement template="wheeled"/>
             <logistics template="civilian car"/>

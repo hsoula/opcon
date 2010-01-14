@@ -74,6 +74,12 @@ class TOEMargument:
         x['professional'] = x['regular'] = 2
         x['elite'] = 4
         
+    def ConceptValue(self, concept):
+        ''' Returns the concept's TOEM integer value. '''
+        if concept in self.concept:
+            return self.concept[concept]
+        raise SandboxException('InvalidTOEMconcept',concept)
+    
     def SetBaseProb(self, x):
         ''' The first thing to do when setting up.
         '''
