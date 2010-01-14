@@ -42,8 +42,8 @@ class sandboXML:
             self.root = self.doc.createElement(rootname)
             self.doc.appendChild(self.root)
             
-        self.ints = re.compile('^\d+$')
-        self.floats = re.compile('^\d*\.\d*$')
+        self.ints = re.compile('^[-]?\d+$')
+        self.floats = re.compile('^[-]?\d*\.\d*$')
         self.datetimes = re.compile('^\d+/\d+/\d{4} \d{4}[:\d+]?$')
         
         self.infrastructure_templates = {}

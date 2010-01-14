@@ -45,9 +45,15 @@ class sandbox_contact:
     # Reliability
     self.p_right = 0.5
     self.rating = 0
+    
+    # Status
+    self.status = 'new'
   
     # Information
     self.fields = {}
+    self.fields['equipment'] = {}
+    self.fields['equipment']['personel'] = []
+    self.fields['equipment']['vehicle'] = []
 
     # Direct subordinates in direct contact
     self.direct_subordinates = []
@@ -67,9 +73,27 @@ class sandbox_contact:
     ''' Read in a contact from a XML node
     '''
     # Non-field information
+    # unit, timestamp, rating and status
+    self.unit = doc.SafeGet(node, 'unit', self.unit)
+    self.timestamp = doc.SafeGet(node, 'timestamp', self.timestamp)
+    self.rating = doc.SafeGet(node, 'rating', self.rating)
+    self.status = doc.SafeGet(node, 'status', self.status)
     
     # Field processing
-    pass
+    fds = doc.Get(node, 'fields')
+    for fd in doc.ElementAsList(fds):
+      # Tag name
+      tag = fd.tagName
+      
+      # Special case - Equipment
+      if tag == 'equipment':
+        count = int(doc.Get(fd, 'count'))
+        kind = doc.Get(fd, 'type')
+        self.EquipmentSighting(doc.Get(fd), kind, count)
+        continue
+      
+      self.SetField(tag, doc.Get(fd))
+    
   def toXML(self, doc):
     pass
   def DefineFields(self):
@@ -187,6 +211,23 @@ class sandbox_contact:
 
   # Manipulate the information
   # 
+  def EquipmentSighting(self, kind, eclass, count, timestamp=None):
+    ''' Add this equipment to the equipment field. kind is the template name, eclass is either personel of vehicle
+        and count is the number seen. 
+        If the sighting exists, it will update the count only if it is bigger.
+    '''
+    for i in self.fields['equipment'][eclass]:
+      if i['ID'] == kind:
+        if count >= i['count']:
+          i['count'] = count
+          if self.timestamp:
+            self.fields['datetime'] = self.timestamp.strftime('%H%MZ(%d%b%y)')
+        return
+        
+        
+    # first sighting of this kind of equipment
+    self.fields['equipment'][eclass].append({'ID':kind,'count':count})
+    
   def AddDirect(self, uid):
     '''! \brief Add to the list of underling in direct contact with the contact
     '''
@@ -575,22 +616,22 @@ class ContactTest(unittest.TestCase):
     ''' Retrieve the node of a contact of the following label
     '''
     for i in self.doc.Get(self.doc.root, 'contact', True):
-      if self.doc.Get(i,'label') == label:
+      if i.unit == label:
         return i
       
     return None
   
   def testGetFullDescContact(self):
-    x = self.GetTest('fulldescription')
+    x = self.GetTest('test unit')
     self.assertTrue(x)
 
   def testReadFullDescContact(self):
-    x = self.GetTest('fulldescription')
+    x = self.GetTest('test unit')
     self.assertTrue(len(x.fields))
     
   def testReadWriteContact(self):
     # Read in
-    x = self.GetTest('fulldescription')
+    x = self.GetTest('test unit')
     
     # Write out
     xml = sandboXML('tests')
@@ -617,7 +658,7 @@ class ContactTest(unittest.TestCase):
     
   def testContactSetField(self):
     # Read in
-    x = self.GetTest('fulldescription')
+    x = self.GetTest('test unit')
     x.SetField('side', 'BLUE')
     self.assertNotEqual(x.GetField('side'), 'RED')
     

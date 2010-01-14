@@ -23,16 +23,18 @@
             
             <!-- Actual Sighting. -->
             <equipment count="10" type="personel">M16/M4</equipment>
-            <equipment count="4" type="personel">HMVEE</equipment>
+            <equipment count="4" type="vehicle">HMVEE</equipment>
             
             <!-- Capability and intentions -->
             <location type="coordinates">33T UG 2500</location>
             <stance>deployed</stance>
-            <activities>hasty defense,combat</activities>
+            <activity>redeploying</activity>
             <course>0</course>
             <speed>0</speed>
-            <range min="800" max="1000"/>
-            <bearing left="0" right="30"/>
+            <range_min>800</range_min>
+            <range_max>1000</range_max>
+            <bearing_left>-20</bearing_left>
+            <bearing_right>10</bearing_right>
             <altitude>0</altitude>
             
             <!-- Other factors that are more analytical and apply best to friends. --> 
