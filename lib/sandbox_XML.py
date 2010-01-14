@@ -25,6 +25,7 @@ from logistics import supply_package
 from intelligence import sandbox_contact
 from sandbox_position import position_descriptor
 
+
 class XMLParseError(Exception):
     def __init__(self, subtype='', data=''):
         Exception.__init__(self)
