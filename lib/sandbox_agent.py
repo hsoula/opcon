@@ -1020,7 +1020,7 @@ class agent:
             note = 'Undetermined'
         if contact != None:
             contact.timestamp = copy(self.clock)
-            if fromwithin in contact['direct subordinates']:
+            if fromwithin in contact.direct_subordinates:
                 contact.RemoveDirect(fromwithin)
             contact.UpdateField('nature', 'lost')
             self.log('>>Contact %s is lost. Cause: %s.'%(contact.TrackName(),note),'intelligence')

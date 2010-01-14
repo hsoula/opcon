@@ -25,6 +25,7 @@ from sandbox_log import *
 from sandbox_sensor import *
 from sandbox_exception import SandboxException
 
+
 import Renderer_html as html
 
 from sandbox_keywords import dch_size_denomination
@@ -34,22 +35,27 @@ from sandbox_geometry import geometry_rubberband
 import system_base
 
 
-class sandbox_contact(dict):
+class sandbox_contact:
   '''! \brief contact information data structure.
   '''
   def __init__(self, myunit= None):
+    # Identifier for the target unit (could be a pointer)
     self.unit = myunit
-    self.p_right = 0.5
     
-    self.log = sandbox_log()
+    # Reliability
+    self.p_right = 0.5
+    self.rating = 0
   
-    # Create field according to FM 101-5-1
-    self.DefineFields()
+    # Information
+    self.fields = {}
 
     # Direct subordinates in direct contact
-    self['direct subordinates'] = []
+    self.direct_subordinates = []
     
+    # Internal attributes for faster computation
     self.location = None
+    
+    # Time of last modification
     self.timestamp = None
     
   def __nonzero__(self):
@@ -58,6 +64,11 @@ class sandbox_contact(dict):
     return False
   
   def fromXML(self, doc, node):
+    ''' Read in a contact from a XML node
+    '''
+    # Non-field information
+    
+    # Field processing
     pass
   def toXML(self, doc):
     pass
@@ -125,21 +136,11 @@ class sandbox_contact(dict):
   
 
   # Retrieve Information
-  #
-  def GetFootprint(self, echelon = False):
-    '''! \brief Return the contact location
-    '''
-    if echelon:
-      pass
+  #  
+  def GetField(self, k):
+    ''' return thee field or None'''
+    self.fields.get(k,None)
     
-    return self.location
-  def GetRangeRings(self):
-    '''! \brief Get the range rings for a contact. 
-         \return A list with [min, max] or None
-    '''
-    if self.fields['max IF range']:
-      return [self.fields['min IF range'], self.fields['max IF range']]
-  
   def IFF(self):
     return self.fields['IFF/SIF']
   
@@ -155,7 +156,7 @@ class sandbox_contact(dict):
     '''Will be able to add EW in due time.'''
     if self.Type() == 'direct':
       return 1
-    if echelon and len(self['direct subordinates']):
+    if echelon and len(self.direct_subordinates):
       return 1
     return 0
   
@@ -181,43 +182,22 @@ class sandbox_contact(dict):
     return self.fields['nature']
 
   
-  def IconString(self):
-    '''! \brief return the MapSym string for the contact, or a blank icon is it doesn't work.
-    '''
-    try:
-      size = Sym_denom[self.fields['size indicator']]
-      type = self.fields['symbol']['char']
-      return size+type
-    except:
-      return '0'
+
     
-  def IconFont(self):
-    '''! \brief return the font name to use, or a generic NU-Land if it fails.
-        The font name MUST be valid, this check has to be done at the UI level!
-    '''
-    type = self.fields['symbol']['type']
-    iff = self.fields['symbol']['IFF']
-    try:
-      if iff == 'NA' or (type in ['Land1','Eqpt','OOTW']):
-        return 'MapSym%s%s'%(iff,type)
-      else:
-        return 'MapSym-%s-%s'%(iff,type)
-    except:
-      return 'MapSym-NU-Land'
-    
+
   # Manipulate the information
   # 
   def AddDirect(self, uid):
     '''! \brief Add to the list of underling in direct contact with the contact
     '''
-    if not uid in self['direct subordinates']:
-      self['direct subordinates'].append(uid)
+    if not uid in self.direct_subordinates:
+      self.direct_subordinates.append(uid)
     
   def RemoveDirect(self, uid):
     '''! \brief Remove to the list of underling in direct contact with the contact
     '''
-    if uid in self['direct subordinates']:
-      self['direct subordinates'].remove(uid)
+    if uid in self.direct_subordinates:
+      self.direct_subordinates.remove(uid)
     
      
   def Merge(self, other):
@@ -586,9 +566,96 @@ class IntelligenceModelTest(unittest.TestCase):
   
 class ContactTest(unittest.TestCase):
   def setUp(self):
-    pass
-  def testBlah(self):
-    self.assertEqual(True, True)
+    from sandbox_XML import sandboXML
+    # Get the XML test file
+    os.chdir(os.environ['OPCONhome'])
+    self.doc = sandboXML(read="./tests/contacts.xml")
+    
+  def GetTest(self, label):
+    ''' Retrieve the node of a contact of the following label
+    '''
+    for i in self.doc.Get(self.doc.root, 'contact', True):
+      if self.doc.Get(i,'label') == label:
+        return i
+      
+    return None
+  
+  def testGetFullDescContact(self):
+    x = self.GetTest('fulldescription')
+    self.assertTrue(x)
+
+  def testReadFullDescContact(self):
+    x = self.GetTest('fulldescription')
+    self.assertTrue(len(x.fields))
+    
+  def testReadWriteContact(self):
+    # Read in
+    x = self.GetTest('fulldescription')
+    
+    # Write out
+    xml = sandboXML('tests')
+    xml.AddNode(x.toXML(xml), xml.root)
+    
+    # Read again
+    y = sandbox_contact()
+    y.fromXML(xml, xml.Get(xml.root, 'contact'))
+    
+    out = []
+    
+    # Compare fields
+    out.append(set(x.fields.keys()).difference(set(y.fields.keys())) == set())
+    out.append(set(y.fields.keys()).difference(set(x.fields.keys())) == set())
+    for k in x.fields.keys():
+      out.append(x.GetField(k) == y.GetField(k))
+      
+    # unit
+    out.append(x.unit == y.unit)
+    out.append(x.timestamp == y.timestamp)
+    out.append(x.rating == y.rating)
+    
+    self.assertEqual(out.count('False'),0)
+    
+  def testContactSetField(self):
+    # Read in
+    x = self.GetTest('fulldescription')
+    x.SetField('side', 'BLUE')
+    self.assertNotEqual(x.GetField('side'), 'RED')
+    
+  def testContactUpdateField(self):
+    x = sandbox_contact()
+    x.rating = 1
+    
+    x.SetField('side','BLUE')
+    x.UpdateField('side','RED', 2)
+    
+    self.assertEqual(x.GetField('side'), 'RED')
+    
+  def testContactUpdateFieldTie(self):
+    x = sandbox_contact()
+    x.rating = 1
+    
+    x.SetField('side','BLUE')
+    x.UpdateField('side','RED', 1)
+    
+    self.assertEqual(x.GetField('side'), 'RED')
+    
+  def testContactUpdateFieldNot(self):
+    x = sandbox_contact()
+    x.rating = 1
+    
+    x.SetField('side','BLUE')
+    x.UpdateField('side','RED', 0)
+    
+    self.assertEqual(x.GetField('side'), 'BLUE')
+    
+  def testContactUpdateFieldDefault(self):
+    x = sandbox_contact()
+    x.rating = 1
+    
+    x.SetField('side','BLUE')
+    x.UpdateField('size','Plt', 0)
+    
+    self.assertEqual(x.GetField('size'), 'Plt')
     
 if __name__ == '__main__':
   import os
