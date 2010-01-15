@@ -189,24 +189,27 @@ class sandbox_contact:
        Make a copy of self into a new instance, used when a contact is reported to more than 1 recipient.
        encode : make the instance pickle-safe.
     '''
-    out = sandbox_contact(self.unit)
-    if encode:
-      out.unit = out.unit['uid']
-    out.p_right = self.p_right
-    out.log = copy(self.log)	
-    out.location = copy(self.location)
-    out.timestamp = copy(self.timestamp)
+    # Write out
+    from sandbox_XML import sandboXML
+    xml = sandboXML('tests')
+    xml.AddNode(self.toXML(xml), xml.root)
     
-    for i in self.fields.keys():
-      out.UpdateField(i, self.fields[i])
+    # Read again
+    out = xml.Get(xml.root, 'contact')
+    
+    # Preserve the pointer type if no encoding is required.
+    if not encode:
+      out.unit = self.unit
+      
     return out
+    
   
 
   # Retrieve Information
   #  
   def GetField(self, k):
     ''' return thee field or None'''
-    return self.fields.get(k,None)
+    return self.fields.get(k,'')
     
   def IFF(self):
     return self.fields['IFF/SIF']
@@ -214,14 +217,11 @@ class sandbox_contact:
 
   
   def IntelReliability(self, pv = None):
-    # Percieved intel reliability
-    if pv == None:
-      pv = self.p_right
-    return abs(0.5 - pv) / 0.5
+    return self.rating
   
   def IsDirectObs(self, echelon = False):
     '''Will be able to add EW in due time.'''
-    if self.Type() == 'direct':
+    if self.Status() == 'direct':
       return 1
     if echelon and len(self.direct_subordinates):
       return 1
@@ -233,16 +233,16 @@ class sandbox_contact:
     '''
     out = ''
     if self.fields['unique designation']:
-      out = '%s ||'%(self.fields['unique designation'])
+      out = '%s ||'%(self.fields['identity'])
     else:
       out = 'Undetermined track ||'
     # Size details that may be added to track ID
-    temp =  ' [ %s %s %s %s ]'%(self.fields['IFF/SIF'], self.fields['hardware'], self.fields['size indicator'], self.fields['reinforced/detached'])
+    temp =  ' [ %s %s %s %s ]'%(self.GetField('side'), self.GetField('TOE'), self.GetField('size'), self.GetField('augmentation'))
     if temp != ' [    ]':
       out = out + temp
     return out
   
-  def Type(self):
+  def Status(self):
     '''
        Return the fields['nature'] variable
     '''
