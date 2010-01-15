@@ -197,6 +197,13 @@ class sandboXML:
         return out
 
     # OUTPUT methods
+    def write_datetime(self, tagname, dt):
+        n = self.doc.createElement(tagname)
+        n.setAttribute('type','datetime')
+        miltime = '%s%s'%(str(dt.hour).zfill(2),str(dt.minute).zfill(2))
+        n.appendChild(self.doc.createTextNode('%d/%d/%d %s'%(dt.day,dt.month,dt.year,miltime)))
+        return n
+        
     def write_RGB(self, name, rgb):
         out = self.NewNode(name)
         self.SetAttribute('type', 'RGB', out)
@@ -249,6 +256,7 @@ class sandboXML:
             
         # Grafting here
         parent.appendChild(temp)
+        return temp
     
     def DateTime(self, tagname, dt):
         '''! \brief return a date time node
