@@ -143,10 +143,10 @@ class SensorVisual(sandbox_sensor):
         else:
             cnt.p_right = max(0.0 ,cnt.p_right - (pvalue/12.0))
             # Lose only if visual contact in the first place
-            if cnt.Type() == 'direct':
+            if cnt.Status() == 'direct':
                 A.ContactLose(cnt.unit, 'observation interupted')
             # Keep track of new contacts
-            if cnt.Type() == 'new':
+            if cnt.Status() == 'new':
                 cnt.timestamp = copy(A.clock)
                 cnt.UpdateField('nature', 'undetected')
                 # Add to contact list

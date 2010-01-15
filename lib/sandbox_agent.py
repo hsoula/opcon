@@ -1236,7 +1236,7 @@ class agent:
         subs = self.entity.AllSubordinates()
         for i in range(len(subs)):
             cnt = self.entity.Contact(subs[i])
-            if cnt != None and cnt.Type() != 'undetected':
+            if cnt != None and cnt.Status() != 'undetected':
                 temp = cnt.Duplicate('encode')
                 temp.UpdateField('nature','reported')
                 friends.append(temp)

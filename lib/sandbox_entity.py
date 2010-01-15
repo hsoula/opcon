@@ -1063,7 +1063,7 @@ class sandbox_entity(dict):
     for i in self['contacts'].keys():
         self['contacts'][i].unit =  self.sim.AsUID(self['contacts'][i].unit)
         # remove undetected with p_right == 0.5
-        if self['contacts'][i].Type() == 'undetected' and abs(self['contacts'][i].p_right - 0.5) <= 0.01:
+        if self['contacts'][i].Status() == 'undetected' and abs(self['contacts'][i].p_right - 0.5) <= 0.01:
           del self['contacts'][i]
 
     self.sim = None
