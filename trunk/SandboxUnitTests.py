@@ -83,13 +83,13 @@ class SandboxTest(unittest.TestCase):
     
     self.assertEqual(ooblen, len(sbox.GetOOB()))
     
-# suite
+# Suite
 testsuite = []
 
-# basic tests on sandbox instance
+# Basic tests on sandbox instance
 testsuite.append(unittest.makeSuite(SandboxTest))
 
-# testing OPORD/ COMM tests
+# Testing OPORD/ COMM tests
 import sandbox_comm
 testsuite.append(unittest.TestLoader().loadTestsFromModule(sandbox_comm))
 
@@ -143,11 +143,9 @@ import SandboxUnitTestTasking
 import sandbox_TOEM
 testsuite.append(unittest.TestLoader().loadTestsFromModule(sandbox_TOEM))
 
-# collate all and run
+# Collate all and run
 allsuite = unittest.TestSuite(testsuite)
 unittest.TextTestRunner(verbosity=2).run(allsuite)
 
 #unittest.main()
-  
-  
-  
+
