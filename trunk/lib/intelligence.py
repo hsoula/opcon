@@ -88,14 +88,57 @@ class sandbox_contact:
       # Special case - Equipment
       if tag == 'equipment':
         count = int(doc.Get(fd, 'count'))
-        kind = doc.Get(fd, 'type')
+        kind = doc.Get(fd, 'category')
         self.EquipmentSighting(doc.Get(fd), kind, count)
         continue
       
       self.SetField(tag, doc.Get(fd))
     
   def toXML(self, doc):
-    pass
+    ''' Create a node and write an XML representation of the data.
+        Uses attributes to make the XML more compact.
+    '''
+    out = doc.NewNode('contact')
+    ## Housekeeping part
+    # Name
+    if type(self.unit) == type(''):
+      doc.SetAttribute('unit', self.unit, out)
+    else:
+      # unit is a pointer
+      doc.SetAttribute('unit', self.unit.GetName(asuniqueID=True), out)
+      
+    # timestamp
+    if self.timestamp:
+      doc.AddField('timestamp', self.timestamp, out, 'datetime')
+      
+    # rating 
+    if self.rating:
+      doc.SetAttribute('rating', self.rating, out)
+      
+    # Status
+    if self.status != 'new':
+      doc.SetAttribute('status', self.status, out)
+      
+    # Fields
+    if len(self.fields):
+      fd = doc.NewNode('fields')
+      doc.AddNode(fd, out)
+      
+      # Write the data
+      for k in self.fields:
+        if k == 'equipment':
+          # Special case
+          for kind in self.fields['equipment']:
+            for item in self.fields['equipment'][kind]:
+              eqnd = doc.AddField('equipment', item['ID'], fd)
+              doc.SetAttribute('category', kind, eqnd)
+              doc.SetAttribute('count', item['count'], eqnd)
+        else:
+          # Write the field as is
+          x = self.GetField(k)
+          doc.AddField(k,x,fd)
+    
+    return out
   def DefineFields(self):
     ''' 
        fields according to FM 101-5-1 of the US army.
@@ -163,7 +206,7 @@ class sandbox_contact:
   #  
   def GetField(self, k):
     ''' return thee field or None'''
-    self.fields.get(k,None)
+    return self.fields.get(k,None)
     
   def IFF(self):
     return self.fields['IFF/SIF']
@@ -286,7 +329,7 @@ class sandbox_contact:
     if translator:
       self.UpdateField('location', translator.AsString(self.location))
     
-  def UpdateField(self, Key, value, pv = None, mytime = None):
+  def UpdateField(self, Key, value, rating = None, mytime = None):
     '''!
        Higher level to SetField which updates only if the intel strength is 
        equal or higher.
@@ -294,10 +337,26 @@ class sandbox_contact:
        \param Key (string) A key in fields.
        \param value (--) The value to be mapped into the fields.
     '''
-    if pv == None:
-      pv = self.p_right
-    if self.IntelReliability(pv) >= self.IntelReliability(self.p_right) or (not self.fields[Key]):
-      self.SetField(Key, value)
+    ## Check if the update should be made
+    update = False
+    # Case 1, the rating is higher or equal for the new data
+    if rating >= self.rating:
+      update = True
+      self.rating = rating
+    # Case 2, the field doesn't exist, so the data is accepted any how
+    if not Key in self.fields:
+      update = True
+      
+    # Abort
+    if not update:
+      return
+    
+    # Update time
+    if mytime:
+      self.timestamp = mytime
+    
+    # Set the field
+    self.SetField(Key, value)
     
       
   def SetField(self, Key, value):
@@ -634,12 +693,12 @@ class ContactTest(unittest.TestCase):
     x = self.GetTest('test unit')
     
     # Write out
+    from sandbox_XML import sandboXML
     xml = sandboXML('tests')
     xml.AddNode(x.toXML(xml), xml.root)
     
     # Read again
-    y = sandbox_contact()
-    y.fromXML(xml, xml.Get(xml.root, 'contact'))
+    y = xml.Get(xml.root, 'contact')
     
     out = []
     

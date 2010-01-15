@@ -22,8 +22,8 @@
             <augmentation>(+)</augmentation>
             
             <!-- Actual Sighting. -->
-            <equipment count="10" type="personel">M16/M4</equipment>
-            <equipment count="4" type="vehicle">HMVEE</equipment>
+            <equipment count="10" category="personel">M16/M4</equipment>
+            <equipment count="4" category="vehicle">HMVEE</equipment>
             
             <!-- Capability and intentions -->
             <location type="coordinates">33T UG 2500</location>

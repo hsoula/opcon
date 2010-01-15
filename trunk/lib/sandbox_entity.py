@@ -172,7 +172,7 @@ class sandbox_entity(dict):
     # All else fail  
     raise AttributeError, name
   
-  def GetName(self, filenamesafe=False):
+  def GetName(self, filenamesafe=False, asuniqueID=False):
     ''' Returns the unit's name. '''
     if filenamesafe:
       return self['name'].replace('/','.')
