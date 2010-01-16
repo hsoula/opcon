@@ -417,6 +417,28 @@ class sandbox:
     
   def GetClock(self):
     return self.clock
+  ## World information
+  #
+  def GetAtmosphericEffects(self, position):
+    ''' Will eventually read the weather area and time of day.
+    '''
+    return ['light']
+  
+  def LineOfSight(self, A, B):
+    ''' Returns whether there is a line of sight between A and B.
+        Right now, depend entirely on the visibility.
+    '''
+    # Get the average visibility for A and B
+    vis = (self.Visibility(A) + self.Visibility(B)) / 2.0
+    
+    # Get the distance.
+    distance = (A-B).length()
+    
+    if vis >= distance:
+      return True
+    
+    return False
+    
   # Broadcast and Signals
   #
   def BroadcastSignal(self, signal):

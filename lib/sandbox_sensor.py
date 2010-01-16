@@ -21,6 +21,9 @@ class sandbox_sensor:
         else:
             self.AoI = AoI
             
+        # Signature target
+        self.signal = ''
+            
         # Requirements
         self.requires = []
         self.degraded_by = []
@@ -33,6 +36,9 @@ class sandbox_sensor:
     def fromXML(self, doc, node):
         ''' Read basic data from the node.
         '''
+        # Target Signal
+        self.signal = doc.SafeGet(node, 'name', self.signal)
+        
         # Read requirements
         for nd in doc.Get(node, 'requires', True):
             self.requires.append(nd)

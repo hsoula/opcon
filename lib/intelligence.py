@@ -32,6 +32,8 @@ from sandbox_keywords import dch_size_denomination
 from GUIMapSym import MapSym, Sym_denom
 from sandbox_geometry import geometry_rubberband
 
+from sandbox_TOEM import TOEMargument
+
 import system_base
 
 
@@ -554,6 +556,24 @@ class system_intelligence(system_base.system_base):
     if not label in self.signature[gtype]:
       label = ''
     return self.signature[gtype][label]
+  
+  def GetHighestSignature(self, gtype, labels=[]):
+    ''' Cycle through each label and get the highest signature.
+    '''
+    # Create an argument
+    x = TOEMargument()
+    
+    # 
+    bestint = -100
+    bestconcept = 'impossible'
+    
+    for lbl in labels:
+      concept = self.GetSignature(gtype, lbl)
+      if x.ConceptValue(concept) > bestint:
+        bestint = x.ConceptValue(concept)
+        bestconcept = concept
+        
+      return bestconcept
     
       
       
@@ -565,10 +585,36 @@ class system_intelligence(system_base.system_base):
   def AcquireTarget(self, E, tgt):
     ''' Process the detection of each sensor owned by E on target tgt.
         Returns the contact to tgt.
+        
+        Algorithm:
+        
+        for each SENSOR:
+           contact <- AcquireWithSensor( E, sensor, tgt)
+           MERGE contact with E's existing contact by updating fields
     '''
     return sandbox_contact(tgt)
   
   # Private Methods
+  def AcquireWithSensor(self, E, sensor, tgt):
+    ''' Algorithm:
+        
+        SIGNAL <- GET sensor's signal
+        signature <- Get signature from tgt for SIGNAL
+        signature <- fetch tgt stance and activity modifiers.
+        
+    '''
+    # Signal Type
+    signal = sensor.signal
+    
+    # Is this target has a signature for this signal
+    signature = tgt.GetSignature(signal)
+    
+    # Build an argument
+    x = TOEMargument(base_prob=signature)
+    
+    # Get Atmospheric effects over the target
+    effects = E.sim.AtmosphericEffects(tgt.Position())
+  
   def EnumerateSensors(self, E):
     ''' Returns a list of sensors owned by E from the personel and vehicle components.
         The list is in fact a dictionary which uses the count as value and instances as keys.

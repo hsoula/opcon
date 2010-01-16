@@ -663,6 +663,20 @@ class sandbox_entity(dict):
     
   
   # Intelligence 
+  def GetSignature(self, signal):
+    ''' Returns the TOEM strength of the signature for this signal which 
+        considers the unit's activities and stance.
+    '''
+    # The model
+    intel = self['intelligence']
+    
+    # stance and activities
+    activities = self['activities this pulse'] + [self.GetStance()]
+    
+    # Highest signature
+    return intel.GetHighestSignature( signal, activities )
+    
+    
   def ContactList(self):
     ''' Returns a list of contact instances.
     '''
