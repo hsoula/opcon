@@ -167,11 +167,11 @@ class sandbox:
     
     if type(bearing) == type(''):
       # Textual bearing are acceptable
-      b = {}
-      a = ['N', 'NNE', 'NE', 'ESE', 'SE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW']
-      if bearing in a:
-        bearing = a.index(bearing) * (pi / 12.0)
-        
+      
+      b = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
+
+      if bearing in b:
+        bearing = b.index(bearing) * (pi / 16.0)
     
     # Solve vector with such bearing
     return v.ToBearing([bearing, distance])
