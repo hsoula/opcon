@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<scenario version="0.7">
+	<reset>1</reset>
+	<name>One Fire Team UTM</name>
+	<clock type="datetime">3/1/2010 0700</clock>
+	
+	<!-- The Map name to load up -->
+	<map>Anzio</map>
+
+	<!-- The head of the data to load -->
+	<data filename="base.xml"/>
+	
+	<!-- OOB section -->
+	<side>
+		<name>Blue</name>
+		<color type="RGB">10,10,255</color>
+		<OOB>
+			<unit template="FireTeam" identity="A/A/1/2-501"><location type="coordinates">33T UG 2500</location></unit>
+			<unit template="FireTeam" identity="B/A/1/2-501"><location type="coordinates">33T UG 255000</location></unit>
+		</OOB>
+	</side>
+</scenario>

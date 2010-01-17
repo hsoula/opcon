@@ -194,8 +194,6 @@ class sandbox_entity(dict):
     
   def SetModelIntelligence(self, M):
     self['intelligence'] = M
-    # Initialize Sensor
-    self['intelligence'].InitializeSensors(self)
     
     # 
       
@@ -720,8 +718,7 @@ class sandbox_entity(dict):
       contact = sandbox_contact(other)
       
     # Acquisition
-    for i in self['sensors']:
-      i.Acquire(self, contact)
+    self['intelligence'].AcquireTarget(self, other)
 
   
   def GetDirectVisualSensor(self):
