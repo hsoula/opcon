@@ -7,6 +7,7 @@
    state information.
 '''
 from sandbox_exception import SandboxException
+from sandbox_sensor import sandbox_sensor
 
 class sandbox_components:
     ''' This class is a post-hoc attempt to consolidate some of the code shared between personel
@@ -37,9 +38,11 @@ class sandbox_components:
         
         # Sensors
         for nd in doc.Get(node, 'sensor', True):
-            template = doc.Get(node, 'template')
+            template = doc.Get(node, 'type')
             if template:
                 x = self.datasource.Get('sensor', template)
+            else:
+                x = sandbox_sensor()
             # Read from XML
             x.fromXML(doc, nd)
             

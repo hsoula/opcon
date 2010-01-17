@@ -592,6 +592,22 @@ class system_intelligence(system_base.system_base):
            contact <- AcquireWithSensor( E, sensor, tgt)
            MERGE contact with E's existing contact by updating fields
     '''
+    # List all sensors
+    sensors = self.EnumerateSensors(E)
+    
+    # Go over each sensor
+    for s in sensors:
+      # Get the fields that should be updated
+      fields = self.AcquireWithSensor(E, s, tgt)
+      
+      # Get the contact
+      cnt = E.Contact(tgt)
+      if not cnt:
+        cnt = sandbox_contact(other)
+        
+      # Update the fields
+      self.UpdateFieldsFromList(cnt, fields)
+      
     return sandbox_contact(tgt)
   
   # Private Methods
@@ -625,6 +641,38 @@ class system_intelligence(system_base.system_base):
     # Vehicles
     
     return out
+  
+  def UpdateFieldsFromList(self, cnt, fields):
+    ''' Fetch the correct information from the target unit for each field
+    '''
+    # tgt unit
+    tgt = cnt.unit
+    
+    # Cycle
+    for fd in fields:
+      methodname = 'ExtractField' + fd
+      if hasattr(self, methodname):
+        # Call the method
+        info = getattr(self, methodname)(tgt)
+      else:
+        raise SandboxException('ExtractFieldError',fd)
+      
+    pass
+  
+  # ExtractField Section
+  ''' List: TOE, side, size, higher_formation, identity, augmentation, location
+            stance, activity, course, speed, range_min, range_max, bearing_left,
+            bearing_right, altitude, casualty_level, morale, fatigue, suppression,
+            supply_level
+  '''
+  def ExtractFieldTOE(self, E):
+    ''' Straighforward get TOE label
+    '''
+    return E['TOE']
+  
+  def ExtractFieldXXX(self, E):
+    '''  '''
+    return ''
   
   # Legacy Methods to eliminate
   def InitializeSensors(self, E):
@@ -709,7 +757,16 @@ class IntelligenceModelTest(unittest.TestCase):
     
     
     
-  
+  def testTwoUnitVisualContact(self):
+    # load the scenario
+    import sandbox_world
+    world = sandbox_world.sandbox('testTwoFireTeamsUTM.xml')
+    
+    # Run for an hour
+    world.Simulate()
+    
+    self.assertTrue(False)
+    
 class ContactTest(unittest.TestCase):
   def setUp(self):
     from sandbox_XML import sandboXML
@@ -802,6 +859,9 @@ class ContactTest(unittest.TestCase):
     x.UpdateField('size','Plt', 0)
     
     self.assertEqual(x.GetField('size'), 'Plt')
+
+
+    
     
 if __name__ == '__main__':
   import os

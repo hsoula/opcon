@@ -878,8 +878,10 @@ class OPORD(sandbox_COMM):
         return []
     
   def GetCurrentTask(self):
-    if self['EXECUTION']['MANEUVER TASKS'].has_key('cursor') == 0:
+    # Returns nothing if there is no sequence
+    if not self['EXECUTION']['MANEUVER TASKS']['sequence']:
       return None
+    # If there is no tasks, the cursor should be None, not 0.
     i = self['EXECUTION']['MANEUVER TASKS']['cursor']
     if i == None:
       return i
