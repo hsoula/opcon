@@ -160,18 +160,24 @@ class sandbox:
   # 
   def RelativePositionTo(self, name, bearing, distance):
     '''! \brief Provide the ability to specify position in the simulation that are relative to named positions.
-          Accept as bearing the following string, or any actual degree value
+          INPUT:
+            name      [string] the name of a node in the network.
+            bearing   [*] either a bearing string (see list b below) or an angle in radians
+            distance  [float] The distance in km from the node
+          OUTPUT:
+            A vector instance for the requested position
     '''
     # Get the reference point in the simulator in flat coordinates.
     v = self.GetLocation(name)
     
     if type(bearing) == type(''):
       # Textual bearing are acceptable
-      
       b = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
 
       if bearing in b:
-        bearing = b.index(bearing) * (pi / 16.0)
+        bearing = b.index(bearing) * (2*pi / 16.0)
+      else:
+        raise SandboxException('InvalidTextualBearing',[name,bearing,distance])
     
     # Solve vector with such bearing
     return v.ToBearing([bearing, distance])
@@ -991,23 +997,7 @@ class sandbox:
     
     
     return str(doc)
-  # Authentication
-  #
-  def Authenticate(self, username = '', session_pwd = ''):
-    '''! \brief validate user/pwd, not more.
-         \param username [string] The username
-         \param session_pwd [string] The session password, which as a key can decrypt the player's password into the concatenation of the world key and the username.
-         
-         A password thus us specific to a world and a username.
-    '''
-    # Get player
-    if self.players.has_key(username):
-      player = self.players[username]
-    else:
-      print 'Username not regitered'
-      return False
-    
-    return True
+
 
   
 import unittest

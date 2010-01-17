@@ -127,12 +127,12 @@ class vect_3D:
     rel = other - self
 
     angle = 0.0
-    range = rel.length()
+    vrange = rel.length()
     
-    if range == 0.0:
+    if vrange == 0.0:
       return [0.0,0.0]
     
-    angle = asin(rel.x/range)
+    angle = asin(rel.x/vrange)
     
     if rel.y < 0:
       t = (pi/2.0) - abs(angle)
@@ -141,7 +141,7 @@ class vect_3D:
       else:
         angle = pi/2.0 + t
         
-    return [NormalizeAngle(angle),range]
+    return [NormalizeAngle(angle),vrange]
   
   def ToBearing(self, B):
     '''
