@@ -378,10 +378,10 @@ class sandbox_entity(dict):
     '''! \brief Returns True if the unit is in OPCON
     '''
     return bool(self['OPCON'])
-  def GetHQ(self):
+  def GetHQ(self, use_opcon=False):
     '''! \brief returns the commanding unit, regardless of who is in command.
     '''
-    if self.IsOPCON():
+    if self.IsOPCON() and use_opcon:
       return self['OPCON']
     return self['HQ']
   
@@ -759,6 +759,25 @@ class sandbox_entity(dict):
   def Position(self):
     return self['position']
   
+  def PositionAsString(self):
+    ''' Returns a string as position. 
+        TODO: expresses relative to a landmark
+    '''
+    # Get the position
+    pos = self.Position()
+    
+    # Convert to a coordinate
+    return self.sim.map.MGRS.XYtoUTM(pos.AsVect())
+    
+  def GetBearing(self):
+    ''' Returns the bearing in the position instance, in radians
+    '''
+    return self['position'].course
+  def GetSpeed(self):
+    ''' Returns the speed of the unit as per the last displacement vector in the position
+        instance.
+    '''
+    return self['position'].rate
   def SetPosition(self, pos):
     '''! pos can either be a vector or a position descriptor '''
     if not 'position' in self:
