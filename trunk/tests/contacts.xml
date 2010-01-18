@@ -31,10 +31,8 @@
             <activity>redeploying</activity>
             <course>0</course>
             <speed>0</speed>
-            <range_min>800</range_min>
-            <range_max>1000</range_max>
-            <bearing_left>-20</bearing_left>
-            <bearing_right>10</bearing_right>
+            <range>800</range>
+            <bearing>-20</bearing>
             <altitude>0</altitude>
             
             <!-- Other factors that are more analytical and apply best to friends. --> 
