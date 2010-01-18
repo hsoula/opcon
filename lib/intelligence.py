@@ -653,7 +653,8 @@ class system_intelligence(system_base.system_base):
       methodname = 'ExtractField' + fd
       if hasattr(self, methodname):
         # Call the method
-        info = getattr(self, methodname)(tgt)
+        info = xxxxxx
+        getattr(self, methodname)(tgt)
       else:
         raise SandboxException('ExtractFieldError',fd)
       
@@ -683,14 +684,112 @@ class system_intelligence(system_base.system_base):
   def ExtractFieldhigher_formation(self, E):
     '''  Returns E's command echelon, or it's HQ is E is not a command unit.'''
     if E['echelon_name']:
-      return '%s (%s)'%(E['echelon_name'], self['command_echelon'])
+      return '%s (%s)'%(E['echelon_name'], E['command_echelon'])
     else:
       # Get the TOE HQ, not the TF HQ
-    return out
+      hq = E.GetHQ(use_opcon=False)
+      
+      # This unit must have an echelon!
+      return '%s (%s)'%(hq['echelon_name'], hq['command_echelon'])
+    
+  def ExtractFieldidentity(self, E):
+    '''  Return the unit's identity '''
+    return E.GetName()
   
-  def ExtractFieldXXX(self, E):
+  def ExtractFieldaugmentation(self, E):
+    '''  Returns either a (+) or a (-) or an empty string'''
+    # Case 1 - augmentation
+    if E.AttachedSubordinates():
+      return '(+)'
+    elif E.DetachedSubordinates():
+      return '(-)'
+    # No augmentation
+    return ''
+  
+  def ExtractFieldlocation(self, E):
+    '''  Get the location as a string. '''
+    return 'UTM ' + E.GetPositionAsString()
+  
+  
+  def ExtractFieldstance(self, E):
+    '''  '''
+    return E['stance']
+  
+  def ExtractFieldactivity(self, E):
+    '''  Returns the activity vector. A better implementation would use the name label of the active task.'''
+    # Get OPORD
+    opord = E['OPORD']
+    
+    # Get Current task
+    act = opord.GetCurrentSubTask()
+    if act:
+      return act.type
+    # No task...
+    return 'idle'
+  
+  def ExtractFieldcourse(self, E, precise=False):
+    '''  Return the direction of the unit.
+         TODO: report the road and the direction if on an infrastructure.
+    '''
+    # Get bearing and convert to degrees
+    bear = (E.GetBearing() / pi ) * 180
+    if bear < 0.0:
+      bear += 360
+      
+    if precise:
+      # return a direction in degrees
+      return str(int(bear)) 
+    else:
+      # returns a bearing in textual form
+       x = ['N','NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW','WSW', 'W', 'WNW', 'NW', 'NNW']
+      return x[int(bear/16.0)]
+    
+    # convert to degrees.
+  
+  def ExtractFieldspeed(self, E):
+    '''  '''
+    return E.Position().rate * 6.0
+  
+  def ExtractFieldrange_min(self, E):
     '''  '''
     return ''
+  
+  def ExtractFieldrange_max(self, E):
+    '''  '''
+    return ''
+  
+  def ExtractFieldbearing_left(self, E):
+    '''  '''
+    return ''
+  
+  def ExtractFieldbearing_right(self, E):
+    '''  '''
+    return ''
+  
+  def ExtractFieldaltitude(self, E):
+    '''  '''
+    return ''
+  
+  def ExtractFieldcasulaty_level(self, E):
+    '''  '''
+    return ''
+  
+  def ExtractFieldmorale(self, E):
+    '''  '''
+    return ''
+  
+  def ExtractFieldfatigue(self, E):
+    '''  '''
+    return ''
+  
+  def ExtractFieldsuppression(self, E):
+    '''  '''
+    return ''
+  
+  def ExtractFieldsupply_level(self, E):
+    '''  '''
+    return ''
+  
   
   # Legacy Methods to eliminate
   def InitializeSensors(self, E):
