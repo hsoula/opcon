@@ -659,8 +659,10 @@ class system_intelligence(system_base.system_base):
       
     pass
   
-  # ExtractField Section
-  ''' List: TOE, side, size, higher_formation, identity, augmentation, location
+  ## ExtractField Section
+  ''' THe naming of these methods is such that it pattern match with the XML tags of the contact fields. This may
+      explain why there are inconsistent naming going on.
+      List: TOE, side, size, higher_formation, identity, augmentation, location
             stance, activity, course, speed, range_min, range_max, bearing_left,
             bearing_right, altitude, casualty_level, morale, fatigue, suppression,
             supply_level
@@ -669,6 +671,18 @@ class system_intelligence(system_base.system_base):
     ''' Straighforward get TOE label
     '''
     return E['TOE']
+  
+  def ExtractFieldside(self, E):
+    ''' returns the side of a contact'''
+    return E['side']
+  
+  def ExtractFieldsize(self, E):
+    '''  returns the size of a contact'''
+    return E['size']
+  
+  def ExtractFieldhigher_formation(self, E):
+    '''  '''
+    return ''
   
   def ExtractFieldXXX(self, E):
     '''  '''
