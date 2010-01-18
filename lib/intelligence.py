@@ -606,7 +606,7 @@ class system_intelligence(system_base.system_base):
         cnt = sandbox_contact(other)
         
       # Update the fields
-      self.UpdateFieldsFromList(cnt, fields)
+      self.UpdateFieldsFromList(E, cnt, fields)
       
     return sandbox_contact(tgt)
   
@@ -642,7 +642,7 @@ class system_intelligence(system_base.system_base):
     
     return out
   
-  def UpdateFieldsFromList(self, cnt, fields):
+  def UpdateFieldsFromList(self, E, cnt, fields):
     ''' Fetch the correct information from the target unit for each field
     '''
     # tgt unit
@@ -653,8 +653,7 @@ class system_intelligence(system_base.system_base):
       methodname = 'ExtractField' + fd
       if hasattr(self, methodname):
         # Call the method
-        info = xxxxxx
-        getattr(self, methodname)(tgt)
+        getattr(self, methodname)(E, tgt)
       else:
         raise SandboxException('ExtractFieldError',fd)
       
@@ -664,24 +663,23 @@ class system_intelligence(system_base.system_base):
   ''' THe naming of these methods is such that it pattern match with the XML tags of the contact fields. This may
       explain why there are inconsistent naming going on.
       List: TOE, side, size, higher_formation, identity, augmentation, location
-            stance, activity, course, speed, range_min, range_max, bearing_left,
-            bearing_right, altitude, casualty_level, morale, fatigue, suppression,
+            stance, activity, course, speed, range, bearing, altitude, casualty_level, morale, fatigue, suppression,
             supply_level
   '''
-  def ExtractFieldTOE(self, E):
+  def ExtractFieldTOE(self, unit, E):
     ''' Straighforward get TOE label
     '''
     return E['TOE']
   
-  def ExtractFieldside(self, E):
+  def ExtractFieldside(self, unit, E):
     ''' returns the side of a contact'''
     return E['side']
   
-  def ExtractFieldsize(self, E):
+  def ExtractFieldsize(self, unit, E):
     '''  returns the size of a contact'''
     return E['size']
   
-  def ExtractFieldhigher_formation(self, E):
+  def ExtractFieldhigher_formation(self, unit, E):
     '''  Returns E's command echelon, or it's HQ is E is not a command unit.'''
     if E['echelon_name']:
       return '%s (%s)'%(E['echelon_name'], E['command_echelon'])
@@ -692,11 +690,11 @@ class system_intelligence(system_base.system_base):
       # This unit must have an echelon!
       return '%s (%s)'%(hq['echelon_name'], hq['command_echelon'])
     
-  def ExtractFieldidentity(self, E):
+  def ExtractFieldidentity(self, unit, E):
     '''  Return the unit's identity '''
     return E.GetName()
   
-  def ExtractFieldaugmentation(self, E):
+  def ExtractFieldaugmentation(self, unit, E):
     '''  Returns either a (+) or a (-) or an empty string'''
     # Case 1 - augmentation
     if E.AttachedSubordinates():
@@ -706,16 +704,16 @@ class system_intelligence(system_base.system_base):
     # No augmentation
     return ''
   
-  def ExtractFieldlocation(self, E):
+  def ExtractFieldlocation(self, unit, E):
     '''  Get the location as a string. '''
     return 'UTM ' + E.GetPositionAsString()
   
   
-  def ExtractFieldstance(self, E):
+  def ExtractFieldstance(self, unit, E):
     '''  '''
     return E['stance']
   
-  def ExtractFieldactivity(self, E):
+  def ExtractFieldactivity(self, unit, E):
     '''  Returns the activity vector. A better implementation would use the name label of the active task.'''
     # Get OPORD
     opord = E['OPORD']
@@ -727,7 +725,7 @@ class system_intelligence(system_base.system_base):
     # No task...
     return 'idle'
   
-  def ExtractFieldcourse(self, E, precise=False):
+  def ExtractFieldcourse(self, unit, E):
     '''  Return the direction of the unit.
          TODO: report the road and the direction if on an infrastructure.
     '''
@@ -736,59 +734,70 @@ class system_intelligence(system_base.system_base):
     if bear < 0.0:
       bear += 360
       
-    if precise:
-      # return a direction in degrees
-      return str(int(bear)) 
-    else:
-      # returns a bearing in textual form
-       x = ['N','NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW','WSW', 'W', 'WNW', 'NW', 'NNW']
-      return x[int(bear/16.0)]
+    return str(int(bear)) 
+
+  
+  def ExtractFieldspeed(self, unit, E):
+    '''  Expressed in kph (/ by the pulse 6 length in hours)'''
+    return E.Position().rate / (E.sim.pulse.seconds/3600.0)
+  
+  def ExtractFieldrange(self, unit, E):
+    '''  Returns the range in km.'''
+    # Us and Them
+    us = unit.Position().AsVect()
+    them = E.Position().AsVect()
     
-    # convert to degrees.
+    # distance
+    return (them - us).length()
+    
   
-  def ExtractFieldspeed(self, E):
+  def ExtractFieldbearing(self, unit, E):
     '''  '''
-    return E.Position().rate * 6.0
+    # Us and Them
+    us = unit.Position().AsVect()
+    them = E.Position().AsVect()
+    
+    # In degree
+    return (us.BearingTo(them)[0] / pi) * 180
   
-  def ExtractFieldrange_min(self, E):
-    '''  '''
-    return ''
+
   
-  def ExtractFieldrange_max(self, E):
-    '''  '''
-    return ''
+  def ExtractFieldaltitude(self, unit, E):
+    '''  The altitude from the position above ground or sea level.'''
+    return E.Position().z
   
-  def ExtractFieldbearing_left(self, E):
-    '''  '''
-    return ''
+  def ExtractFieldcasulaty_level(self, unit, E):
+    '''  TODO: implement after revisiting the combat model'''
+    # Collect all authorized and actual number
+    authorized = 0
+    count = 0
+    for i in E.personel:
+      authorized += E.personel[i]['authorized']
+      count += E.personel[i]['count']
+      
+    for i in E.vehicle:
+      authorized += E.vehicle[i]['authorized']
+      count += E.vehicle[i]['count']
+      
+    return 100 * (1.0 - (authorized/count))
   
-  def ExtractFieldbearing_right(self, E):
+  def ExtractFieldmorale(self, unit, E):
     '''  '''
-    return ''
+    return E.AsStringMorale(E.GetMorale())
   
-  def ExtractFieldaltitude(self, E):
+  def ExtractFieldfatigue(self, unit, E):
     '''  '''
-    return ''
+    return E.AsStringFatigue(E.GetFatigue())
   
-  def ExtractFieldcasulaty_level(self, E):
+  def ExtractFieldsuppression(self, unit, E):
     '''  '''
-    return ''
+    return E.AsStringSuppression(E.GetSuppression())
   
-  def ExtractFieldmorale(self, E):
-    '''  '''
-    return ''
-  
-  def ExtractFieldfatigue(self, E):
-    '''  '''
-    return ''
-  
-  def ExtractFieldsuppression(self, E):
-    '''  '''
-    return ''
-  
-  def ExtractFieldsupply_level(self, E):
-    '''  '''
-    return ''
+  def ExtractFieldsupply_level(self, unit, E):
+    '''  Rough bulk estimates in percent.
+         Confound all supply types: so heavy stuff is more important than light stuff.
+    '''
+    return float(E.GetCargo()) / float(E.GetCapacity()) * 100
   
   
   # Legacy Methods to eliminate

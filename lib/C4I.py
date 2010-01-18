@@ -16,13 +16,7 @@ import pickle
 class system_C4I(system_base.system_base):
   '''!
        Controler class for data transfer and storage for a unit.
-  '''
-  MoraleScale = {0.9:'GREEN', 0.75:'AMBER', 0.6:'RED', 0.4:'BLACK', 0.0:'Broken'}
-  CommandScale = {0.9:'GREEN', 0.75:'AMBER', 0.6:'RED', 0.4:'BLACK', 0.0:'Broken'}
-  FatigueScale = {0.80:'GREEN', 0.75:'AMBER', 0.6:'RED', 0.3:'BLACK', 0.0:'Exhausted'}
-  SuppressionScale = {0.80:'GREEN', 0.60:'AMBER', 0.4:'RED', 0.2:'BLACK', 0.0:'Paralyzed'}  
-  effectiveness = {'IDEAL': 1.0, 'EXCELLENT': 0.9, 'PROFESSIONAL': 0.8, 'SUB-STANDARD':0.7, 'DYSFUNCTIONAL': 0.5, 'INCOMPETENT':3.0**-1}
-  
+  ''' 
   def __init__(self):
     # Base class
     system_base.system_base.__init__(self)
@@ -147,6 +141,20 @@ class system_C4I(system_base.system_base):
   
 
   # Verbalization
+  def AsStringHumanFactor(self, k):
+    ''' Return a Human factor descriptor
+    '''
+    if k > 0:
+      return 'EXCELLENT'
+    elif k == 0:
+      return 'GREEN'
+    elif k >= -2:
+      return 'AMBER'
+    elif k >= -4:
+      return 'RED'
+    else:
+      return 'BROKEN'
+    
   def KeyLowerThan(self, k, L):
     '''! \brief Return the largest element in L that is smaller than k '''
     candidate = min(L)
@@ -158,21 +166,18 @@ class system_C4I(system_base.system_base):
     
     
   def AsStringMorale(self, m):
-    L = system_C4I.MoraleScale.keys()
-    return system_C4I.MoraleScale[self.KeyLowerThan(m,L)]
+    return self.AsStringHumanFactor(m)
   
   def AsStringFatigue(self, m ):
-    k = system_C4I.FatigueScale.keys()
-    return system_C4I.FatigueScale[self.KeyLowerThan(m,k)]
+    return self.AsStringHumanFactor(m)
+  
   
   def AsStringSuppression(self, m):
-    k = system_C4I.SuppressionScale.keys()
-    return system_C4I.SuppressionScale[self.KeyLowerThan(m,k)]
+    return self.AsStringHumanFactor(m)
   
   def AsStringCommand(self, m):
-    k = system_C4I.CommandScale.keys()
-    return system_C4I.CommandScale[self.KeyLowerThan(m,k)]
- 
+    return self.AsStringHumanFactor(m)
+  
   # Situation
   def Report(self, E):
     '''
