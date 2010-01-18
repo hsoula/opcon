@@ -681,8 +681,12 @@ class system_intelligence(system_base.system_base):
     return E['size']
   
   def ExtractFieldhigher_formation(self, E):
-    '''  '''
-    return ''
+    '''  Returns E's command echelon, or it's HQ is E is not a command unit.'''
+    if E['echelon_name']:
+      return '%s (%s)'%(E['echelon_name'], self['command_echelon'])
+    else:
+      # Get the TOE HQ, not the TF HQ
+    return out
   
   def ExtractFieldXXX(self, E):
     '''  '''
