@@ -9,12 +9,12 @@ The collation of information fields is called a contact. As time goes by, contac
 = Routine =  
 Lets assume that the unit detecting is called *ESEN* and the target unit is called *ETGT*. For each possible pair ESEN|ETGT, the following is done:
 
-# Enumerate each sensors in ESEN as SENSOR
-# Determine whether ETGT has a signature that SENSOR is sensitive to.
-# If this is the case, determine whether the SENSOR's Area of Interest overlaps with the footprint of ETGT.
-# If this is the case, determine the strength of the signature, modified by ETGT's activity and other environmental factors which the SENSOR is defined as either require, be degraded by or be enhanced by.
-# If SENSOR acquires ETGT, cycle through SENSOR's list of information fields that can be classified (and their likelihood). Determine for each field if the classification is made.
-# Update the newly classified fields into the existing contact, or create a new contact.
+  # Enumerate each sensors in ESEN as SENSOR
+  # Determine whether ETGT has a signature that SENSOR is sensitive to.
+  # If this is the case, determine whether the SENSOR's Area of Interest overlaps with the footprint of ETGT.
+  # If this is the case, determine the strength of the signature, modified by ETGT's activity and other environmental factors which the SENSOR is defined as either require, be degraded by or be enhanced by.
+  # If SENSOR acquires ETGT, cycle through SENSOR's list of information fields that can be classified (and their likelihood). Determine for each field if the classification is made.
+  # Update the newly classified fields into the existing contact, or create a new contact.
 
 Depending on the SOP/OPORD, the contact may be reported to HIGHER. 
 
