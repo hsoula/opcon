@@ -104,6 +104,10 @@ class sandbox_sensor:
     # Private methods.
 
     # New interface
+    def ClassificationFields(self):
+        ''' returns a list of classification fields'''
+        return self.classification_filter.keys()
+    
     def Requires(self):
         return self.requires
     

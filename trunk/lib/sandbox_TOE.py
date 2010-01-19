@@ -38,7 +38,7 @@ class sandbox_components:
         
         # Sensors
         for nd in doc.Get(node, 'sensor', True):
-            template = doc.Get(node, 'type')
+            template = doc.Get(nd, 'type')
             if template:
                 x = self.datasource.Get('sensor', template)
             else:

@@ -597,13 +597,16 @@ class system_intelligence(system_base.system_base):
     
     # Go over each sensor
     for s in sensors:
-      # Get the fields that should be updated
-      fields = self.AcquireWithSensor(E, s, tgt)
+      # Get the argument on whether there will be an acquisition
+      argument = self.AcquireWithSensor(E, s, tgt)
+      
+      # Get a list of fields to update
+      fields = self.FieldsToUpdate(s, argument.Increment())
       
       # Get the contact
       cnt = E.Contact(tgt)
       if not cnt:
-        cnt = sandbox_contact(other)
+        cnt = sandbox_contact(tgt)
         
       # Update the fields
       self.UpdateFieldsFromList(E, cnt, fields)
@@ -615,6 +618,8 @@ class system_intelligence(system_base.system_base):
     if self['signature'].has_key(label):
       return self['signature'][label]
     return self['signature']['deployed']  
+  
+  
   # Private Methods
   def AcquireWithSensor(self, E, sensor, tgt):
     ''' Algorithm:
@@ -630,11 +635,39 @@ class system_intelligence(system_base.system_base):
     # Is this target has a signature for this signal
     signature = tgt.GetSignature(signal)
     
+    # Abort if a sensor can't pick-up on the signal
+    if signature == 'impossible':
+      return []
+    
     # Build an argument
     x = TOEMargument(base_prob=signature)
     
     # Get Atmospheric effects over the target
-    effects = E.sim.AtmosphericEffects(tgt.Position())
+    effects = E.sim.GetAtmosphericEffects(tgt.Position())
+    
+    # Go over the requirements
+    for i in sensor.requires:
+      if i == 'LOS':
+        # special case of needing a LOS
+        if not E.sim.LineOfSight(E.Position(), tgt.Position()):
+          return []
+      elif not i in effects:
+        return []
+    
+    # PROS/CONS
+    for eff in effects:
+      if eff in sensor.degraded_by:
+        x.AddCon(eff)
+      elif eff in sensor.enhanced_by:
+        x.AddCon(eff)
+        
+    # Resolve
+    x.Resolve()
+    
+    # returns
+    return x
+    
+    
   
   def EnumerateSensors(self, E):
     ''' Returns a list of sensors owned by E from the personel and vehicle components.
@@ -642,11 +675,44 @@ class system_intelligence(system_base.system_base):
     '''
     out = {}
     # Personel
+    for k in E.personel:
+      x = E.personel[k]['kit']
+      for s in x.sensors:
+        if not s[0] in out:
+          out[s[0]] = 0
+        out[s[0]] += E.personel[k]['count'] * s[1]
     
     # Vehicles
-    
+    for k in E.vehicle:
+      x = E.vehicle[k]['kit']
+      for s in x.sensors:
+        if not s[0] in out:
+          out[s[0]] = 0
+        out[s[0]] += E.vehicle[k]['count'] * s[1]
+        
     return out
   
+  def FieldsToUpdate(self, sensor, increment):
+    ''' Return the list of fields to update for this sensor, consider the success increment.
+    '''
+    out = []
+    # Not acquired
+    if increment < 0:
+      return out
+    
+    # iterate over all fields
+    for fd in sensor.ClassificationFields():
+      # Get prob
+      p = sensor.ClassifyProb(fd)
+
+      # Argument
+      add = TOEMargument(base_prob= p).Resolve()
+      
+      # add to list of true
+      if add:
+        out.append(fd)
+        
+    return out
   def UpdateFieldsFromList(self, E, cnt, fields):
     ''' Fetch the correct information from the target unit for each field
     '''
@@ -751,7 +817,7 @@ class system_intelligence(system_base.system_base):
   
   def ExtractFieldspeed(self, unit, E):
     '''  Expressed in kph (/ by the pulse 6 length in hours)'''
-    return E.Position().rate / (E.sim.pulse.seconds/3600.0)
+    return E.Position().rate / (E.sim.Pulse())
   
   def ExtractFieldrange(self, unit, E):
     '''  Returns the range in km.'''

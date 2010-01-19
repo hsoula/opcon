@@ -9,7 +9,7 @@ from random import random, shuffle
 from sandbox_exception import SandboxException
 
 class TOEMargument:
-    def __init__(self, argument, outcome='', base_prob='neutral', skill_level=''):
+    def __init__(self, argument='', outcome='', base_prob='neutral', skill_level=''):
         # The argument
         self.argument = argument
         
@@ -63,6 +63,8 @@ class TOEMargument:
         x['very unlikely'] = -4
         x['likely'] = 1
         x['very likely'] = 2
+        x['automatic'] = 5
+        x['impossible'] = -5
         
         x['basic task'] = 4
         x['trained task'] = 0
