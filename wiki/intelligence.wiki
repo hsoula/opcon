@@ -1,5 +1,5 @@
 #summary The Intelligence model
-#labels docs,models
+#labels docs,models,XML-format
 
 = Principle =
 Units are made of components, which are either [personel] or [vehicle]. There components have [sensors] and are generating [signatures]. A given sensor has a chance of acquiring the signature with a probability that depends on the strength of the signature, the activities of the target unit and other atmospheric effects. Once a contact is acquired, each sensor can classify the target unit based on a list of information fields and associated probabilities of filling them up. 
@@ -17,3 +17,12 @@ Lets assume that the unit detecting is called *ESEN* and the target unit is call
 # Update the newly classified fields into the existing contact, or create a new contact.
 
 Depending on the SOP/OPORD, the contact may be reported to HIGHER. 
+
+= Parameterizing the intelligence model =
+The only parameter to the intelligence mode is to create a list of signatures. The base definition for the intelligence model can be found [https://code.google.com/p/opcon/source/browse/trunk/Data/intelligence.xml here]. In the section below, this definition is documented:
+
+== Default model ==
+{{{
+<intelligence template="base"/>
+}}}
+The default model draws from the base model, whether the template is specified or not. The base model is visible, has a thermal signature with properties similar to the visual signature (but works best in the dark/cold), and emit sound.  
