@@ -30,3 +30,26 @@ A sensor can only acquire if the sensor unit and the target units meet the requi
       </classify>
 </sensor>
 }}}
+
+== Implemented Fields ==
+  * TOE
+  * side
+  * size
+  * higher_formation
+  * identity
+  * augmentation
+  * location
+  * personel
+  * vehicle
+  * stance
+  * activity
+  * course
+  * speed
+  * range
+  * bearing
+  * altitude
+  * casualty_level
+  * morale
+  * fatigue
+  * suppression
+  * supply_level
