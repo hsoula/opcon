@@ -37,3 +37,18 @@ The basic definition. It has no capacity for materiel nor passenger lift. It has
    </consumption_rate>
 </logistics>
 }}}
+
+== capacity ==
+The quantity of material that a unit can carry. If this field is omitted or left blank, the capacity will be set to the unit's cargo with a full basic load (as defined when the unit is created).
+
+== passenger_lift ==
+The number of individuals that can be carried by the entity. 
+
+== crew ==
+The number of individuals that are required to operate the entity (vehicle) and are not disembarking when a dismount order is given.
+
+== basicload ==
+The number of hours of average consumption for each of the consumption rates. 
+
+== consumption_rate ==
+Expressed in supply_package in kg per unit of time (hour by default). This supply is expended only when the unit is performing this type of activity. 
