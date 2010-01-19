@@ -662,7 +662,7 @@ class system_intelligence(system_base.system_base):
   ## ExtractField Section
   ''' THe naming of these methods is such that it pattern match with the XML tags of the contact fields. This may
       explain why there are inconsistent naming going on.
-      List: TOE, side, size, higher_formation, identity, augmentation, location
+      List: TOE, side, size, higher_formation, identity, augmentation, location, personel, vehicle
             stance, activity, course, speed, range, bearing, altitude, casualty_level, morale, fatigue, suppression,
             supply_level
   '''
@@ -703,6 +703,16 @@ class system_intelligence(system_base.system_base):
       return '(-)'
     # No augmentation
     return ''
+  
+  def ExtractFieldpersonel(self, unit, E):
+    ''' return a sighting of personel
+    '''
+    return 'implement me'
+  
+  def ExtractFieldvehicle(self, unit, E):
+    ''' return a sighting of personel
+    '''
+    return 'implement me'
   
   def ExtractFieldlocation(self, unit, E):
     '''  Get the location as a string. '''
