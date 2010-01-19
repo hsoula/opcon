@@ -610,6 +610,11 @@ class system_intelligence(system_base.system_base):
       
     return sandbox_contact(tgt)
   
+  def Signature(self, label):
+    ''' Returns the signature for a given unit's stance as a TOEM probability. '''
+    if self['signature'].has_key(label):
+      return self['signature'][label]
+    return self['signature']['deployed']  
   # Private Methods
   def AcquireWithSensor(self, E, sensor, tgt):
     ''' Algorithm:
@@ -660,11 +665,8 @@ class system_intelligence(system_base.system_base):
     pass
   
   ## ExtractField Section
-  ''' THe naming of these methods is such that it pattern match with the XML tags of the contact fields. This may
+  ''' The naming of these methods is such that it pattern match with the XML tags of the contact fields. This may
       explain why there are inconsistent naming going on.
-      List: TOE, side, size, higher_formation, identity, augmentation, location, personel, vehicle
-            stance, activity, course, speed, range, bearing, altitude, casualty_level, morale, fatigue, suppression,
-            supply_level
   '''
   def ExtractFieldTOE(self, unit, E):
     ''' Straighforward get TOE label
@@ -810,28 +812,8 @@ class system_intelligence(system_base.system_base):
     return float(E.GetCargo()) / float(E.GetCapacity()) * 100
   
   
-  # Legacy Methods to eliminate
-  def InitializeSensors(self, E):
-    '''
-       Build sensors.
-    '''
-    # Flush sensors from platform
-    E['sensors'] = []
-    
-    # Direct detection through visuals
-    if self['sensors'].has_key('visual') and E.Footprint():
-      E['sensors'].append(SensorVisual(E.Footprint()))
-      
-    
+  # Legacy Methods to eliminate 
 
-
-  
-  def Signature(self, label):
-    ''' Returns the signature for a given unit's stance as a TOEM probability. '''
-    if self['signature'].has_key(label):
-      return self['signature'][label]
-    return self['signature']['deployed']
-  
   def SituationalAwareness(self, other, real = True):
       '''!
          If real set to false, will return the percieved SA instead of the real SA
