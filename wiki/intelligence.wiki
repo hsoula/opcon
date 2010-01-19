@@ -1,0 +1,8 @@
+#summary The Intelligence model
+
+= Principle =
+Units are made of components, which are either [personel] or [vehicle]. There components have [sensors] and are generating [signatures]. A given sensor has a chance of acquiring the signature with a probability that depends on the strength of the signature, the activities of the target unit and other atmospheric effects. Once a contact is acquired, each sensor can classify the target unit based on a list of information fields and associated probabilities of filling them up. 
+
+The collation of information fields is called a contact. As time goes by, contacts get updated with new information, can be sent as CNTREP, can be merged with other contact on the same units and passed back down the chain as part of an INTSUM/INTREP. 
+
+= Routine =  
