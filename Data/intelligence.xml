@@ -21,6 +21,7 @@
 				<likely>transit</likely>
 				<very_likely>combat</very_likely>
 			</signature>
+			<signature type="self" level="automatic"/>
 		</intelligence>
 		
 		<!-- Static LOGPAC -->

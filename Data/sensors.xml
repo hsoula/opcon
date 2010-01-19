@@ -55,5 +55,14 @@
                 <very_unlikely>location</very_unlikely>
             </classify>
         </sensor>
+        <!-- Esoteric self sensor, which allow self-reporting using the same routines as any other 
+             sensors. -->
+        <sensor name="self" signature="self">
+            <classify>
+                <automatic>moral,fatigue,supply levels,augmentation,identity,side,size,higher_formation,
+                course,speed,activity,personel,vehicles,location,altitude,stance,TOE
+                </automatic>
+            </classify>
+        </sensor>
     </sensors>
 </templates>

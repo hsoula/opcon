@@ -955,56 +955,12 @@ class agent:
         '''!
            Prepare a fully informative contact about self.entity
         '''
-        # Create the contact
-        cnt = sandbox_contact(self.entity)
-        # Right all the time about self.
-        cnt.p_right = 1.0
-        # unit
-        cnt.unit = self.entity
-        # Set the time
-        cnt.timestamp = copy(self.clock)
-        # All fields updated
-        cnt.UpdateField('symbol', self.entity['icon'], mytime = self.clock)
-        cnt.UpdateField('hardware', self.entity['TOE'], mytime = self.clock)
-        cnt.UpdateField('size indicator', self.entity['size'], mytime = self.clock)
-        #cnt.UpdateField('equipment', val, mytime = self.clock)
-        #cnt.UpdateField('task force', val, mytime = self.clock)
-        cnt.UpdateField('nature', 'direct', mytime = self.clock)
-        #cnt.UpdateField('reinforced/detached', val, mytime = self.clock)
-        #cnt.UpdateField('staff comment', val, mytime = self.clock)
-        #cnt.UpdateField('additional information', val, mytime = self.clock)
-        cnt.UpdateField('evaluation rating', 'A1', mytime = self.clock)
-        #cnt.UpdateField('combat effectiveness', self.entity['combat']['RCP'], mytime = self.clock)
-        cnt.UpdateField('combat effectiveness', 1.0, mytime = self.clock)
-        #cnt.UpdateField('signature equipment', val, mytime = self.clock)
-        try:
-            cnt.UpdateField('higher formation', self.entity.GetHQ()['echelon'], mytime = self.clock)
-        except:
-            pass # TODO, implement a robust higher echelon solving.
-        #cnt.UpdateField('enemy(hostile)', val, mytime = self.clock)
-        cnt.UpdateField('side', self.entity['side'], mytime = self.clock)
-        cnt.UpdateField('IFF/SIF', 'FR', mytime = self.clock)
-        #cnt.UpdateField('movement arrow', val, mytime = self.clock)
-        cnt.UpdateField('mobility', self.entity.GetStance(), mytime = self.clock)
-        #cnt.UpdateField('locating indicator', val, mytime = self.clock)
-        cnt.UpdateField('unique designation', self.entity.GetName(), mytime = self.clock)
-        cnt.timestamp = deepcopy(self.clock)
-        cnt.UpdateField('datetime', cnt.timestamp.strftime('%d%H%M%SZ%b%y'), mytime = self.clock) #DDHHMMSSZMONYY
-        #cnt.UpdateField('altitude/depth', val, mytime = self.clock)
-        cnt.SetLocation(copy(self.entity['position']))
-        #cnt.UpdateField('location', self.map.MGRS.AsString(cnt.location), mytime = self.clock)
-        cnt.location.SetFootprint(copy(self.entity.Footprint()))
-        cnt.UpdateField( 'Echelon Footprint', copy(self.SolveFootprint()) )
-        #cnt.UpdateField('footprint', self.entity.Footprint())
-        cnt.UpdateField('speed', self.entity['position'].rate * 1.0 / (self.entity.sim.Pulse()), mytime = self.clock)
         
-        # Min/Max range IF
-        '''
-        if self.entity.IFRCP():
-            temp = self.entity.IFranges()
-            cnt.UpdateField('min IF range', temp[0])
-            cnt.UpdateField('max IF range', temp[1])
-        '''
+        # Get a self sensor
+        sensor = self.entity.EnumerateSensors()['self']
+        
+        # Launch the routine
+        cnt = self.entity.AcquireWithSensor(self.entity, sensor, self.entity)
         
         return cnt
             
