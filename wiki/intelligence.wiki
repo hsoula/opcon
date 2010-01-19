@@ -26,3 +26,36 @@ The only parameter to the intelligence mode is to create a list of signatures. T
 <intelligence template="base"/>
 }}}
 The default model draws from the base model, whether the template is specified or not. The base model is visible, has a thermal signature with properties similar to the visual signature (but works best in the dark/cold), and emit sound.  
+
+== Signatures ==
+{{{
+<intelligence template="base">
+      <signature signal="visual" level="likely"/>
+</intelligence>
+}}}
+In this simple example, all visual signature are likely to be acquired, regardless of the target unit's activity. The signal must be a single token (no whitespaces) which matches the label of a signal that at least one sensor is sensitive to.  The level field is one of the possible [TOEM] labels: 
+  * very_unlikely
+  * unlikely
+  * neutral
+  * likely
+  * very_likely
+
+{{{
+<intelligence template="base">
+      <signature signal="thermal" sameas="visual"/>
+</intelligence>
+}}}
+In this example, the thermal signature behaves the same as the visual signature, except that the thermal sensors have a different sets of requirements and modifiers.
+
+{{{
+<intelligence template="base">
+      <signature type="visual" level="likely">
+          <very_likely>combat,transit</very_likely>
+          <neutral>deployed,hasty defense</neutral>
+          <unlikely>prepared defense</unlikely>
+      </signature>
+</intelligence>
+}}}
+The example above is a more elaborate sample where the stance and the activity of a unit affects its signature. If there are more than one label possible for a given signature level, use coma to delimit the elements.
+
+In this case, the unit would likely to be detected visually if in range and observed by a unit. However, this likelihood is much higher is the unit is either fighting or moving overland. It is also much more difficult to acquire a target unit if this unit is in prepared defense.
