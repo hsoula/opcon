@@ -152,6 +152,10 @@ class sandbox_entity(dict):
     # template information
     if self.sim and self.template:
       self.sim.data.FetchData(self, 'unit', self.template)
+      
+    # Set the cargo to the capacity to a basic load
+    if not self.cargo:
+      self.cargo = self.GetCapacity()
 
   def __getattr__(self, name):
     '''! \brief Attempt direct access to the models.
@@ -188,6 +192,9 @@ class sandbox_entity(dict):
     
   def SetModelLogistics(self, M):
     self['logistics'] = M
+    # Set the cargo to the capacity to a basic load
+    if not self.cargo:
+      self.cargo = self.GetCapacity()
     
   def SetModelC4I(self, M):
     self['C4I'] = M
