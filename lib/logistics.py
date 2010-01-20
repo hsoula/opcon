@@ -378,12 +378,7 @@ class system_logistics(system_base.system_base):
   # Interface
   def fromXML(self, doc, node):
     '''! \brief Populate instance from XML node.
-    '''
-    # Capacity
-    cap = doc.Get(node, 'capacity')
-    if cap:
-      self['capacity'] = cap
-        
+    ''' 
     # Passenger lift
     lift = doc.Get(node, 'passenger_lift')
     if lift != '':
@@ -409,14 +404,15 @@ class system_logistics(system_base.system_base):
         self['consumption_rate'][i] = nd
         
 
+    # Capacity
+    cap = doc.Get(node, 'capacity')
+    if cap:
+      self['capacity'] = cap
+    else:
+      # Capacity not defined, lets set it to a basic load
+      self['capacity'] = self.ProjectSupply(activity_dict=self['basic load'])
   
   # Initialization
-  def ConsumptionInitialize(self, hardware = None, initRCP = None, Nv = None, Np = None, echelon = None, climate = 'temperate'):
-    '''
-       Set the consumption model - #del
-    '''
-    pass
-    
   # Manips
   #
   def StripLOGPACs(self, LOGPACs):
@@ -430,22 +426,12 @@ class system_logistics(system_base.system_base):
       return out
   #
   # Report and information
-  #
-  def CombatSupplyLevel(self): #del, combat
-    '''! Return the level of Ammunition relative to capacity. 
-         Broken, awaiting the refactoring of the combat module.
-    '''
-    return 1.0
-    try:
-      return min(1.0,self['cargo']['V'] / self['capacity']['V'])
-    except:
-      return 0.0
-  
   def GetCapacity(self, E=None):
     '''! \brief returns the cargo capacity of a unit 
     '''
     # Base capacity of the model
     out = self['capacity']
+  
     
     if not E:
       return out
@@ -454,13 +440,13 @@ class system_logistics(system_base.system_base):
     for i in E.vehicle:
       cnt = E.vehicle[i]['count']
       vh  = E.vehicle[i]['kit']
-      out = out + vh.logistics.GetCapacity()
+      out = out + (vh.logistics.GetCapacity() * cnt)
       
     # Personel
     for i in E.personel:
       cnt = E.personel[i]['count']
       vh  = E.personel[i]['kit']
-      out = out + vh.logistics.GetCapacity()
+      out = out + (vh.logistics.GetCapacity() * cnt)
       
     return out
   
