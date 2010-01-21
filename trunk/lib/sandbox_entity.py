@@ -672,6 +672,10 @@ class sandbox_entity(dict):
     ''' Returns the TOEM strength of the signature for this signal which 
         considers the unit's activities and stance.
     '''
+    # Automatically return self signal
+    if signal == 'self':
+      return 'automatic'
+    
     # The model
     intel = self['intelligence']
     

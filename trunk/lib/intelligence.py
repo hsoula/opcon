@@ -636,7 +636,9 @@ class system_intelligence(system_base.system_base):
       else:
         # It failed
         cnt.deception += 1
-      
+  
+  def ClassifyWithSensor(self, sensor, increment):
+    pass
   
   def Signature(self, label):
     ''' Returns the signature for a given unit's stance as a TOEM probability. '''
