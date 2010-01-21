@@ -957,7 +957,7 @@ class agent:
         '''
         
         # Get a self sensor
-        sensor = self.entity.EnumerateSensors()['self']
+        sensor = self.entity.sim.data.Get('sensor','self')
         
         # Launch the routine
         cnt = self.entity.AcquireWithSensor(self.entity, sensor, self.entity)
