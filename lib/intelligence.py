@@ -49,8 +49,8 @@ class sandbox_contact:
     self.rating = 0
     self.deception = 0
     
-    # Status
-    self.status = 'new'
+    # Status (by default, set to undetected)
+    self.status = 'undetected'
   
     # Information
     self.fields = {}
@@ -255,7 +255,7 @@ class sandbox_contact:
   
   def Status(self):
     '''
-       Return the fields['nature'] variable
+       Return the status
     '''
     return self.status
 
@@ -349,14 +349,17 @@ class sandbox_contact:
        \param value (--) The value to be mapped into the fields.
     '''
     ## Check if the update should be made
-    update = False
-    # Case 1, the rating is higher or equal for the new data
-    if rating >= self.rating:
+    if rating == None:
       update = True
-      self.rating = rating
-    # Case 2, the field doesn't exist, so the data is accepted any how
-    if not Key in self.fields:
-      update = True
+    else:
+      update = False
+      # Case 1, the rating is higher or equal for the new data
+      if rating >= self.rating:
+        update = True
+        self.rating = rating
+      # Case 2, the field doesn't exist, so the data is accepted any how
+      if not Key in self.fields:
+        update = True
       
     # Abort
     if not update:
@@ -365,6 +368,9 @@ class sandbox_contact:
     # Update time
     if mytime:
       self.timestamp = mytime
+      # Remove the undetected status
+      if self.status == 'undetected':
+        self.status = 'new'
     
     # Set the field
     self.SetField(Key, value)
@@ -624,11 +630,7 @@ class system_intelligence(system_base.system_base):
       success = argument.Resolve()
       
       if success:
-        # Get a list of fields to update
-        fields = self.FieldsToUpdate(s, argument.Increment())
-        
-        # Update the fields
-        self.UpdateFieldsFromList(E, cnt, fields)
+        self.ClassifyWithSensor(E, cnt, s, argument.Increment())
         
         # Deception and rating
         cnt.deception = 0
@@ -637,8 +639,14 @@ class system_intelligence(system_base.system_base):
         # It failed
         cnt.deception += 1
   
-  def ClassifyWithSensor(self, sensor, increment):
-    pass
+  def ClassifyWithSensor(self, E, cnt, sensor, increment):
+    ''' Determine which field to update and do it.
+    '''
+    # Get a list of fields to update
+    fields = self.FieldsToUpdate(sensor, increment)
+      
+    # Update the fields
+    self.UpdateFieldsFromList(E, cnt, fields)
   
   def Signature(self, label):
     ''' Returns the signature for a given unit's stance as a TOEM probability. '''
@@ -748,7 +756,7 @@ class system_intelligence(system_base.system_base):
       methodname = 'ExtractField' + fd
       if hasattr(self, methodname):
         # Call the method
-        getattr(self, methodname)(E, tgt)
+        cnt.UpdateField(fd, getattr(self, methodname)(E, tgt), mytime=E.sim.clock)
       else:
         raise SandboxException('ExtractFieldError',fd)
       
@@ -808,7 +816,7 @@ class system_intelligence(system_base.system_base):
   
   def ExtractFieldlocation(self, unit, E):
     '''  Get the location as a string. '''
-    return 'UTM ' + E.GetPositionAsString()
+    return 'UTM ' + E.PositionAsString()
   
   
   def ExtractFieldstance(self, unit, E):

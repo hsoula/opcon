@@ -98,10 +98,27 @@ class TOEMargument:
         else:
             raise SandboxException('TOEM: Invalid skill level.', x)
             
-    def GetPvalue(self):
+    def GetPvalue(self, p=None):
         # Get p-value as per version 1.0 of the rule.
-        p = self.base_prob
+        if p == None:
+            p = self.base_prob
         return max(1, 2**(p+1)-1) / 2.0**(abs(p)+1)
+    
+    def LevelAtPvalue(self, pval):
+        ''' returns the smallest level which large enough to include the given pval.
+            This is a dumb empirical way to do this...
+        '''
+        out = 0
+        if pval == 0.5:
+            return out
+        elif pval <0.5:
+            while pval < self.GetPvalue(out-1):
+                out -= 1
+        else:
+            while pval > self.GetPvalue(out):
+                out += 1
+        return out
+
     
     def AddPro(self, x):
         '''
@@ -154,21 +171,10 @@ class TOEMargument:
                 if i.Resolve():
                     self.base_prob -= 1
                     
-        # Determine the increment
-        if dice <= self.GetPvalue():
-            # It worked!
-            temp = self.base_prob
-            self.base_prob -= 1
-            while dice <= self.GetPvalue():
-                self.base_prob -= 1
-            self.increment = self.base_prob - temp + 1
-        else:
-            # It failed.
-            temp = self.base_prob
-            self.base_prob += 1
-            while dice >= self.GetPvalue():
-                self.base_prob += 1
-            self.increment = temp - self.base_prob 
+
+        # It worked!
+        roll_level = self.LevelAtPvalue(dice)
+        self.increment = self.base_prob - roll_level
             
         # Shuffle arguments (for blaming later)
         shuffle(self.con)
