@@ -47,6 +47,7 @@ class sandbox_contact:
     # Reliability
     self.p_right = 0.5
     self.rating = 0
+    self.deception = 0
     
     # Status
     self.status = 'new'
@@ -80,6 +81,7 @@ class sandbox_contact:
     self.timestamp = doc.SafeGet(node, 'timestamp', self.timestamp)
     self.rating = doc.SafeGet(node, 'rating', self.rating)
     self.status = doc.SafeGet(node, 'status', self.status)
+    self.deception = doc.SafeGet(node, 'deception', self.deception)
     
     # Field processing
     fds = doc.Get(node, 'fields')
@@ -116,6 +118,10 @@ class sandbox_contact:
     # rating 
     if self.rating:
       doc.SetAttribute('rating', self.rating, out)
+      
+    # deception
+    if self.deception:
+      doc.SetAttribute('deception', self.deception, out)
       
     # Status
     if self.status != 'new':
@@ -209,6 +215,9 @@ class sandbox_contact:
 
   # Retrieve Information
   #  
+  def DeceptionLevel(self):
+    return self.deception
+  
   def GetField(self, k):
     ''' return thee field or None'''
     return self.fields.get(k,'')
@@ -248,7 +257,7 @@ class sandbox_contact:
     '''
        Return the fields['nature'] variable
     '''
-    return self.fields['nature']
+    return self.status
 
   
 
@@ -595,23 +604,39 @@ class system_intelligence(system_base.system_base):
     # List all sensors
     sensors = self.EnumerateSensors(E)
     
+    # Get the contact
+    cnt = E.Contact(tgt)
+    if not cnt:
+      # Create a new contact
+      cnt = sandbox_contact(tgt)
+      E.WriteContact(cnt)
+    
     # Go over each sensor
     for s in sensors:
       # Get the argument on whether there will be an acquisition
       argument = self.AcquireWithSensor(E, s, tgt)
       
-      # Get a list of fields to update
-      fields = self.FieldsToUpdate(s, argument.Increment())
-      
-      # Get the contact
-      cnt = E.Contact(tgt)
-      if not cnt:
-        cnt = sandbox_contact(tgt)
+      # Factor in levels of deception
+      for i in range(cnt.DeceptionLevel()):
+        argument.AddCon('deception')
         
-      # Update the fields
-      self.UpdateFieldsFromList(E, cnt, fields)
+      # Roll the argument
+      success = argument.Resolve()
       
-    return sandbox_contact(tgt)
+      if success:
+        # Get a list of fields to update
+        fields = self.FieldsToUpdate(s, argument.Increment())
+        
+        # Update the fields
+        self.UpdateFieldsFromList(E, cnt, fields)
+        
+        # Deception and rating
+        cnt.deception = 0
+        cnt.rating = argument.Increment()
+      else:
+        # It failed
+        cnt.deception += 1
+      
   
   def Signature(self, label):
     ''' Returns the signature for a given unit's stance as a TOEM probability. '''
@@ -660,9 +685,6 @@ class system_intelligence(system_base.system_base):
         x.AddCon(eff)
       elif eff in sensor.enhanced_by:
         x.AddCon(eff)
-        
-    # Resolve
-    x.Resolve()
     
     # returns
     return x
