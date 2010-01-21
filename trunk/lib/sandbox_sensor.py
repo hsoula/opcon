@@ -38,7 +38,7 @@ class sandbox_sensor:
 
 
     def __str__(self):
-        return 'Sensor: %s'%(self.signal)
+        return 'Sensor: %s (%s)'%(self.name, self.signal)
     def fromXML(self, doc, node):
         ''' Read basic data from the node.
         '''
@@ -82,7 +82,9 @@ class sandbox_sensor:
                 k = nd.tagName.replace('_',' ')
                 x = doc.Get(nd).split(',')
                 for i in x:
-                    self.classification_filter[i.strip()] = k.strip()
+                    i = i.strip()
+                    i = i.replace(' ', '_')
+                    self.classification_filter[i] = k.strip()
     
     def GetAoI(self):
         return self.AoI
@@ -94,24 +96,10 @@ class sandbox_sensor:
         '''
         cnt.timestamp = copy(E['agent'].clock)
     
-    def Classify(self, E, cnt):
-        '''
-           Fill in the data information for the contact
-        '''
-        for i in dir(self):
-            if i.find('Specify') == 0:
-                fn = getattr(self, i)
-                fn(E,cnt)
-    
-    def Report(self, E):
-        '''
-           Returns the contact list defined by the sensor.
-        '''
-        return []
-    
-    # Private methods.
 
-    # New interface
+    
+
+    # Get Data from sensor
     def ClassificationFields(self):
         ''' returns a list of classification fields'''
         return self.classification_filter.keys()
