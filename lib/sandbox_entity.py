@@ -155,7 +155,7 @@ class sandbox_entity(dict):
       
     # Set the cargo to the capacity to a basic load
     if not self.cargo:
-      self.cargo = self.GetCapacity()
+      self.cargo = self.GetBasicLoad(self)
 
   def __getattr__(self, name):
     '''! \brief Attempt direct access to the models.
@@ -712,6 +712,7 @@ class sandbox_entity(dict):
       return
     k = cnt.unit['side']+cnt.unit.GetName()
     self['contacts'][k] = cnt
+    
   def Detection(self, other):
     '''!
        Handle all the detection and classification as called by the simulator
@@ -728,12 +729,7 @@ class sandbox_entity(dict):
     self['intelligence'].AcquireTarget(self, other)
 
   
-  def GetDirectVisualSensor(self):
-    # find the sensor
-    for i in xrange(len(self['sensors'])):
-      if isinstance(self['sensors'][i], SensorVisual):
-        return self['sensors'][i]
-    return None
+
   # Combat
   def IsDismounted(self):
     ''' Return true is dismounted flag is not logically a no.

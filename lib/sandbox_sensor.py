@@ -21,6 +21,9 @@ class sandbox_sensor:
         else:
             self.AoI = AoI
             
+        # Name
+        self.name = ''
+        
         # Signature target
         self.signal = ''
             
@@ -33,11 +36,16 @@ class sandbox_sensor:
         self.classification_filter = {}
             
 
+
+    def __str__(self):
+        return 'Sensor: %s'%(self.signal)
     def fromXML(self, doc, node):
         ''' Read basic data from the node.
         '''
+        # Name
+        self.name = doc.SafeGet(node, 'name', self.name)
         # Target Signal
-        self.signal = doc.SafeGet(node, 'name', self.signal)
+        self.signal = doc.SafeGet(node, 'signature', self.signal)
         
         # Read requirements
         for nd in doc.Get(node, 'requires', True):

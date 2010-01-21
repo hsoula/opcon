@@ -42,7 +42,18 @@ class supply_package(dict):
     # Read goods in
     for i in doc.ElementAsList(node):
       name = doc.Get(i,'name')
-      self[name] = doc.Get(i) * units * ratetime
+      u = doc.Get(i, 'units')
+      if u:
+        u = supply_package.units_conversion[u]
+      else:
+        u = units
+      rt = doc.Get(i, 'time_units')
+      if rt:
+        rt = supply_package.time_units_conversion[rt]
+      else:
+        rt = ratetime
+        
+      self[name] = doc.Get(i) * u * rt
     return True
     
   def __str__(self):
@@ -569,6 +580,10 @@ class system_logistics(system_base.system_base):
       mod = 24.0 / self['basic load']['idle']
       return self.ProjectSupply(1, self['basic load'], E) * mod
     return supply_package()
+  def GetBasicLoad(self, E):
+    ''' Returns the basic load of Entity E
+    '''
+    return self.ProjectSupply(activity_dict=self['basic load'], E=E)
   #
   # Umpire interface
   def ComputeCapacity(self):
