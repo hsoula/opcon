@@ -82,7 +82,7 @@ class sandbox_sensor:
                 k = nd.tagName.replace('_',' ')
                 x = doc.Get(nd).split(',')
                 for i in x:
-                    self.classification_filter[i] = k
+                    self.classification_filter[i.strip()] = k.strip()
     
     def GetAoI(self):
         return self.AoI

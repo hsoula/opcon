@@ -960,7 +960,12 @@ class agent:
         sensor = self.entity.sim.data.Get('sensor','self')
         
         # Launch the routine
-        cnt = self.entity.AcquireWithSensor(self.entity, sensor, self.entity)
+        arg = self.entity.AcquireWithSensor(self.entity, sensor, self.entity)
+        arg.Resolve()
+        
+        # Fill in the information
+        cnt = sandbox_contact(self.entity)
+        self.entity.ClassifyWithSensor(self.entity, cnt, sensor, arg.Increment())
         
         return cnt
             

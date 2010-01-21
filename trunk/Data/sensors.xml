@@ -12,11 +12,11 @@
             <degraded_by>terrain</degraded_by>
             <!-- Which type of information can be classified by this sensor -->
             <classify>
-                <not_used>bearing,range</not_used>
+                <!-- not_used>bearing,range</not_used -->
                 <very_unlikely>moral,fatigue,supply levels</very_unlikely>
                 <unlikely>augmentation,identity</unlikely>
                 <neutral>side,size,higher_formation,course,speed,activity</neutral>
-                <likely>personel,vehicles,location,altitude,stance</likely>
+                <likely>personel,vehicle,location,altitude,stance</likely>
                 <very_likely>TOE</very_likely>
             </classify>
         </sensor>
