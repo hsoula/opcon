@@ -420,6 +420,21 @@ class sandbox_contact:
 
   # Output methods
   #
+  def WriteField(self, field):
+    ''' Write the content of the field in a simple format
+    '''
+    # Get content as a string
+    content = str(self.fields.get(field,''))
+    
+    # Field name in bold
+    out = html.Tag('STRONG', '%s : '%(field))
+    
+    # Whole thing as a span
+    out = html.Tag('span', '%s%s'%(out,content))
+    
+    return out
+    
+  
   def __str__(self):
     '''Build a contact string for SITREP and INTREP'''
     out = 'Track : '
@@ -468,7 +483,7 @@ class sandbox_contact:
     '''
     out = ''
     # First line
-    firstline = html.Tag('STRONG','Track ID: ') + self.fields['unique designation']
+    firstline = html.Tag('STRONG','Track ID: ') + self.fields.get('identity','')
     if self.fields['higher formation']:
       firstline = firstline + html.Tag('STRONG', ' (%s)'%(self.fields['higher formation']))
     if self.fields['IFF/SIF']:
