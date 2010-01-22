@@ -434,7 +434,10 @@ class sandbox_contact:
     
     return out
     
-  
+  def WriteTrackIdentity(self):
+    ''' Write the header of teh html render
+    '''
+    pass
   def __str__(self):
     '''Build a contact string for SITREP and INTREP'''
     out = 'Track : '
