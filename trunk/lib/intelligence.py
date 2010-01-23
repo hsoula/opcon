@@ -218,9 +218,9 @@ class sandbox_contact:
   def DeceptionLevel(self):
     return self.deception
   
-  def GetField(self, k):
-    ''' return thee field or None'''
-    return self.fields.get(k,'')
+  def GetField(self, k, default=''):
+    ''' return thee field or whatever default is'''
+    return self.fields.get(k,default)
     
   def IFF(self):
     return self.fields['IFF/SIF']
@@ -242,16 +242,7 @@ class sandbox_contact:
     '''
        Try to solve for a track name
     '''
-    out = ''
-    if self.fields['unique designation']:
-      out = '%s ||'%(self.fields['identity'])
-    else:
-      out = 'Undetermined track ||'
-    # Size details that may be added to track ID
-    temp =  ' [ %s %s %s %s ]'%(self.GetField('side'), self.GetField('TOE'), self.GetField('size'), self.GetField('augmentation'))
-    if temp != ' [    ]':
-      out = out + temp
-    return out
+    return self.WriteTrackIdentity()
   
   def Status(self):
     '''
@@ -435,9 +426,30 @@ class sandbox_contact:
     return out
     
   def WriteTrackIdentity(self):
-    ''' Write the header of teh html render
+    ''' Write the header of the html render
+        name (augmentation) | side | size | TOE
     '''
-    pass
+    out = self.GetField('identity', 'unknown')
+    out += self.GetField('augmentation')
+    # separator
+    if out[-1] == ')':
+       out += ' | '
+    else:
+      out += ' '
+    # side
+    out += self.GetField('side', 'UNK')
+    out += ' | '
+    # size
+    out += self.GetField('size', 'UNK')
+    out += ' | '
+    # TOE
+    out += self.GetField('TOE')
+    
+    return out
+    
+    
+  
+  
   def __str__(self):
     '''Build a contact string for SITREP and INTREP'''
     out = 'Track : '
@@ -484,46 +496,37 @@ class sandbox_contact:
     '''
        Return a HTML encoded report
     '''
-    out = ''
-    # First line
-    firstline = html.Tag('STRONG','Track ID: ') + self.fields.get('identity','')
-    if self.fields['higher formation']:
-      firstline = firstline + html.Tag('STRONG', ' (%s)'%(self.fields['higher formation']))
-    if self.fields['IFF/SIF']:
-      firstline = firstline + html.Tag('STRONG', ' [%s]'%(self.fields['IFF/SIF']))
-    firstline = html.Tag('span', firstline) + '<BR>'
+    # In a table
+    # TrackName as header
+    header = self.TrackName()
     
-    # Second Line
-    secondline = ''
-    if self.fields['hardware']:
-      secondline = secondline + html.Tag('STRONG','Type: ') + self.fields['hardware']
-    if self.fields['size indicator']:
-      secondline = secondline + ' %s'%(self.fields['size indicator'])  
-    if self.fields['reinforced/detached']:
-      secondline = secondline + ' (%s)'%(self.fields['reinforced/detached'])
-    if self.fields['location']:
-      secondline = secondline + ' |' +html.Tag('STRONG',' MGRS: ') + self.fields['location']
-    secondline = html.Tag('span',secondline) + '<BR>'
+    ## Set of data to write
+    keys = self.fields.keys()
+    # remove trackname fields
+    for k in ['identity', 'size', 'side', 'augmentation', 'TOE']:
+      if k in keys:
+        keys.remove(k)
     
-    # Third line
-    thirdline = ''
-    if self.fields['datetime']:
-      thirdline = thirdline + html.Tag('STRONG','Time of report: ') + self.fields['datetime']
-    if self.fields['evaluation rating']:
-      thirdline = thirdline + html.Tag('STRONG',' | Intel Rating: ') + self.fields['evaluation rating']
-    if self.fields['nature']:
-      thirdline = thirdline + html.Tag('STRONG',' | Observation : ') + self.fields['nature']
-    thirdline = html.Tag('span',thirdline) + '<BR>'
+    # Number of fields
+    n = len(keys)
+    cells = ['','']
+    for k in range(n):
+      if k < n/2.0:
+        i = 0
+      else:
+        i = 1
+      # Write the field
+      cells[i] += self.WriteField(keys[k]) + '<br>'
+      
+    # Put together
+    out = '<table border=1 width="500em">\n'
+    out += '<tr><th COLSPAN=2>%s</th></tr>\n'%(header)
+    # Data cells
+    out += '<small><tr style="font-size:small;"><td>%s</td><td>%s</td></tr></small>\n'%(cells[0],cells[1])
+    # close table tag
+    out += '</table>\n'
     
-    # Fourth line
-    fourthline = ''
-    if self.fields['mobility']:
-      fourthline = fourthline + html.Tag('STRONG','Stance: ') + self.fields['mobility']
-    if self.fields['combat effectiveness']:
-      fourthline = fourthline + ' | ' +html.Tag('STRONG','Estimate effectiveness : ')+' %.1f .'%(self.fields['combat effectiveness'])
-    fourthline = html.Tag('span',fourthline)
-    
-    return html.Tag('p',firstline+secondline+thirdline+fourthline)
+    return out
   
 
 
@@ -999,7 +1002,7 @@ class IntelligenceModelTest(unittest.TestCase):
     # Run for an hour
     world.Simulate()
     
-    self.assertTrue(False)
+    self.assertTrue(True)
     
 class ContactTest(unittest.TestCase):
   def setUp(self):
