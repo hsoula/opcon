@@ -2,14 +2,14 @@
 #labels docs,models,XML-format
 
 = Principle =
-Units are made of components, which are either [personel] or [vehicle]. There components have [sensors] and are generating [signatures]. A given sensor has a chance of acquiring the signature with a probability that depends on the strength of the signature, the activities of the target unit and other atmospheric effects. Once a contact is acquired, each sensor can classify the target unit based on a list of information fields and associated probabilities of filling them up. 
+Units are made of components, which are either [personnel] or [vehicle]. These components have [sensors] and are generating [signatures]. A given sensor has a chance of acquiring the signature with a probability that depends on the strength of the signature, the activities of the target unit and other atmospheric effects. Once a contact is acquired, each sensor can classify the target unit based on a list of information fields and associated probabilities of filling them up. 
 
 The collation of information fields is called a contact. As time goes by, contacts get updated with new information, can be sent as CNTREP, can be merged with other contact on the same units and passed back down the chain as part of an INTSUM/INTREP. 
 
 = Routine =  
-Lets assume that the unit detecting is called *ESEN* and the target unit is called *ETGT*. For each possible pair ESEN|ETGT, the following is done:
+Lets assume that the detecting unit is called *ESEN* and the target unit is called *ETGT*. For each possible pair ESEN|ETGT, the following is done:
 
-  # Enumerate each sensors in ESEN as SENSOR
+  # Enumerate each sensor in ESEN as SENSOR
   # Determine whether ETGT has a signature that SENSOR is sensitive to.
   # If this is the case, determine whether the SENSOR's Area of Interest overlaps with the footprint of ETGT.
   # If this is the case, determine the strength of the signature, modified by ETGT's activity and other environmental factors which the SENSOR is defined as either require, be degraded by or be enhanced by.
@@ -56,6 +56,6 @@ In this example, the thermal signature behaves the same as the visual signature,
       </signature>
 </intelligence>
 }}}
-The example above is a more elaborate sample where the stance and the activity of a unit affects its signature. If there are more than one label possible for a given signature level, use coma to delimit the elements.
+The example above is a more elaborate sample where the stance and the activity of a unit affects its signature. If there are more than one label possible for a given signature level, use comma to delimit the elements.
 
-In this case, the unit would likely to be detected visually if in range and observed by a unit. However, this likelihood is much higher is the unit is either fighting or moving overland. It is also much more difficult to acquire a target unit if this unit is in prepared defense.
+In this case, the unit would likely be detected visually if in range and observed by a unit. However, this likelihood is much higher if the unit is either fighting or moving overland. It is also much more difficult to acquire a target unit if this unit is in prepared defence.
