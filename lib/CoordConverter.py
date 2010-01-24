@@ -98,7 +98,7 @@ class CoordTranslator:
             return coord
         # string format
         c = coord
-        return '%s %s %s %s'%( c[0], c[1], c[2], c[3])
+        return '%s %s %d %d'%( c[0], c[1], int(c[2]), int(c[3]))
     
     def AsLatLong(self, coord, dms = False, internal = False):
         '''! \brief Returns a decimal Lat long pair as a list.
