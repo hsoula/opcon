@@ -424,7 +424,20 @@ class sandbox_contact:
     out = html.Tag('span', '%s%s'%(out,content))
     
     return out
+  
+  def WriteFieldsupply_level(self):
+    # Get content as a string
+    content = str(int(self.fields.get('supply_level','')))
     
+    # Field name in bold
+    out = html.Tag('STRONG', '%s : '%('supply_level'))
+    
+    # Whole thing as a span
+    out = html.Tag('span', '%s%s'%(out,content) + '%')
+    
+    return out    
+    
+  
   def WriteTrackIdentity(self):
     ''' Write the header of the html render
         name (augmentation) | side | size | TOE
@@ -516,7 +529,10 @@ class sandbox_contact:
       else:
         i = 1
       # Write the field
-      cells[i] += self.WriteField(keys[k]) + '<br>'
+      if hasattr(self, 'WriteField%s'%(keys[k])):
+        cells[i] += getattr(self, 'WriteField%s'%(keys[k]))() + '<br>'
+      else:
+        cells[i] += self.WriteField(keys[k]) + '<br>'
       
     # Put together
     out = '<table border=1 width="500em">\n'
