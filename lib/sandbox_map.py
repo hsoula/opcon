@@ -567,6 +567,19 @@ class sandbox_map:
     return final
     
     
+  def MeanFriction(self,poly, mode='LOS'):
+    '''
+       compute the mean friction in the polygon "poly"
+    '''
+    # Terrain profile
+    terrain = self.SampleTerrain(poly)
+    
+    # Mean friction from terrain alone (no
+    out = 0.0
+    for i in terrain:
+      out = out + (self.frictions[mode][i] * terrain[i])
+    
+    return out
   def Initialize(self):
     '''! \brief Read in the XML definition and take appropriate action
     '''

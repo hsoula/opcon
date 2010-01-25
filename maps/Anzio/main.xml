@@ -24,6 +24,16 @@
 			<terrain name="urban">0.75</terrain>
 			<terrain name="off map">1.0</terrain>
 		</mode>
+		<!-- Clutter for Lines of sight-->
+		<mode name="LOS">
+			<terrain name="unrestricted">1.0</terrain>
+			<terrain name="restricted">0.8</terrain>
+			<terrain name="severely restricted">0.6</terrain>
+			<terrain name="impassable">0.6</terrain>
+			<terrain name="water">1.0</terrain>
+			<terrain name="urban">0.25</terrain>
+			<terrain name="off map">1.0</terrain>			
+		</mode>
 		<mode name="leg"><terrain name="restricted">0.75</terrain><terrain name="severely restricted">0.5</terrain><terrain name="impassable">0.1</terrain></mode>
 		<mode name="wheeled"/>
 		<mode name="tracked"><terrain name="restricted">0.75</terrain><terrain name="severely restricted">0.2</terrain></mode>

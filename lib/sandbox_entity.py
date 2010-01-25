@@ -736,6 +736,11 @@ class sandbox_entity(dict):
   
 
   # Combat
+  def FrontageRatioWith(self, point):
+    ''' returns the unit's ratio of components that can be seen/can see from/to the location point
+        TODO: implment as this is only a placeholder
+    '''
+    return 1.0
   def IsDismounted(self):
     ''' Return true is dismounted flag is not logically a no.
     '''

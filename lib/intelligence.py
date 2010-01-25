@@ -860,7 +860,40 @@ class system_intelligence(system_base.system_base):
   def ExtractFieldpersonel(self, unit, E):
     ''' return a sighting of personel
     '''
-    return 'implement me'
+    return self._ExtractFieldComponent(unit, E, 'personel')
+  
+  def _ExtractFieldComponent(self, unit, E, kindof):
+    ''' Routine for listing the component of a unit of the kindof type
+        Sightings are a functiuon of the unit's stance and the terrain that it is deployed in. 
+        POSSIBLE improment: E's stance and terrain, activities, etc, concealability of the unit.
+    '''
+    # Unit's stance (fraction of the unit that is deployed in possible LOS with the unit)
+    frontage = unit.FrontageRatioWith(E.Position())
+    
+    # Unit's terrain (fraction of unit that can be seen through the terrain)
+    friction = unit.sim.map.MeanFriction(unit.Footprint(),'LOS')
+    
+    # Mean ratio of the unit that is seen 
+    ratio = frontage * friction
+    
+    # Acquire data dictionary
+    if kindof == 'personel':
+      xx = unit.personel
+    else:
+      xx = unit.vehicle
+      
+    out = []
+    for k in xx:
+      # Get a geometrically distributed final ratio
+      ratio = min(1.0,random.expovariate(ratio**-1))
+      
+      n = int(ratio * xx[k].GetCount())
+      if n:
+        out.append('%d X %s'%(n, k))
+    
+    # 
+    return out
+    
   
   def ExtractFieldvehicle(self, unit, E):
     ''' return a sighting of personel
