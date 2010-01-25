@@ -60,7 +60,7 @@
         <sensor name="self" signature="self">
             <classify>
                 <automatic>morale,fatigue,supply level,augmentation,identity,side,size,higher_formation,
-                course,speed,activity,personel,vehicle,location,altitude,stance,TOE
+                course,speed,activity,personel,vehicle,location,altitude,stance,TOE,suppression
                 </automatic>
             </classify>
         </sensor>
