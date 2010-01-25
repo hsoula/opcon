@@ -256,13 +256,13 @@ class sandbox_contact:
 
   # Manipulate the information
   # 
-  def EquipmentSighting(self, kind, eclass, count, timestamp=None):
+  def EquipmentSighting(self, eq_class, kitname, count, timestamp=None):
     ''' Add this equipment to the equipment field. kind is the template name, eclass is either personel of vehicle
         and count is the number seen. 
         If the sighting exists, it will update the count only if it is bigger.
     '''
-    for i in self.fields['equipment'][eclass]:
-      if i['ID'] == kind:
+    for i in self.fields['equipment'][ eq_class]:
+      if i['ID'] == kitname:
         if count >= i['count']:
           i['count'] = count
           if self.timestamp:
@@ -271,7 +271,7 @@ class sandbox_contact:
         
         
     # first sighting of this kind of equipment
-    self.fields['equipment'][eclass].append({'ID':kind,'count':count})
+    self.fields['equipment'][ eq_class].append({'ID':kitname,'count':count})
     
   def AddDirect(self, uid):
     '''! \brief Add to the list of underling in direct contact with the contact
@@ -460,7 +460,17 @@ class sandbox_contact:
     
     return out
     
+  def WriteFieldaltitude(self):
+    # Get content as a string
+    altitude = self.fields.get('altitude','')
     
+    # Field name in bold
+    out = html.Tag('STRONG', '%s : '%('Altitude'))
+    
+    # Whole thing as a span
+    out = html.Tag('span', '%s%.1fm'%(out,altitude))
+    
+    return out    
   
   
   def __str__(self):
@@ -519,6 +529,9 @@ class sandbox_contact:
     for k in ['identity', 'size', 'side', 'augmentation', 'TOE']:
       if k in keys:
         keys.remove(k)
+        
+    # Remove the Equipment fields (administrative)
+    keys.remove('equipment')
     
     # Number of fields
     n = len(keys)
@@ -818,14 +831,17 @@ class system_intelligence(system_base.system_base):
   
   def ExtractFieldhigher_formation(self, unit, E):
     '''  Returns E's command echelon, or it's HQ is E is not a command unit.'''
-    if E['echelon_name']:
+    if E.IsCommandUnit():
       return '%s (%s)'%(E['echelon_name'], E['command_echelon'])
     else:
       # Get the TOE HQ, not the TF HQ
       hq = E.GetHQ(use_opcon=False)
       
-      # This unit must have an echelon!
-      return '%s (%s)'%(hq['echelon_name'], hq['command_echelon'])
+      if hq:
+        # This unit must have an echelon!
+        return '%s (%s)'%(hq['echelon_name'], hq['command_echelon'])
+      else:
+        return 'None'
     
   def ExtractFieldidentity(self, unit, E):
     '''  Return the unit's identity '''

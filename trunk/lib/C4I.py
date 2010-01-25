@@ -168,12 +168,30 @@ class system_C4I(system_base.system_base):
   def AsStringMorale(self, m):
     return self.AsStringHumanFactor(m)
   
-  def AsStringFatigue(self, m ):
-    return self.AsStringHumanFactor(m)
+  def AsStringFatigue(self, k ):
+    if k > 0:
+      return 'FRESH'
+    elif k == 0:
+      return 'FRESH'
+    elif k >= -2:
+      return 'TIRED'
+    elif k >= -4:
+      return 'EXHAUSTED'
+    else:
+      return 'BROKEN'
   
   
-  def AsStringSuppression(self, m):
-    return self.AsStringHumanFactor(m)
+  def AsStringSuppression(self, k):
+    if k > 0:
+      return 'NONE'
+    elif k == 0:
+      return 'NONE'
+    elif k >= -2:
+      return 'PINNED'
+    elif k >= -4:
+      return 'SHOCKED'
+    else:
+      return 'PARALYZED'
   
   def AsStringCommand(self, m):
     return self.AsStringHumanFactor(m)
