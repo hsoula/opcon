@@ -449,14 +449,14 @@ class system_logistics(system_base.system_base):
     
     # Vehicles
     for i in E.vehicle:
-      cnt = E.vehicle[i]['count']
-      vh  = E.vehicle[i]['kit']
+      cnt = E.vehicle[i].GetCount()
+      vh  = E.vehicle[i].GetKit()
       out = out + (vh.logistics.GetCapacity() * cnt)
       
     # Personel
     for i in E.personel:
-      cnt = E.personel[i]['count']
-      vh  = E.personel[i]['kit']
+      cnt = E.personel[i].GetCount()
+      vh  = E.personel[i].GetKit()
       out = out + (vh.logistics.GetCapacity() * cnt)
       
     return out
@@ -544,11 +544,11 @@ class system_logistics(system_base.system_base):
       # personel
       for i in E.personel.keys():
         x = E.personel[i]
-        out = out + x['kit'].logistics.SupplyExpenditure(x['count'], activity_code, deltatime)
+        out = out + x.GetKit().logistics.SupplyExpenditure(x.GetCount(), activity_code, deltatime)
       # Vehicle
       for i in E.vehicle.keys():
         x = E.vehicle[i]
-        out = out + x['kit'].logistics.SupplyExpenditure(x['count'], activity_code, deltatime)
+        out = out + x.GetKit().logistics.SupplyExpenditure(x.GetCount(), activity_code, deltatime)
     
     # The model itself
     for act in activity_code:

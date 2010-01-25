@@ -61,16 +61,16 @@ class system_combat(system_base.system_base):
     # The personel-born weapons, counted only if the unit is dismounted
     if E.IsDismounted():
       for personel in E.personel:
-        cnt = E.personel[personel]['count']
-        wpn_list = E.personel[personel]['kit'].GetWeapons()
+        cnt = E.personel[personel].GetCount()
+        wpn_list = E.personel[personel].GetKit().GetWeapons()
         for i in wpn_list:
           cntw = cnt * i.GetAllowance('personel')
           out.append( [cntw, i] )
 
     # The vehicle-born weapons, should be consitional to be crewed.
     for vehicle in E.vehicle:
-      cnt = E.vehicle[vehicle]['count']
-      wpn_list = E.vehicle[vehicle]['kit'].GetWeapons()
+      cnt = E.vehicle[vehicle].GetCount()
+      wpn_list = E.vehicle[vehicle].GetKit().GetWeapons()
       for i in wpn_list:
         cntw = cnt * i.GetAllowance('vehicle')
         out.append( [cntw, i] )

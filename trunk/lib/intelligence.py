@@ -745,19 +745,19 @@ class system_intelligence(system_base.system_base):
     out = {}
     # Personel
     for k in E.personel:
-      x = E.personel[k]['kit']
+      x = E.personel[k].GetKit()
       for s in x.sensors:
         if not s[0] in out:
           out[s[0]] = 0
-        out[s[0]] += E.personel[k]['count'] * s[1]
+        out[s[0]] += E.personel[k].GetCount() * s[1]
     
     # Vehicles
     for k in E.vehicle:
-      x = E.vehicle[k]['kit']
+      x = E.vehicle[k].GetKit()
       for s in x.sensors:
         if not s[0] in out:
           out[s[0]] = 0
-        out[s[0]] += E.vehicle[k]['count'] * s[1]
+        out[s[0]] += E.vehicle[k].GetCount() * s[1]
         
     return out
   
@@ -919,12 +919,12 @@ class system_intelligence(system_base.system_base):
     authorized = 0
     count = 0
     for i in E.personel:
-      authorized += E.personel[i]['authorized']
-      count += E.personel[i]['count']
+      authorized += E.personel[i].GetAuthorized()
+      count += E.personel[i].GetCount()
       
     for i in E.vehicle:
-      authorized += E.vehicle[i]['authorized']
-      count += E.vehicle[i]['count']
+      authorized += E.vehicle[i].GetAuthorized()
+      count += E.vehicle[i].GetCount()
       
     return 100 * (1.0 - (authorized/count))
   
