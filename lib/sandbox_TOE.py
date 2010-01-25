@@ -105,10 +105,15 @@ class sandbox_components:
                     
         
         
+
+    # Stateless section
     def GetWeapons(self):
         return self.weapon_systems
     def GetMode(self):
         return self.movement['mode']
+
+    # State-specific code
+    
 class sandbox_personel(sandbox_components):
     def __init__(self):
         # Parent class
@@ -120,6 +125,7 @@ class sandbox_personel(sandbox_components):
 
 
     
+
 class sandbox_vehicle(sandbox_components):
     def __init__(self):
         # Parent class
@@ -129,6 +135,8 @@ class sandbox_vehicle(sandbox_components):
     def fromXML(self, doc, node):
         sandbox_components.fromXML(self, doc, node)
     
+
+
 class sandbox_weapon_system(dict):
     def __init__(self):
         # Range
@@ -225,3 +233,33 @@ class sandbox_payload:
         self.demolition_points = 0.0
         self.penetration_steel = 0.0
         self.effect = {}
+        
+
+class sandbox_component_state:
+    ''' This class separate the stateless data of components with the unit-specific states of this equipment.
+        This state-stateless divide is there so a very large number of units can be handled with very little duplication
+        of the data in the RAM. 
+    '''
+    def __init__(self, kindof='', kit_pointer=None, count=0, authorized=0):
+        # count of active component
+        self.count = count
+        
+        # Allowed by TOE
+        self.authorized = authorized
+        
+        # Pointer to component
+        self.kit = kit_pointer
+        
+        # Can either be a vehicle or a personel type
+        self.kindof = kindof
+        
+    def GetCount(self):
+        return self.count
+    
+    def GetAuthorized(self):
+        return self.authorized
+    
+    def GetKit(self):
+        return self.kit
+    
+    

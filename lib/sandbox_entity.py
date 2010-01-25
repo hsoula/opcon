@@ -38,6 +38,7 @@ from sandbox_position import *
 from sandbox_sensor import *
 from sandbox_TOEM import TOEMargument
 from sandbox_geometry import geometry_rubberband
+from sandbox_TOE import sandbox_component_state
 import sandbox_keywords
 
 from sandbox_exception import SandboxException
@@ -934,16 +935,16 @@ class sandbox_entity(dict):
       for p in self.personel.keys():
         x = doc.NewNode('personel')
         doc.SetAttribute('template', p, x)
-        doc.SetAttribute('authorized', self.personel[p]['authorized'],x)
-        if self.personel[p]['authorized'] != self.personel[p]['count']:
-          doc.SetAttribute('count', self.personel[p]['count'],x)
+        doc.SetAttribute('authorized', self.personel[p].GetAuthorized(),x)
+        if self.personel[p].GetAuthorized() != self.personel[p].GetCount():
+          doc.SetAttribute('count', self.personel[p].GetCount(),x)
         doc.AddNode(x, toe)
       for p in self.vehicle.keys():
         x = doc.NewNode('vehicle')
         doc.SetAttribute('template', p, x)
-        doc.SetAttribute('authorized', self.vehicle[p]['authorized'],x)
-        if self.vehicle[p]['authorized'] != self.vehicle[p]['count']:
-          doc.SetAttribute('count', self.vehicle[p]['count'],x)
+        doc.SetAttribute('authorized', self.vehicle[p].GetAuthorized(),x)
+        if self.vehicle[p].GetAuthorized() != self.vehicle[p].GetCount():
+          doc.SetAttribute('count', self.vehicle[p].GetCount(),x)
         doc.AddNode(x, toe)
       
       # Human Factors
@@ -1027,7 +1028,7 @@ class sandbox_entity(dict):
         count = doc.Get(it,'count')
         if count == '':
           count = auth
-        self.personel[kit] = {'kit':self.sim.data.Get('personel',kit),'count':count, 'authorized':auth}
+        self.personel[kit] = sandbox_component_state('personel', self.sim.data.Get('personel',kit), count, auth)
         
       # vehicle
       z = doc.Get(x,'vehicle', True)
@@ -1037,7 +1038,7 @@ class sandbox_entity(dict):
         count = doc.Get(it,'count')
         if count == '':
           count = auth
-        self.vehicle[kit] = {'kit':self.sim.data.Get('vehicle',kit),'count':count,'authorized':auth}      
+        self.vehicle[kit] = sandbox_component_state('vehicle', self.sim.data.Get('vehicle',kit), count, auth)     
       self['movement'].SetVehicles(self.vehicle.values())
       
       # Sensors TODO
