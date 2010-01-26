@@ -16,7 +16,7 @@
         with this program; if not, write to the Free Software Foundation, Inc.,
         51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 '''
-from random import random, choice
+from random import random, choice, expovariate
 from math import pi
 
 from copy import copy
@@ -93,7 +93,7 @@ class sandbox_contact:
       if tag == 'equipment':
         count = int(doc.Get(fd, 'count'))
         kind = doc.Get(fd, 'category')
-        self.EquipmentSighting(doc.Get(fd), kind, count)
+        self.EquipmentSighting(kind, doc.Get(fd), count)
         continue
       
       self.SetField(tag, doc.Get(fd))
@@ -425,6 +425,39 @@ class sandbox_contact:
     
     return out
   
+  def WriteFieldpersonel(self):
+    return self.WriteFieldComponent('personel')
+  
+  def WriteFieldvehicle(self):
+    return self.WriteFieldComponent('vehicle')
+  
+  def WriteFieldComponent(self, kindof):
+    if kindof == 'personel':
+      xx = self.fields['personel']
+    else:
+      xx = self.fields['vehicle']
+      
+    # Don't bother if there is none
+    if len(xx) == 0:
+      return ''
+    
+    # Only one thing to list, make is short
+    if len(xx) == 1:
+      return html.Tag('strong',kindof + ':') + xx[0]
+    
+    out = ''
+    # Itermize
+    for i in xx:
+      out += html.Tag( 'li' , i )
+      
+    # Wrap into a <ul>
+    out = html.Tag('ul',out)
+    
+    # Add a header
+    out = html.Tag('strong', kindof + ':') + out
+    
+    return out
+  
   def WriteFieldsupply_level(self):
     # Get content as a string
     content = str(int(self.fields.get('supply_level','')))
@@ -542,10 +575,13 @@ class sandbox_contact:
       else:
         i = 1
       # Write the field
+      snip = ''
       if hasattr(self, 'WriteField%s'%(keys[k])):
-        cells[i] += getattr(self, 'WriteField%s'%(keys[k]))() + '<br>'
+        snip = getattr(self, 'WriteField%s'%(keys[k]))()
       else:
-        cells[i] += self.WriteField(keys[k]) + '<br>'
+        snip = self.WriteField(keys[k])
+      if snip:
+        cells[i] += snip + '<br>'
       
     # Put together
     out = '<table border=1 width="500em">\n'
@@ -885,7 +921,7 @@ class system_intelligence(system_base.system_base):
     out = []
     for k in xx:
       # Get a geometrically distributed final ratio
-      ratio = min(1.0,random.expovariate(ratio**-1))
+      ratio = min(1.0, expovariate(ratio**-1))
       
       n = int(ratio * xx[k].GetCount())
       if n:
@@ -898,7 +934,7 @@ class system_intelligence(system_base.system_base):
   def ExtractFieldvehicle(self, unit, E):
     ''' return a sighting of personel
     '''
-    return 'implement me'
+    return self._ExtractFieldComponent(unit, E, 'vehicle')
   
   def ExtractFieldlocation(self, unit, E):
     '''  Get the location as a string. '''
