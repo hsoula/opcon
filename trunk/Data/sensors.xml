@@ -13,7 +13,7 @@
             <!-- Which type of information can be classified by this sensor -->
             <classify>
                 <!-- not_used>bearing,range</not_used -->
-                <very_unlikely>moral,fatigue,supply level</very_unlikely>
+                <very_unlikely>morale,fatigue,supply level</very_unlikely>
                 <unlikely>augmentation,identity</unlikely>
                 <neutral>side,size,higher_formation,course,speed,activity</neutral>
                 <likely>personel,vehicle,location,altitude,stance</likely>
@@ -37,7 +37,7 @@
             <!-- Which type of information can be classified by this sensor -->
             <classify>
                 <not_used>bearing,range</not_used>
-                <very_unlikely>moral,fatigue,supply level,identity</very_unlikely>
+                <very_unlikely>morale,fatigue,supply level,identity</very_unlikely>
                 <unlikely>augmentation,higher_formation</unlikely>
                 <neutral>side,size,course,speed,activity</neutral>
                 <likely>personel,vehicle,location,altitude,stance</likely>

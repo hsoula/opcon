@@ -54,9 +54,8 @@ class sandbox_contact:
   
     # Information
     self.fields = {}
-    self.fields['equipment'] = {}
-    self.fields['equipment']['personel'] = []
-    self.fields['equipment']['vehicle'] = []
+    self.fields['personel'] = []
+    self.fields['vehicle'] = []
 
     # Direct subordinates in direct contact
     self.direct_subordinates = []
@@ -128,7 +127,6 @@ class sandbox_contact:
       doc.SetAttribute('status', self.status, out)
       
     # Fields
-    equipment = None
     if len(self.fields):
       fd = doc.NewNode('fields')
       doc.AddNode(fd, out)
@@ -136,15 +134,12 @@ class sandbox_contact:
       # Write the data
       for k in self.fields:
         if k in ['personel', 'vehicle']:
-          # Create the equipment node the first time
-          if not equipment:
-            equipment = doc.NewNode('equipment')
-            doc.AddNode(equipment, fd)
-            
-          for case in self.fields[k]:
+          kindof = k
+          # cycle through personel and vehicles
+          for case in self.fields[k][kindof]:
             eqnd = doc.AddField('equipment', case['ID'], fd)
-            doc.SetAttribute('category', kind, eqnd)
-            doc.SetAttribute('count', item['count'], eqnd)
+            doc.SetAttribute('category', kindof, eqnd)
+            doc.SetAttribute('count', case['count'], eqnd)
               
         else:
           # Write the field as is
@@ -266,7 +261,7 @@ class sandbox_contact:
         and count is the number seen. 
         If the sighting exists, it will update the count only if it is bigger.
     '''
-    for i in self.fields['equipment'][ eq_class]:
+    for i in self.fields[ eq_class]:
       if i['ID'] == kitname:
         if count >= i['count']:
           i['count'] = count
@@ -276,7 +271,7 @@ class sandbox_contact:
         
         
     # first sighting of this kind of equipment
-    self.fields['equipment'][ eq_class].append({'ID':kitname,'count':count})
+    self.fields[ eq_class].append({'ID':kitname,'count':count})
     
   def AddDirect(self, uid):
     '''! \brief Add to the list of underling in direct contact with the contact
@@ -567,9 +562,6 @@ class sandbox_contact:
     for k in ['identity', 'size', 'side', 'augmentation', 'TOE']:
       if k in keys:
         keys.remove(k)
-        
-    # Remove the Equipment fields (administrative)
-    keys.remove('equipment')
     
     # Number of fields
     n = len(keys)
