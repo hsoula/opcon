@@ -128,19 +128,24 @@ class sandbox_contact:
       doc.SetAttribute('status', self.status, out)
       
     # Fields
+    equipment = None
     if len(self.fields):
       fd = doc.NewNode('fields')
       doc.AddNode(fd, out)
       
       # Write the data
       for k in self.fields:
-        if k == 'equipment':
-          # Special case
-          for kind in self.fields['equipment']:
-            for item in self.fields['equipment'][kind]:
-              eqnd = doc.AddField('equipment', item['ID'], fd)
-              doc.SetAttribute('category', kind, eqnd)
-              doc.SetAttribute('count', item['count'], eqnd)
+        if k in ['personel', 'vehicle']:
+          # Create the equipment node the first time
+          if not equipment:
+            equipment = doc.NewNode('equipment')
+            doc.AddNode(equipment, fd)
+            
+          for case in self.fields[k]:
+            eqnd = doc.AddField('equipment', case['ID'], fd)
+            doc.SetAttribute('category', kind, eqnd)
+            doc.SetAttribute('count', item['count'], eqnd)
+              
         else:
           # Write the field as is
           x = self.GetField(k)
