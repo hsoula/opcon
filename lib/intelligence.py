@@ -67,6 +67,7 @@ class sandbox_contact:
     self.timestamp = None
     
   def __nonzero__(self):
+    ''' Is this ever get used? '''
     if self.unit != None:
       return True
     return False
@@ -134,11 +135,10 @@ class sandbox_contact:
       # Write the data
       for k in self.fields:
         if k in ['personel', 'vehicle']:
-          kindof = k
           # cycle through personel and vehicles
-          for case in self.fields[k][kindof]:
+          for case in self.fields[k]:
             eqnd = doc.AddField('equipment', case['ID'], fd)
-            doc.SetAttribute('category', kindof, eqnd)
+            doc.SetAttribute('category', k, eqnd)
             doc.SetAttribute('count', case['count'], eqnd)
               
         else:
@@ -147,48 +147,7 @@ class sandbox_contact:
           doc.AddField(k,x,fd)
     
     return out
-  def DefineFields(self):
-    ''' 
-       fields according to FM 101-5-1 of the US army.
-    '''
-    self.fields = {}
-    
-    self.fields['symbol'] = {}
-    self.fields['hardware'] = ''
-    self.fields['side'] = ''
-    self.fields['size indicator'] = ''
-    self.fields['equipment'] = ''
-    self.fields['task force'] = ''
-    self.fields['nature'] = 'new'
-    self.fields['reinforced/detached'] = ''
-    self.fields['staff comment'] = ''
-    self.fields['additional information'] = ''
-    self.fields['evaluation rating'] = 'F'
-    self.fields['combat effectiveness'] = ''
-    self.fields['signature equipment'] = ''
-    self.fields['higher formation'] = ''
-    self.fields['enemy(hostile)'] = ''
-    self.fields['IFF/SIF'] = ''
-    self.fields['movement arrow'] = None
-    self.fields['mobility'] = ''
-    self.fields['locating indicator'] = False
-    self.fields['unique designation'] = ''
-    self.fields['datetime'] = '' #DDHHMMSSZMONYY
-    self.fields['altitude/depth'] = ''
-    self.fields['location'] = ''
-    self.fields['speed'] = ''
-    self.fields['footprint'] = ''
-    self.fields['Echelon Footprint'] = None
-    
-    # Analytical
-    self.fields['CCC'] = ''
-    self.fields['morale'] = ''
-    self.fields['fatigue'] = ''
-    self.fields['suppression'] = ''
-    self.fields['supply'] = ''
-    
-    self.fields['min IF range'] = ''
-    self.fields['max IF range'] = ''
+
     
     
     
@@ -507,43 +466,11 @@ class sandbox_contact:
   
   
   def __str__(self):
-    '''Build a contact string for SITREP and INTREP'''
-    out = 'Track : '
-    if self.fields['unique designation']:
-      out = out + '%s '%(self.fields['unique designation'])
-    if self.fields['higher formation']:
-      out = out +' %(Higher Echelon : %s) ' %( self.fields['higher formation'])
-    # Size details that may be added to track ID
-    temp = ' '
-    if self.fields['IFF/SIF']:
-      temp = temp + 'IFF: %s | '%(self.fields['IFF/SIF'])
-    if self.fields['hardware']:
-      temp = temp + 'Type: %s | ' %(self.fields['hardware'])
-    if self.fields['size indicator']:
-      temp = temp + 'Ech.: %s'%(self.fields['size indicator'])  
-    if self.fields['reinforced/detached']:
-      temp = temp + ' (%s)\n'%(self.fields['reinforced/detached'])
-    else:
-      temp = temp + '\n'
-    out = out + temp
-    
-    # Intel info
-    if self.fields['datetime']:
-      out = out + 'Time of report: %s | '%(self.fields['datetime'])
-    if self.fields['evaluation rating']:
-      out = out + 'Rating: %s | '%(self.fields['evaluation rating'])
-    if self.fields['nature']:
-      out = out + 'INTEL: %s | '%(self.fields['nature'])
-      out = out + '\n'
-    # Position and stance
-    if self.fields['location']:
-      out = out + 'Grid Ref : ' + self.fields['location']
-    if self.fields['mobility']:
-      out = out + ' in %s .\n'%(self.fields['mobility'])
-    if self.fields['combat effectiveness']:
-      out = out + 'Estimate effectiveness : %.1f .'%(self.fields['combat effectiveness']) 
-    return out + '\n'
+    '''Quick and dirty string reps.'''
+    return self.TrackName()
   def __repr__(self):
+    ''' Is this ever used?
+    '''
     try:
       return self.TrackName() + ' for ' + self.unit.GetName()
     except:

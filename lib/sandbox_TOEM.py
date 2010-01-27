@@ -115,7 +115,7 @@ class TOEMargument:
             while pval < self.GetPvalue(out-1):
                 out -= 1
         else:
-            while pval > self.GetPvalue(out):
+            while pval >= self.GetPvalue(out):
                 out += 1
         return out
 

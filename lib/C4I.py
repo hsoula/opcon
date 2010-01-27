@@ -213,26 +213,6 @@ class system_C4I(system_base.system_base):
   
 import unittest
 class C4ITest(unittest.TestCase):
-    def testAsStringMoraleBroken(self):
-      C = system_C4I()
-      self.assertEqual('Broken',C.AsStringMorale(0.01))
-      
-    def testAsStringMoraleBLACK(self):
-      C = system_C4I()
-      self.assertEqual('BLACK',C.AsStringMorale(0.41))
-      
-    def testAsStringMoraleRED(self):
-      C = system_C4I()
-      self.assertEqual('RED',C.AsStringMorale(0.61))
-      
-    def testAsStringMoraleAMBER(self):
-      C = system_C4I()
-      self.assertEqual('AMBER',C.AsStringMorale(0.76))
-    
-    def testAsStringMoraleGREEN(self):
-      C = system_C4I()
-      self.assertEqual('GREEN',C.AsStringMorale(0.91))
-      
     def testLevelDeployStateTransit(self):
       C = system_C4I()
       self.assertEqual(0.8, C.LevelDeployState('transit'))
