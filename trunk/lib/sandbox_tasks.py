@@ -1094,7 +1094,7 @@ class taskOffense(sandbox_task):
         ENY = []
         for i in UNT:
           cnt = E['agent'].GetContact(i)
-          if cnt and cnt.IFF() == 'ENY':
+          if cnt and cnt.IFF() == 'FOE':
             ENY.append(i)
         
         if len(ENY) > 1:

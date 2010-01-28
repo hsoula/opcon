@@ -322,6 +322,9 @@ class base_polygon:
         self.pts = pts
         self.SortPts(pts)
 
+
+    def __nonzero__(self):
+        return bool(self.pts)
     def __mul__(self, other):
         # returns a scaled copy of the polygon
         if type(other) == type(1) or type(other) == type(1.0):
@@ -333,7 +336,9 @@ class base_polygon:
 
     
     def __len__(self):
-        return len(self.pts)
+        if self.pts:
+            return len(self.pts)
+        return 0
     
     # Properties
     def Radius(self):
@@ -784,6 +789,8 @@ class circle(base_polygon):
         base_polygon.__init__(self, [center])
         self.center = center
         self.radius = radius
+    def __nonzero__(self):
+        return bool(self.radius)
     def Centroid(self):
         return self.center
     def Radius(self):

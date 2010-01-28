@@ -146,7 +146,7 @@ class sandbox_entity(dict):
     
     # Overiding Icon symbol
     self['icon'] = {}
-    self['icon']['IFF'] = 'FR'
+    self['icon']['IFF'] = 'FRIEND'
     self['icon']['type'] = MapSym[self['TOE']][1]
     self['icon']['char'] = MapSym[self['TOE']][0]
      
@@ -214,8 +214,6 @@ class sandbox_entity(dict):
     # Clear the activity codes
     self['activities this pulse'] = []
     
-
-  
   # Steps
   def Step(self, Map, clock, pulse):
     '''
