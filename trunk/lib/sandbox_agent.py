@@ -83,25 +83,7 @@ class agent:
         '''! \brief "Agent of [sandbox_entity]"'''
         return 'Agent of %s'%(self.entity.GetName())
     #
-    # Interface to I/O
-    def Situation(self):
-        '''!
-           Analyse the situation and suggest actions points.
-        '''
-        # Exclude LOGPACs
-        if self.entity.GetName().find('LOGPAC') == 0:
-            return
-        
-        self.log('--------------------------------------------------------------------------')
-        # Process all Requests and Orders and convert into tasks and intel pictures
-        self.ProcessSTAFF_QUEUE()
-                
-        # Routine Ressuply
-        self.PrepareRoutineRessuply()
-        
-        # Reporting and all
-        self.entity.StepINTEL()
-                
+    # Interface to I/O          
     def Process(self, msg):
         '''!
                 Generic function to process a new OPORD or REQUEST
@@ -332,14 +314,27 @@ class agent:
     def routine_S2(self):
         '''! \brief Routine intelligence staffwork.
         '''
-        # Reporting and all
-        self.entity.StepINTEL()
+        # Process contacts
+        self['agent'].ProcessContacts()
+        
+        # Prepare Insum
+        self['agent'].PrepareINTSUM()
+        
+        # Decide whether a SITREP should be sent.
+        if self['agent'].PolicySendSITREP():
+          self['agent'].PrepareSITREP()
         
     def routine_S3(self):
         '''! \brief Routine operations staffwork.
         '''
-        # Delete all Echelon footprint
-        self.Situation()
+        # Exclude LOGPACs
+        if self.entity.GetName().find('LOGPAC') == 0:
+            return
+        
+        self.log('--------------------------------------------------------------------------')
+        
+        # Process all Requests and Orders and convert into tasks and intel pictures
+        self.ProcessSTAFF_QUEUE()
     
     def routine_S4(self):
         '''! \brief Routine logistics staffwork.
@@ -355,8 +350,7 @@ class agent:
     def routine_S6(self):
         '''! \brief Routine communications staffwork.
         '''
-        # Process all Requests and Orders and convert into tasks and intel pictures
-        self.ProcessSTAFF_QUEUE()
+        pass
     
     def StaffName(self, role, echelon = None):
         '''! \brief Returns the name of the staff officer on a specific role.
@@ -701,6 +695,7 @@ class agent:
                 return False
         
         return True    
+
     #
     # Staff Planning Subroutines
     # Decision Making
@@ -904,6 +899,8 @@ class agent:
 
     #
     # contacts
+    def ProcessContacts(self):
+        pass
     def GetContact(self, E):
         return self.entity.Contact(E)
     
