@@ -241,19 +241,6 @@ class sandbox_entity(dict):
       # Weird, don't remmber why this is here -- CHECKOUT
       self['agent'].sustaintask.Step(self)
   
-  def StepINTEL(self):
-    '''! \brief  Decides whether and how to send INTSUM and INTREP
-        \TODO Get Agent to decide whether it should be done instead of having this built-in the fn call
-        
-        Called by agent in the Staffwork phase.
-    '''
-    # Prepare Insum
-    self['agent'].PrepareINTSUM()
-    
-    # Decide whether a SITREP should be sent.
-    if self['agent'].PolicySendSITREP():
-      self['agent'].PrepareSITREP()
-  
   def StepRegroup(self):
     '''! \brief Implement a Regroup iteration.
         # Wraps the C4I model regroup routine.
