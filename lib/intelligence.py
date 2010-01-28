@@ -182,9 +182,7 @@ class sandbox_contact:
     return self.fields.get(k,default)
     
   def IFF(self):
-    return self.fields['IFF/SIF']
-  
-
+    return self.fields.get('IFF/SIF','unknown')
   
   def IntelReliability(self, pv = None):
     return self.rating
@@ -215,6 +213,12 @@ class sandbox_contact:
 
   # Manipulate the information
   # 
+  def SetIFF(self, iff):
+    ''' Set the IFF information asa field.
+        The only possible are: FRIEND, ENEMY, NEUTRAL
+    '''
+    self.SetField('IFF/SIF', iff)
+    
   def EquipmentSighting(self, eq_class, kitname, count, timestamp=None):
     ''' Add this equipment to the equipment field. kind is the template name, eclass is either personel of vehicle
         and count is the number seen. 
@@ -674,6 +678,19 @@ class system_intelligence(system_base.system_base):
         signature <- fetch tgt stance and activity modifiers.
         
     '''
+    # Footprint overlap
+    if sensor.max_range:
+      # A circular area
+      sensor.AoI = sandbox_geometry.circle(E.Position(),sensor.max_range)
+    else:
+      # No footprint
+      sensor.AoI = None
+    
+    if sensor.AoI:
+      # If defined, check for overlap
+      if not sensor.AoI.Overlaps(tgt.Footprint()):
+        return TOEMargument(base_prob='impossible')
+    
     # Signal Type
     signal = sensor.signal
     
@@ -682,7 +699,7 @@ class system_intelligence(system_base.system_base):
     
     # Abort if a sensor can't pick-up on the signal
     if signature == 'impossible':
-      return []
+      return TOEMargument(base_prob='impossible')
     
     # Build an argument
     x = TOEMargument(base_prob=signature)
@@ -695,9 +712,9 @@ class system_intelligence(system_base.system_base):
       if i == 'LOS':
         # special case of needing a LOS
         if not E.sim.LineOfSight(E.Position(), tgt.Position()):
-          return []
+          return TOEMargument(base_prob='impossible')
       elif not i in effects:
-        return []
+        return TOEMargument(base_prob='impossible')
     
     # PROS/CONS
     for eff in effects:

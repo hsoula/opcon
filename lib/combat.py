@@ -518,7 +518,7 @@ class sandbox_engagement(dict):
       # Get contact
       cnt = E['agent'].GetContact(e)
       if cnt != None:
-        if cnt.IFF() != 'FR':
+        if cnt.GetField('side') != E['side']:
           eny.append(e)
         else:
           fr.append(e)

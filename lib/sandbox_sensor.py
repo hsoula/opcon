@@ -24,6 +24,9 @@ class sandbox_sensor:
         # Name
         self.name = ''
         
+        # Range
+        self.max_range = 0.0
+        
         # Signature target
         self.signal = ''
             
@@ -46,6 +49,9 @@ class sandbox_sensor:
         self.name = doc.SafeGet(node, 'name', self.name)
         # Target Signal
         self.signal = doc.SafeGet(node, 'signature', self.signal)
+        
+        # Range
+        self.max_range = doc.SafeGet(node, 'range', self.max_range)
         
         # Read requirements
         for nd in doc.Get(node, 'requires', True):

@@ -153,18 +153,7 @@ class agent:
         '''
         out = OPORD(self.entity, recipient)
         sim = recipient.sim
-        '''
-        # Intelligence section
-        cntlist = []
-        for i in self.entity['contacts'].values() + [self.ContactDefineSelf()]:
-            if i.fields['nature'] != 'undetected':
-                cntlist.append(i.Duplicate('encode'))
-        for i in cntlist:
-            if i.IFF() == 'FR':
-                out['SITUATION']['FRIENDLY FORCES']['DISPOSITION'].append(i)
-            else:
-                out['SITUATION']['ENNEMY FORCES']['DISPOSITION'].append(i)
-        '''
+
         # Higher unit
         #out['COMMAND AND SIGNAL']['COMMAND']['HIGHER UNIT'] = self.entity['uid']
         return out
@@ -1139,7 +1128,7 @@ class agent:
         for i in tgtlist:
             cnt = self.GetContact(i)
             if cnt != None:
-                if cnt.IsDirectObs() and cnt.IFF() != self.entity['side'] and cnt.IFF():
+                if cnt.IsDirectObs() and cnt.GetField('side') != self.entity['side'] and cnt.GetField('side'):
                     cntlist.append(cnt)
         
         # Dumb picker, choose a random unit
@@ -1162,7 +1151,7 @@ class agent:
         for i in self.entity['contacts'].values():
             if i.IsDirectObs():
                 temp = i.Duplicate('encode')
-                if self.SolveIFF(i.fields['side']) != 'FR':
+                if self.SolveIFF(i.fields['side']) != 'FRIEND':
                     eny.append(temp)
                 else:
                     friends.append(temp)
@@ -1892,8 +1881,8 @@ class agent:
           
     def SolveIFF(self, color):
         if color != self.entity['side']:
-            return 'ENY'
-        return 'FR'
+            return 'FOE'
+        return 'FRIEND'
     
     def SolveChooseEngageFoe(self):
         '''!
@@ -2117,7 +2106,7 @@ class agent_CO(agent):
        for i in contacts:
            if i.IsDirectObs('echelon'):
                temp = i.Duplicate('encode')
-               if self.SolveIFF(i.fields['side']) != 'FR':
+               if self.SolveIFF(i.fields['side']) != 'FRIEND':
                    eny.append(temp)
                    tout += i.AsHTML()
        if tout == '':
@@ -2138,7 +2127,7 @@ class agent_CO(agent):
                else:
                    if i.IsDirectObs('echelon'):
                        temp = i.Duplicate('encode')
-                       if self.SolveIFF(i.fields['side']) == 'FR':
+                       if self.SolveIFF(i.fields['side']) == 'FRIEND':
                            others.append(i.Duplicate())
             
        out += html.Tag('H2','B. Friendly Forces') + '<HR>'

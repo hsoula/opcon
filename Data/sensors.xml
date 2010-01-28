@@ -46,7 +46,7 @@
         </sensor>
         
         <!-- Hearing-->
-        <sensor name="ear" signature="sound">
+        <sensor name="ear" signature="sound" range="1000">
             <degraded_by>combat</degraded_by>
             <degraded_by>terrain</degraded_by>
             <classify>
