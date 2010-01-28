@@ -327,7 +327,13 @@ class sandbox_contact:
         self.status = 'new'
     
     # Set the field
-    self.SetField(Key, value)
+    if Key in ['personel', 'vehicle']:
+      for i in value:
+        n = i[:i.find('X')].strip()
+        kind = i[i.find('X')+1:].strip()
+        self.EquipmentSighting(Key, kind, n)
+    else:
+      self.SetField(Key, value)
     
       
   def SetField(self, Key, value):
@@ -406,12 +412,11 @@ class sandbox_contact:
     
     # Only one thing to list, make is short
     if len(xx) == 1:
-      return html.Tag('strong',kindof + ':') + xx[0]
-    
+      return html.Tag('strong',kindof + ':') + '%s X %s'%(xx[0]['count'], xx[0]['ID'])    
     out = ''
     # Itermize
     for i in xx:
-      out += html.Tag( 'li' , i )
+      out += html.Tag( 'li' , '%s X %s'%(xx[i]['count'], xx[i]['ID']) )
       
     # Wrap into a <ul>
     out = html.Tag('ul',out)
@@ -649,6 +654,7 @@ class system_intelligence(system_base.system_base):
         # Deception and rating
         cnt.deception = 0
         cnt.rating = argument.Increment()
+        cnt.status = 'direct'
       else:
         # It failed
         cnt.deception += 1

@@ -131,7 +131,7 @@ class system_combat(system_base.system_base):
     
   def GetFrontage(self, unit_size):
     ''' Returns a frontage (or radius) as a function of the units size '''
-    return system_combat.frontages.get(unit_size, '')
+    return system_combat.frontages.get(unit_size, '') * (1000**-1)
     
   
   def GetExpectedKillsPerMinute(self, E):

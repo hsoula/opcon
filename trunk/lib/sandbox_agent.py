@@ -1151,7 +1151,7 @@ class agent:
         for i in self.entity['contacts'].values():
             if i.IsDirectObs():
                 temp = i.Duplicate('encode')
-                if self.SolveIFF(i.fields['side']) != 'FRIEND':
+                if self.SolveIFF(i.GetField('side')) != 'FRIEND':
                     eny.append(temp)
                 else:
                     friends.append(temp)
