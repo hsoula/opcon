@@ -900,7 +900,21 @@ class agent:
     #
     # contacts
     def ProcessContacts(self):
-        pass
+        ''' Allow the Staff to annotate contacts 
+        '''
+        # Get contacts
+        for cnt in self.GetContactList():
+            # Solve for possible IFF/SIF
+            us = self.entity['side']
+            them = cnt.GetField('side')
+            if us == them:
+                cnt.SetField('IFF/SIF','FRIEND')
+            elif set((us,them)) == set(('RED','BLUE')):
+                cnt.SetField('IFF/SIF', 'FOE')
+            # TODO: make provision for neutral
+            else:
+                cnt.SetField('IFF/SIF','UNKNOWN')
+        
     def GetContact(self, E):
         return self.entity.Contact(E)
     
