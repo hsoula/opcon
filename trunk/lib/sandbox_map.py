@@ -452,23 +452,27 @@ class sandbox_map:
     maxpoint = self.PixelCoord(vect_3D(box[2],box[3]))
     box = [minpoint[0], minpoint[1], maxpoint[0], maxpoint[1]]
     
-    # Polygon
-    mypoly = []
-    for i in poly.vertices():
-      pt = self.PixelCoord(i)
-      mypoly.append( (pt[0]-minpoint[0], pt[1]-minpoint[1] ) )
-
-    # Subset of data
-    temp = self.terrain.crop(box).copy()
-    
-    # Mask (Negative of a mask)
-    msk = Image.new('L',temp.size,color = 256)
-    ImageDraw.Draw(msk).polygon(mypoly,fill=0,outline=0)
-    voidcolor = (13,13,13)
-    temp.paste(voidcolor,(0,0)+temp.size,msk)
-    
-    # Get the pixel data
-    data = list(temp.getdata())
+    # If this is a very small footprint (1px)
+    if minpoint == maxpoint:
+      data = [self.terrain.getpixel(minpoint)]
+    else:
+      # Polygon
+      mypoly = []
+      for i in poly.vertices():
+        pt = self.PixelCoord(i)
+        mypoly.append( (pt[0]-minpoint[0], pt[1]-minpoint[1] ) )
+  
+      # Subset of data
+      temp = self.terrain.crop(box).copy()
+      
+      # Mask (Negative of a mask)
+      msk = Image.new('L',temp.size,color = 256)
+      ImageDraw.Draw(msk).polygon(mypoly,fill=0,outline=0)
+      voidcolor = (13,13,13)
+      temp.paste(voidcolor,(0,0)+temp.size,msk)
+      
+      # Get the pixel data
+      data = list(temp.getdata())
     
     # Extract the data
     out = {}

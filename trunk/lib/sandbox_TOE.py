@@ -262,4 +262,5 @@ class sandbox_component_state:
     def GetKit(self):
         return self.kit
     
-    
+    def GetShortcoming(self):
+        return self.GetAuthorized() - self.GetCount()
