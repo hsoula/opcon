@@ -315,14 +315,14 @@ class agent:
         '''! \brief Routine intelligence staffwork.
         '''
         # Process contacts
-        self['agent'].ProcessContacts()
+        self.ProcessContacts()
         
         # Prepare Insum
-        self['agent'].PrepareINTSUM()
+        self.PrepareINTSUM()
         
         # Decide whether a SITREP should be sent.
-        if self['agent'].PolicySendSITREP():
-          self['agent'].PrepareSITREP()
+        if self.PolicySendSITREP():
+          self.PrepareSITREP()
         
     def routine_S3(self):
         '''! \brief Routine operations staffwork.
@@ -747,30 +747,8 @@ class agent:
             
         # Don't lie, there is only 1 unit to worry about anyway.
         return self.entity.EchelonFootprint()
-    #    
+    #
     # Supply
-    def EstimateCasulatiesFigures(self):
-        '''!
-           Estimate the number of KIA/MIA, WIA, destroyed vehicle and dammaged ones.
-           Return as a tuple
-        '''
-        # FIXME
-        #D = 1.0 - self.entity['combat'].RawRCP()/self.entity['combat']['TOE RCP']
-        #C =  self.entity['combat'].UnavailableRCP() / self.entity['combat']['TOE RCP']
-        D = 0.0
-        C = 0.0
-        #Nv = self.entity['logistics']['Nv']
-        #Np = self.entity['logistics']['Np']
-        Nv = 1
-        Np = 1
-        
-        W = int(C * Np)
-        K = int(D * Np) - W
-        dm = C * Nv
-        dt = int(D * Nv) - dm
-        
-        return K, W, dt, dm
-        
     def SolveOPORDRessuply(self, opord):
         '''! \brief Find whether there is a need to resupply within the OPORD
              \param opord An OPORD instance
@@ -1297,7 +1275,7 @@ class agent:
            OUTPUT : A string.
         '''
         head = html.Tag('H3','Deployment Details')
-        out =  'We are located at MGRS %s in %s stance. '%(self.map.MGRS.AsString(self.entity['position'],2),self.entity.GetStance())
+        out =  'We are located at UTM %s in %s stance. '%(self.map.MGRS.XYtoUTM(self.entity['position']),self.entity.GetStance())
 
         # Distance from HQ
         if self.entity.GetHQ():
@@ -1347,13 +1325,19 @@ class agent:
         # Out string
         out = html.Tag('H3', 'Capacity and Strenght')
         
-        # Relative Combat strenght
-        #R = self.entity['combat'].RawRCP()/self.entity['combat']['TOE RCP']
-        R = 0.0
-        temp = 'We are operating at %d%% of our TOE allocation. '%(int(100*R))
-        
-        KIA,WIA,dst,dmg = self.EstimateCasulatiesFigures()
-        temp += 'We report %d KIA/MIA and %d WIA. We also report %d destroyed and %d dammaged vehicles that possibly can be salvaged. '%(KIA, WIA, dst, dmg)
+        # Relative Combat strength
+        # shortmoncing
+        temp = ''
+        for x in [self.entity.personel, self.entity.vehicle]:
+            for kit in x:
+                if x[kit].GetShortcoming():
+                    # shortcoming, then percent
+                    short = x[kit].GetShortcoming()
+                    level = int( 100 * x[kit].GetCount() / float(x[kit].GetAuthorized()))
+                    temp += 'We\'re short of %d X %s (%d '%(short, kit, level) + '% authorized levels.). '
+                    
+        if not temp:
+            temp = 'We are operating with a full complement of personel. '
         
         out += html.Tag('p',temp)
         
@@ -2249,6 +2233,7 @@ class agent_CO(agent):
         R = self.entity['combat'].RawRCP()/self.entity['combat']['TOE RCP']
         temp = 'We are operating at %d%% of our TOE allocation. '%(int(100*R))
         
+        '''
         KIA = WIA = dst = dmg = 0
         for S in self.entity.Subordinates()+[self.entity]:
             t1,t2,t3,t4 = S['agent'].EstimateCasulatiesFigures()
@@ -2259,7 +2244,7 @@ class agent_CO(agent):
             
         
         temp += 'We report %d KIA/MIA and %d WIA. We also report %d destroyed and %d dammaged vehicles that possibly can be salvaged. '%(KIA, WIA, dst, dmg)
-        
+        '''
         out += html.Tag('p',temp)
         
         return out
