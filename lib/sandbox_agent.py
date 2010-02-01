@@ -194,7 +194,36 @@ class agent:
         tk.Process(self.entity)
 
         
-    def PrepareSITREP(self, echelon = True):
+    def PrepareSITREP(self, echelon=True):
+        ''' template-based implementation to replace the old one.
+        '''
+        # Dispatch to the righ code
+        if echelon and self.entity.EchelonSubordinates():
+            # CO agent
+            CO = agent_CO(self.entity, self.map)
+            CO.clock = self.clock
+            return CO.PrepareSITREP()
+        
+        # Fetch contact list
+        cntreport, eny, friends = self.REPORT_Contacts()
+        
+        # Instanciate the SITREP
+        sitrep = SITREP(self.entity, eny, friends, '', self.entity.C3Level())
+        sitrep.GetTemplate()
+        
+        # fill header
+        sitrep.FillField('##OPERATION_NAME##', 'OPCONTEST')
+        sitrep.FillField('##COMMTYPE##', 'SITREP')
+        # Recipient name
+        if self.entity.GetHQ():
+            x = self.entity.GetHQ().GetName()
+        else:
+            x = 'DRAFT'
+        sitrep.FillField('##RECIPIENT##', x)
+        
+        
+        
+    def PrepareSITREPold(self, echelon = True):
         '''!
            Prepare a SITREP
            
