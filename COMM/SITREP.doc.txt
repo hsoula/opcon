@@ -1,0 +1,21 @@
+== header ==
+##OPERATION_NAME##
+##COMMTYPE##
+##RECIPIENT##
+##DTG##
+##PERID_START##
+##PERID_END##
+##REPORTING_UNIT_NAME##
+
+== listing ==
+/unit_name     /coordinates (23rd character)  /comments (44th characters)   
+
+== SITREP part ==
+##SITUATION##
+##OPERATION##
+##INTEL##
+##LOGISTICS##
+##COMMUNICATION##
+##PERSONEL##
+##SIGNIFICANT_EVENTS##
+##EVALUATION##
