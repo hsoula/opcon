@@ -72,7 +72,7 @@ class agent:
         self.clock = datetime.now()
         self.issuedSUPREQs = []
         self.potentialengagements = []
-        self.data = {'actions':[], 'Echelon Cnt':{}}
+        self.data = {'actions':[], 'Echelon Cnt':{}, 'last SITREP':None}
         self.overlay = operational_overlay()
         
         # Minimum survival tasking by default
@@ -214,12 +214,35 @@ class agent:
         # fill header
         sitrep.FillField('##OPERATION_NAME##', 'OPCONTEST')
         sitrep.FillField('##COMMTYPE##', 'SITREP')
+        
         # Recipient name
         if self.entity.GetHQ():
             x = self.entity.GetHQ().GetName()
         else:
             x = 'DRAFT'
         sitrep.FillField('##RECIPIENT##', x)
+        
+        # DTG
+        sitrep.FillField('##DTG##', self.clock.strftime('%d%H%MZ'))
+        
+        # Period time
+        if not self.data['last SITREP']:
+            sitrep.FillField('##PERID_START##', '---')
+        else:
+            sitrep.FillField('##PERID_START##', self.data['last SITREP'].strftime('%d%H%MZ'))
+        sitrep.FillField('##PERID_END##', self.clock.strftime('%d%H%MZ'))
+        
+        sitrep.FillField('##REPORTING_UNIT_NAME##', self.entity.GetName())
+        
+        # Position
+        x = ('/%s'%(self.entity.GetName())).ljust(22, ' ')
+        x += ('/%s'%(self.map.MGRS.XYtoUTM(self.entity.Position()))).ljust(21, ' ')
+        x += '/NO COMMENTS'
+        sitrep.FillField('##UNIT_LIST##', x)
+        
+        
+        
+        
         
         
         

@@ -158,7 +158,7 @@ class sandbox_COMM(dict):
     '''
     if not field_name.startswith('##'):
       field_name = '##%s##'%(field_name).upper()
-    self.report.replace(field_name,content)
+    self.report = self.report.replace(field_name,content)
     
   def FinalizeWriteup(self):
     ''' Remove unused fields and returns the report.
