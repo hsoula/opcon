@@ -211,7 +211,7 @@ class agent:
         sitrep = SITREP(self.entity, eny, friends, '', self.entity.C3Level())
         sitrep.GetTemplate()
         
-        # fill header
+        ##  HEADER #################################################
         sitrep.FillField('##OPERATION_NAME##', 'OPCONTEST')
         sitrep.FillField('##COMMTYPE##', 'SITREP')
         
@@ -231,16 +231,41 @@ class agent:
         else:
             sitrep.FillField('##PERID_START##', self.data['last SITREP'].strftime('%d%H%MZ'))
         sitrep.FillField('##PERID_END##', self.clock.strftime('%d%H%MZ'))
+        self.data['last SITREP'] = self.clock
         
         sitrep.FillField('##REPORTING_UNIT_NAME##', self.entity.GetName())
         
-        # Position
+        ##  POSITION of reporting units
         x = ('/%s'%(self.entity.GetName())).ljust(22, ' ')
         x += ('/%s'%(self.map.MGRS.XYtoUTM(self.entity.Position()))).ljust(21, ' ')
         x += '/NO COMMENTS'
         sitrep.FillField('##UNIT_LIST##', x)
         
+        ## GENTEXT FIELD
+        # SITUATION
+        sitrep.FillField('SITUATION', self.REPORT_position())
         
+        # OPERATION
+        sitrep.FillField('OPERATION', self.REPORT_CurrentTask() + self.REPORT_Engagement())
+        
+        # INTEL
+        sitrep.FillField('INTEL', 'NOTHING TO REPORT.')
+        
+        # LOGISTICS
+        sitrep.FillField('LOGISTICS', self.REPORT_logistics())
+        
+        # COMMUNICATION
+        sitrep.FillField('COMMUNICATION', self.REPORT_communication())
+        
+        # PERSONEL
+        sitrep.FillField('PERSONEL', self.REPORT_personel())
+        
+        # SIGNIFICANT_EVENTS
+        
+        # EVALUATION
+        sitrep.FillField('EVALUATION', self.REPORT_Command())
+        
+        return sitrep
         
         
         
@@ -1180,6 +1205,10 @@ class agent:
         
     #
     # Reports preparation
+    def REPORT_communication(self):
+        ''' To fill the STANAG field.
+        '''
+        return 'NOTHING TO REPORT.'
     def REPORT_Contacts(self):
         '''! \brief Do the contact reporting for the SITREP
          
@@ -1352,8 +1381,11 @@ class agent:
             else:
                 ts = '%d mins'%(minutes)
             out = out + 'We are ready to get underway in %s. '%(ts)
+        return out
         return head + html.Tag('p',out)
     
+    def REPORT_personel(self):
+        return 'NOTHING TO REPORT.'
     def REPORT_CurrentTask(self):
         '''!
            Format depending on tasks.
@@ -1364,7 +1396,7 @@ class agent:
         
         # Default report
         if task == None:
-            return ''
+            return 'WE ARE IDLE.'
             return out + html.Tag('p','Nothing to Report')
         
         # custom report
@@ -1375,7 +1407,8 @@ class agent:
            Report on the Capacity of the entity to perform its tasks.
         '''
         # Out string
-        out = html.Tag('H3', 'Capacity and Strenght')
+        out = ''
+        #out = html.Tag('H3', 'Capacity and Strenght')
         
         # Relative Combat strength
         # shortmoncing
@@ -1391,7 +1424,8 @@ class agent:
         if not temp:
             temp = 'We are operating with a full complement of personel. '
         
-        out += html.Tag('p',temp)
+        #out += html.Tag('p',temp)
+        out += temp
         
         return out
     
