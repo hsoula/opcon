@@ -946,6 +946,14 @@ class sandbox_entity(dict):
       
       # Chain of command
       
+      # Contacts
+      intel = doc.NewNode('intel_picture')
+      doc.AddNode(intel, out)
+      # Write each contacts
+      for cnt in self.ContactList():
+        cnt_node = cnt.toXML(doc)
+        doc.AddNode(cnt_node, intel)
+      
     return out
   
   def fromXML(self, doc, node):

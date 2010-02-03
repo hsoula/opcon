@@ -984,16 +984,16 @@ class agent:
         '''
         # Get contacts
         for cnt in self.GetContactList():
-            # Solve for possible IFF/SIF
+            # Solve for possible IFF
             us = self.entity['side']
             them = cnt.GetField('side')
             if us == them:
-                cnt.SetField('IFF/SIF','FRIEND')
+                cnt.SetField('IFF','FRIEND')
             elif set((us,them)) == set(('RED','BLUE')):
-                cnt.SetField('IFF/SIF', 'FOE')
+                cnt.SetField('IFF', 'FOE')
             # TODO: make provision for neutral
             else:
-                cnt.SetField('IFF/SIF','UNKNOWN')
+                cnt.SetField('IFF','UNKNOWN')
         
     def GetContact(self, E):
         return self.entity.Contact(E)
