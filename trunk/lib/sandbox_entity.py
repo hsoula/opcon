@@ -950,8 +950,9 @@ class sandbox_entity(dict):
       intel = doc.NewNode('intel_picture')
       doc.AddNode(intel, out)
       # Write each contacts
-      for cnt in self.ContactList():
-        cnt_node = cnt.toXML(doc)
+      for cnt in self['contacts']:
+        cnt_node = self['contacts'][cnt].toXML(doc)
+        doc.SetAttribute('key', cnt, cnt_node)
         doc.AddNode(cnt_node, intel)
       
     return out
@@ -1080,6 +1081,15 @@ class sandbox_entity(dict):
             # Will need to be connected to the right pointer after loading the file
             self['subordinates'] = u
         
+        # INTEL picture
+        intel = doc.Get(node, 'intel_picture')
+        if intel:
+          # Read in the contacts
+          for nd in doc.ElementAsList(intel):
+            key = doc.Get(nd,'key')
+            cnt = sandbox_contact()
+            cnt.fromXML(doc, nd)
+            self['contacts'][key] = cnt
       
   def fileAppendLogs(self):
     fout = open(os.path.join(self['folder'],'logs.txt'),'a')
