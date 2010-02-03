@@ -1159,7 +1159,7 @@ class SITREP(sandbox_COMM):
     return str(self)
     
   def __str__(self):
-    return decompress(self.report)
+    return self.report
 
   
 
