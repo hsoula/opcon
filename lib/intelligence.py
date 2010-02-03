@@ -182,7 +182,7 @@ class sandbox_contact:
     return self.fields.get(k,default)
     
   def IFF(self):
-    return self.fields.get('IFF/SIF','unknown')
+    return self.fields.get('IFF','unknown')
   
   def IntelReliability(self, pv = None):
     return self.rating
@@ -217,7 +217,7 @@ class sandbox_contact:
     ''' Set the IFF information asa field.
         The only possible are: FRIEND, ENEMY, NEUTRAL
     '''
-    self.SetField('IFF/SIF', iff)
+    self.SetField('IFF', iff)
     
   def EquipmentSighting(self, eq_class, kitname, count, timestamp=None):
     ''' Add this equipment to the equipment field. kind is the template name, eclass is either personel of vehicle
