@@ -233,12 +233,19 @@ class agent:
         sitrep.FillField('##PERID_END##', self.clock.strftime('%d%H%MZ'))
         self.data['last SITREP'] = self.clock
         
+        # Unit listing
         sitrep.FillField('##REPORTING_UNIT_NAME##', self.entity.GetName())
+        # align the header of this section
+        beg = sitrep.report.find('/UNITDES')
+        end = sitrep.report.find('\n', beg)
+        temp = sitrep.report[beg:end].replace(' ','&nbsp;')
+        sitrep.report = sitrep.report[:beg] + temp + sitrep.report[end:]
         
         ##  POSITION of reporting units
-        x = ('/%s'%(self.entity.GetName())).ljust(22, ' ')
-        x += ('/%s'%(self.map.MGRS.XYtoUTM(self.entity.Position()))).ljust(21, ' ')
+        x = ('/%s'%(self.entity.GetName())).ljust(22, '$')
+        x += ('/%s'%(self.map.MGRS.XYtoUTM(self.entity.Position()))).ljust(21, '$')
         x += '/NO COMMENTS'
+        x = x.replace('$','&nbsp;')
         sitrep.FillField('##UNIT_LIST##', x)
         
         ## GENTEXT FIELD
@@ -261,9 +268,27 @@ class agent:
         sitrep.FillField('PERSONEL', self.REPORT_personel())
         
         # SIGNIFICANT_EVENTS
+        sitrep.FillField('SIGNIFICANT_EVENTS', 'NONE')
         
         # EVALUATION
         sitrep.FillField('EVALUATION', self.REPORT_Command())
+        
+        # Make it uppercased and htmlize the whitespaces and EOL
+        sitrep.report = sitrep.report.replace('\n', '<br>\n')
+        sitrep.report = sitrep.report.upper()
+        sitrep.report = sitrep.report.replace('&NBSP;', '&nbsp;')
+        
+        # Send it out
+        self.entity.Send(sitrep)
+        
+        # Log it to HD
+        # Make HTML file
+        ech = self.entity.Echelon()
+        if not ech:
+            ech = self.entity.HigherEchelon()
+        title = 'SITREP for %s %s at time %s\n'%(self.entity.GetName(), ech, self.clock.strftime('%m-%d %H%MJ'))
+        hs = html.HTMLfile(title,str(sitrep))
+        self.Write('%s.SITREP.html'%(self.clock.strftime('%m%d.%H%M')),hs)
         
         return sitrep
         
@@ -1211,6 +1236,7 @@ class agent:
         return 'NOTHING TO REPORT.'
     def REPORT_Contacts(self):
         '''! \brief Do the contact reporting for the SITREP
+             The HTML code here is obsolete. Delete?
          
              \return outstring, eny vector and friends vector
         '''
@@ -1268,20 +1294,23 @@ class agent:
         '''!
            Prepare a report about engagement eng and return as a string.
         '''
-        out = html.Tag('p',html.Tag('B','Engagement Report'))
+        out = ''
         # for each Engagements
         for eng in self.entity['ground engagements']:
             if eng:
                 out += eng.Report(self.entity)
+        # Add a header if not empty
+        if out:
+            out = '/' + out
         # 
-        return html.Tag('div', out)
+        return out
     
     def REPORT_logistics(self):
         '''!
            Prepare a report about logistics
            \todo Use obsolete Deliver Supply tasks
         '''
-        out = html.Tag('h3','Logistics Report')
+        out = ''
         # CSSUnit and ressuply policies
         cssunit = ''
         css = self.SolveCSSUnit()
@@ -1305,12 +1334,11 @@ class agent:
             
         pol = 'We are currently required to maintain between %.2f and %.2f basic loads. Here follows our current inventory:'%(policies[0],policies[1])
         
-        out = out + html.Tag('P',cssunit+pol) + html.Tag('blockquote',self.entity['logistics'].Report(self.entity))
+        out = out + cssunit+ pol + 'Current supply level is %.1f'%(self.entity.ExtractFieldsupply_level(None, self.entity)) + '%.'
         
         if type(self.entity['logistics']) == type(CSSlogistics()):
             # burden and available freight
-            temp = 'Our transportation assets are used at %d%% under projected supply requirements for our serviced units; with %.1f STON left of freight currently available. Note that 100%% means there is no freight that can be allocated for contingency plan even while assuming an optimized routine schedule.'%(100*self.entity['logistics'].ComputeRessuplyBurden(self.SolveSupportedUnits()),self.entity['logistics']['freight'])
-            out = out + html.Tag('p',temp)
+            out = 'Our transportation assets are used at %d%% under projected supply requirements for our serviced units; with %.1f STON left of freight currently available. Note that 100%% means there is no freight that can be allocated for contingency plan even while assuming an optimized routine schedule.'%(100*self.entity['logistics'].ComputeRessuplyBurden(self.SolveSupportedUnits()),self.entity['logistics']['freight'])
             #
             myconvoys = self.SolveSubordinateConvoys()
             if myconvoys:
@@ -1332,22 +1360,21 @@ class agent:
                 out = out + cvlist + html.Tag('small',html.Table(table))
                 
         
-        return html.Tag('div',out)
+        return out
 
     def REPORT_Command(self):
         '''!
            Report on command and control.
         '''
-        out = html.Tag('H3', 'Command, Control and Communication.')
-        out1 = html.Tag('B', 'C2 level   : ') + self.entity['C4I'].AsStringCommand(self.entity.C2Level()) + ' (%d%%)'%(100*self.entity.C2Level())
+        out = ''
+        out1 = 'C2 level: ' + self.entity['C4I'].AsStringCommand(self.entity.C2Level()) + ' (%d%%)'%(100*self.entity.C2Level())
         if self.entity.GetHQ(): 
-            out1 = out1 + '<BR>' + html.Tag('B', ' C4I level   : ') + self.entity['C4I'].AsStringCommand(self.entity.C3Level()) + ' (%d%%)'%(100*self.entity.C3Level())
-        out1 = out1 + '<BR>'
-        out1 = out1 + 'Suppression: ' + self.entity['C4I'].AsStringSuppression(self.entity.GetSuppression()) + ' (%d%%)<BR>'%(100*self.entity.GetSuppression())
-        out1 = out1 + 'Fatigue    : ' + self.entity['C4I'].AsStringFatigue(self.entity.GetFatigue()) + ' (%d%%)<BR>'%(100*self.entity.GetFatigue())
-        out1 = out1 + 'Morale     : ' + self.entity['C4I'].AsStringMorale(self.entity.GetMorale()) + ' (%d%%)<BR>'%(100*self.entity.GetMorale())
-        out = out + html.Tag('blockquote',out1)
-        return html.Tag('div',out)
+            out1 = out1  + ' C4I level: ' + self.entity['C4I'].AsStringCommand(self.entity.C3Level()) + ' (%d%%)'%(100*self.entity.C3Level())
+        out1 = out1 + ', Suppression: ' + self.entity['C4I'].AsStringSuppression(self.entity.GetSuppression()) + ' (%d%%)'%(100*self.entity.GetSuppression())
+        out1 = out1 + ', Fatigue: ' + self.entity['C4I'].AsStringFatigue(self.entity.GetFatigue()) + ' (%d%%)'%(100*self.entity.GetFatigue())
+        out1 = out1 + ', Morale: ' + self.entity['C4I'].AsStringMorale(self.entity.GetMorale()) + ' (%d%%)'%(100*self.entity.GetMorale())
+        out = out + out1
+        return out
     
     
     def REPORT_position(self):
@@ -1355,7 +1382,6 @@ class agent:
            Location and stance.
            OUTPUT : A string.
         '''
-        head = html.Tag('H3','Deployment Details')
         out =  'We are located at UTM %s in %s stance. '%(self.map.MGRS.XYtoUTM(self.entity['position']),self.entity.GetStance())
 
         # Distance from HQ
@@ -1382,7 +1408,6 @@ class agent:
                 ts = '%d mins'%(minutes)
             out = out + 'We are ready to get underway in %s. '%(ts)
         return out
-        return head + html.Tag('p',out)
     
     def REPORT_personel(self):
         return 'NOTHING TO REPORT.'
@@ -1390,17 +1415,14 @@ class agent:
         '''!
            Format depending on tasks.
         '''
-        out = html.Tag('H3','Maneuver Report')
         # Get Task
         task = self.entity['OPORD'].GetCurrentTask()
         
         # Default report
         if task == None:
             return 'WE ARE IDLE.'
-            return out + html.Tag('p','Nothing to Report')
-        
-        # custom report
-        return html.Tag('div',out+task.AsHTML(self))
+        else:
+            return task.AsHTML(self)
     
     def REPORT_CapacityStrenght(self):
         '''!
