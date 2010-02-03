@@ -289,6 +289,14 @@ class agent:
         title = 'SITREP for %s %s at time %s\n'%(self.entity.GetName(), ech, self.clock.strftime('%m-%d %H%MJ'))
         hs = html.HTMLfile(title,str(sitrep))
         self.Write('%s.SITREP.html'%(self.clock.strftime('%m%d.%H%M')),hs)
+        # Boldify headings
+        x = sitrep.report
+        pat = re.compile('^((.+)/(.+)/)')
+        match = pat.match(x)
+        while match:
+            x = x[:match.start()] + '<b>' + match.group(0) + '</b>' + x[match.end():]
+            match = pat.match(x)
+        sitrep.report = x
         
         return sitrep
         
