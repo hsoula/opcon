@@ -466,7 +466,7 @@ class sandbox:
     name = net[net.find('.')+1:]
     E = self.GetEntity(side, name)
     signal['sent timestamp'] = self.clock
-    filename = os.path.join(self.OS['savepath'], E['side'], E.GetName(True), 'net', signal.ArchiveName())
+    filename = os.path.join(self.OS['savepath'], E['side'], E.GetName(True), 'COMMnet', signal.ArchiveName())
     
     # Write a text version 
     fout = open(filename, 'w')

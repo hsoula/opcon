@@ -590,11 +590,11 @@ class sandbox_entity(dict):
     self['staff queue'].append(order)
     
 
-  def Send(self, comm_instance, net=None, send_up=False, send_down=False):
+  def Send(self, comm_instance, send_up=True, send_down=False, net=None, ):
     ''' Sends the comm_instance in a net.
     '''
     # These two keywords will handle most of the cases
-    if send_up:
+    if send_up and self.GetHQ():
       net = self.GetHQ().GetInnerCOMMnet()
     elif send_down:
       net = self.GetInnerCOMMnet()

@@ -218,6 +218,7 @@ class agent:
         # Recipient name
         if self.entity.GetHQ():
             x = self.entity.GetHQ().GetName()
+            sitrep.AddRecipient(self.entity.GetHQ())
         else:
             x = 'DRAFT'
         sitrep.FillField('##RECIPIENT##', x)
@@ -280,15 +281,6 @@ class agent:
         
         # Send it out
         self.entity.Send(sitrep, send_down=True)
-        
-        # Log it to HD
-        # Make HTML file
-        ech = self.entity.Echelon()
-        if not ech:
-            ech = self.entity.HigherEchelon()
-        title = 'SITREP for %s %s at time %s\n'%(self.entity.GetName(), ech, self.clock.strftime('%m-%d %H%MJ'))
-        hs = html.HTMLfile(title,str(sitrep))
-        self.Write('%s.SITREP.html'%(self.clock.strftime('%m%d.%H%M')),hs)
         
         return sitrep
         
