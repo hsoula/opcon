@@ -84,7 +84,7 @@ class sandbox_entity(dict):
     
     # Command echelon level
     self['command_echelon'] = command_echelon
-    self['echelon_name'] = command_echelon
+    self['echelon_name'] = name
     
     # Actual unit size
     self['size'] = 'Team'
@@ -116,6 +116,8 @@ class sandbox_entity(dict):
     
     # Communications and Situations
     self['SITREP'] = {}
+    self.COMMindex = 0
+    self.COMMNets = []
     
     
     # Agents ##################################
@@ -211,8 +213,12 @@ class sandbox_entity(dict):
     '''! Initialize for a new pulse '''
     # Adjust the stafftoom's clock
     self['agent'].clock = ctime
+    
     # Clear the activity codes
     self['activities this pulse'] = []
+    
+    # Make sure that the unit is tuned to the nets
+    self['agent'].routine_S6()
     
   # Steps
   def Step(self, Map, clock, pulse):
@@ -405,6 +411,8 @@ class sandbox_entity(dict):
     
     if subord not in self['subordinates']:
       self['subordinates'].append(subord)
+      self.sim.COMMnets[self.GetInnerCOMMnet()].append(subord)
+
 
   def DeleteSubordinate(self, sub):
     '''!
@@ -416,8 +424,16 @@ class sandbox_entity(dict):
     if sub in self['subordinates']:
       self['subordinates'].remove(sub)
       out = True
+      # remove from the comm net
+      try:
+        self.sim.COMMnets[self.GetInnerCOMMnet()].remove(sub)
+      except:
+        pass
+      
     if self['SITREP'].has_key(sub['uid']):
       del self['SITREP'][sub['uid']]  
+      
+    
     return out
     
   def DetachFromHQ(self):
@@ -558,6 +574,11 @@ class sandbox_entity(dict):
   
 
   # C4I - communications
+  def GetInnerCOMMnet(self):
+    ''' Return the key to the COMM name for the echelon of this unit.
+    '''
+    return self['side'] + '.' + self.GetName()
+  
   def IssueOrder(self, order):
     '''!
        Pass an order to an entity. The entity will dispatch it to the appropriate agent.
@@ -568,7 +589,27 @@ class sandbox_entity(dict):
       
     self['staff queue'].append(order)
     
-  def Send(self, request, subord = None):
+
+  def Send(self, comm_instance, net=None, send_up=False, send_down=False):
+    ''' Sends the comm_instance in a net.
+    '''
+    # These two keywords will handle most of the cases
+    if send_up:
+      net = self.GetHQ().GetInnerCOMMnet()
+    elif send_down:
+      net = self.GetInnerCOMMnet()
+      
+    # embed the command level of the sender.
+    comm_instance['C3 level'] = self.C2Level()
+    
+    # Set sender
+    comm_instance.SetSender(self)
+    
+    # Broadcast 
+    self.sim.BroadcastSignal(comm_instance, net)
+
+  
+  def OldSend(self, request, subord = None):
     '''!
        Send a request to the Higher Unit or subordinate
     '''
