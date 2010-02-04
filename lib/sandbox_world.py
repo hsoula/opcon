@@ -36,6 +36,9 @@ from sandbox_infrastructure import sandbox_network
 from sandbox_exception import SandboxException
 from sandbox_data import sandbox_data_server
 
+# HTML renderer (for text)
+import Renderer_html as html
+
 # Import std python modules
 import time as tm
 from datetime import *
@@ -60,7 +63,7 @@ class sandbox:
     
     # communication net
     # The communication stack
-    self.commstack = []
+    self.COMMnets = {}
     
     # Each unit gets it own UID, this is the counter that keeps track of this
     self.next_uid = 1
@@ -231,6 +234,9 @@ class sandbox:
     '''
     # Add to the list
     self.OOB.append(entity)
+    
+    # Open the net
+    self.COMMnets[entity.GetInnerCOMMnet()] = [entity]
     
     # Friction vectors
     if entity['movement']['mode']:
@@ -447,11 +453,26 @@ class sandbox:
     
   # Broadcast and Signals
   #
-  def BroadcastSignal(self, signal):
+  def BroadcastSignal(self, signal, net):
     '''
        Post signal so it becomes available for interception by listeners.
     '''
-    self.commstack.append(signal)
+    # Adds the comm to each unit tuned to the net
+    for i in self.COMMnets.get(net, []):
+      i['staff queue'].append(signal)
+      
+    # Writes the communication to the net
+    side = net[:net.find('.')]
+    name = net[net.find('.')+1:]
+    E = self.GetEntity(side, name)
+    signal['sent timestamp'] = self.clock
+    filename = os.path.join(self.OS['savepath'], E['side'], E.GetName(True), 'net', signal.ArchiveName())
+    
+    # Write a text version 
+    fout = open(filename, 'w')
+    text = html.HTMLfile('COMM on net %s'%(net),signal.AsHTML())
+    fout.write(text)
+    fout.close()
     
   # Engagement Interface
   #
@@ -785,7 +806,12 @@ class sandbox:
       entity['folder'] = os.path.join(self.OS['savepath'],entity['side'].upper(),tname)
 
     try:
+      # Unit's folder
       os.mkdir(entity['folder'])
+      
+      # COMM network
+      os.mkdir(os.path.join(entity['folder'],'COMMnet'))
+      
     except:
       print 'failure to create folder for %s'%(entity['folder'])   
       

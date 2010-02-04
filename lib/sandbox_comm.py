@@ -60,6 +60,10 @@ class sandbox_COMM(dict):
     self.template = ''
     self.report = ''
     
+  def ArchiveName(self):
+    ''' AUTOform a file name for this comm
+    '''
+    return self['sent timestamp'].strftime('%m%d.%H%M') + self.__name__ + '.html'
   def AutoRecipient(self, sender):
     '''! \brief Try to guess the recipient (HQ or self) if not provided
     '''

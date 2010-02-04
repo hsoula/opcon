@@ -279,7 +279,7 @@ class agent:
         sitrep.report = sitrep.report.replace('&NBSP;', '&nbsp;')
         
         # Send it out
-        self.entity.Send(sitrep)
+        self.entity.Send(sitrep, send_down=True)
         
         # Log it to HD
         # Make HTML file
@@ -289,14 +289,6 @@ class agent:
         title = 'SITREP for %s %s at time %s\n'%(self.entity.GetName(), ech, self.clock.strftime('%m-%d %H%MJ'))
         hs = html.HTMLfile(title,str(sitrep))
         self.Write('%s.SITREP.html'%(self.clock.strftime('%m%d.%H%M')),hs)
-        # Boldify headings
-        x = sitrep.report
-        pat = re.compile('^((.+)/(.+)/)')
-        match = pat.match(x)
-        while match:
-            x = x[:match.start()] + '<b>' + match.group(0) + '</b>' + x[match.end():]
-            match = pat.match(x)
-        sitrep.report = x
         
         return sitrep
         
@@ -459,6 +451,7 @@ class agent:
     
     def routine_S6(self):
         '''! \brief Routine communications staffwork.
+              Make sure that the unit is in two key nets.
         '''
         pass
     
