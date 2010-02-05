@@ -679,9 +679,7 @@ class sandbox_map:
         rgb = doc.Get(i,'color')
         self.code_terrain[nm] = rgb
     
-  def PostPickle(self):
-    self.Initialize()
-    self.pathcache.PostPickle()
+
     
   def FlushCache(self):
     del self.pathcache
@@ -697,14 +695,7 @@ class sandbox_map:
       
     self.copy.show()
     
-  def PrePickle(self):
-    ''' Delete all non-picleable data '''
-    del self.copy
-    del self.terrain
-    del self.graphics
-    #del self.GraphicDraw
-    del self.TerrainDraw
-    self.pathcache.PrePickle()
+
   
   def AsXML(self):
     '''! \brief A XML render of the map data.
@@ -1535,14 +1526,7 @@ class PathCACHE:
   
     
 
-  def PrePickle(self):
-    self.Save()
-    self._key = None
-    self._paths = None
-    
-  def PostPickle(self):
-    self.Load()
-    
+
 
 from random import random
 CASE = 'DATA'
