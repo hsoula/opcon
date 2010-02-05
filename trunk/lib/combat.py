@@ -456,13 +456,6 @@ class sandbox_engagement(dict):
       return True
     return False
     
-  def PrePickle(self):
-    pass
-
-    
-  def PostPickle(self, sim):
-    pass
-    
   # Sub-processes
   def Bombardments(self):
     # Artillery preparative barrages

@@ -283,7 +283,7 @@ class sandbox:
       # Staff queue
       toremove = []
       for comm in unit['staff queue']:
-        if comm.sender == entity['uid']:
+        if comm.Sender() == entity['uid']:
           toremove.append(comm)
       for i in toremove:
         unit['staff queue'].remove(i)
@@ -697,33 +697,6 @@ class sandbox:
     with open(archive,'w') as af:
       af.write(out)
     
-    
-  def PrePickle(self):
-    # Disconnect Map
-    self.map.PrePickle()
-    # Disconnect agents
-    for i in self.OOB:
-      i.PrePickle()
-    # Disconnect Engagements
-    for i in self.engagements:
-      i.PrePickle()
-    # Scheduler
-    self.scheduler.PrePickle()
-    
-  def PostPickle(self):
-    # Regenerate the data
-    self.map.PostPickle()
-    # Reconnect agents
-    for i in self.OOB:
-      i.PostPickle(self)
-    # Reconnect Engagements
-    for i in self.engagements:
-      i.PostPickle(self)
-    # Scheduler
-    self.scheduler.PostPickle(self)
-    if not self.map.data.has_key('climate'):
-      self.map.data['climate'] = 'temperate'
-      self.SaveMap()
   def ForkWorld(self, newname):
     '''
        Create a new folder to save the current world into.

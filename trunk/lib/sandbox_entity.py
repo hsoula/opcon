@@ -625,27 +625,7 @@ class sandbox_entity(dict):
       
     # Broadcast signal (all assumed to be radio) - will be used for SIGINT routine at some point down the road.
     if self.sim:
-      self.sim.BroadcastSignal(request)
-    
-  def GetLastSITREP(self, subord, echelon=True):
-    '''!
-       Return the last SITREP received from uid
-    '''
-    if type(subord) != type(12):
-      subord = subord['uid']
-      
-    if self['SITREP'].has_key(subord):
-      return self['SITREP'][subord]
-    
-    if subord == self['uid']:
-      return self['agent'].PrepareSITREP(echelon)
-    return None
-  def CacheSITREP(self, uid, sitrep):
-    '''!
-       Cache the sitrep for a subordinate unit, indexing by uid.
-    '''
-    self['SITREP'][uid] = sitrep  
-    
+      self.sim.BroadcastSignal(request)    
 
   # Echelon code
   def DeleteEchelonFootprint(self):
@@ -1137,38 +1117,7 @@ class sandbox_entity(dict):
     self['log'].fileUpdate(fout)
     fout.close()
     
-  def PrePickle(self):
-    # No world, skip
-    if self.sim == None:
-      return False
-    #disconnect the agent, for some reasons
-    self['agent'].PrePickle()
-    # OPORD
-    self['OPORD'].PrePickle()
 
-    # Contacts
-    for i in self['contacts'].keys():
-        self['contacts'][i].unit =  self.sim.AsUID(self['contacts'][i].unit)
-        # remove undetected with p_right == 0.5
-        if self['contacts'][i].Status() == 'undetected' and abs(self['contacts'][i].p_right - 0.5) <= 0.01:
-          del self['contacts'][i]
-
-    self.sim = None
-    
-    return True
-        
-    
-  def PostPickle(self, sim):
-    self.sim = sim
-    self['agent'].PostPickle(self)
-
-    # contacts
-    for i in self['contacts'].keys():
-        self['contacts'][i].unit =  self.sim.AsEntity(self['contacts'][i].unit)
-    # OPORD
-    self['OPORD'].PostPickle(self.sim)
-
-    
   
 
 import unittest

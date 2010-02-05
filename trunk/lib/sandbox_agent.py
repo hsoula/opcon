@@ -88,12 +88,6 @@ class agent:
         '''!
                 Generic function to process a new OPORD or REQUEST
         '''
-        # Will it be processed because of clarity issues?
-        # Can our staff handle it?
-        if msg.IsSuppressed() or random() > self.entity.C3Level():
-            self.entity.orderoverflow.append(msg)
-            return
-        
         # Determine whether this is a request or an OPORD using runtime type recognition
         mytype = type(msg)
         # OPORD - New operational orders
@@ -115,17 +109,14 @@ class agent:
 
     def ProcessSTAFF_QUEUE(self):
         '''!
-           Seek to implement the new OPORD in the list
+           Call Process on each COMM in the queue.
         '''
-        # All staff queue messages that will not make it this pulse
-        self.entity.orderoverflow = []
-       
         # Iterate over all item in STAFF QUEUE (OPORD or REQUESTS)
         for i in self.entity['staff queue']:
-          self.Process(i)
-    
-        # Remove all processed items from staff queue, but keep overflow for later.      
-        self.entity['staff queue'] = self.entity.orderoverflow       
+            # Process only conditionally to being a recipient
+            if i.IsRecipient(self.entity.GetName()):
+                self.Process(i)
+
         
     
     def PrepareOPORD(self, recipient):
@@ -288,63 +279,7 @@ class agent:
         
         
         
-    def PrepareSITREPold(self, echelon = True):
-        '''!
-           Prepare a SITREP
-           
-           \param echelon Write a SITREP for owning echelon and not just for the HQ unit.
-        '''
-        # Dispatch to the righ code
-        if echelon and self.entity.EchelonSubordinates():
-            # CO agent
-            CO = agent_CO(self.entity, self.map)
-            CO.clock = self.clock
-            return CO.PrepareSITREP()
-        
-        # HTML render
-        ech = self.entity.Echelon()
-        if not ech:
-            ech = self.entity.HigherEchelon()
-        title = 'SITREP for %s %s at time %s\n'%(self.entity.GetName(), ech, self.clock.strftime('%m-%d %H%M ZULU'))
-        out = html.Tag('H1',title)
-        
-        # Contact reporting
-        temp, eny, friends = self.REPORT_Contacts()
-        out += temp
-        
-                
-        # Adm (logistics) ###############################
-        # Human factor(s), fatigue, supression and morale
-        out = out + html.Tag('H2','C. Admin') + '<HR>'
-        temp=  html.Tag('p',self.REPORT_position())
-        
-        # Report engagement status if applicable
-        if self.entity['ground engagements']:
-            temp += html.Tag('p', self.REPORT_Engagement())
-            
-        temp += html.Tag('p',self.REPORT_CapacityStrenght())
-        temp += html.Tag('p',self.REPORT_Command())
-        temp += html.Tag('p',self.REPORT_CurrentTask())
-        temp += html.Tag('p',self.REPORT_logistics())
-        
-        out += html.Tag('BLOCKQUOTE',temp)
-        
-        out = html.HTMLfile('SITREP',out)
 
-        # Other #########################################
-        
-        # timing
-        self.data['last SITREP'] = self.clock        
-        
-        # Return the actual data structure
-        mysit = SITREP(self.entity, eny, friends, out, self.entity.C3Level())
-        mysit.PrePickle()
-        self.entity.Send(mysit)
-        # Log it to HD
-        # Make HTML file
-        hs = html.HTMLfile(title,str(mysit))
-        self.Write('%s.SITREP.html'%(self.clock.strftime('%m%d.%H%M')),hs)
-        return mysit
     
     def PrepareSUPREQ(self, LOGPAC, DP, T, emergency_flag = False):
         '''! \brief Prepare a Supply Request
@@ -667,9 +602,7 @@ class agent:
         '''!
            Integrate a contact report to the intelligence picture.
         '''
-        self.log('Received a contact report from %s'%(rep.Sender(self.entity.sim).GetName()),'communications')
-        # Re-generate the contact's unit pointer
-        rep.PostPickle(self.entity.sim)
+        self.log('Received a contact report from %s'%(rep.Sender().GetName()),'communications')
         rep.cnt.unit = self.entity.sim.AsEntity(rep.cnt.unit)
         # Catch defunct units (such as deleted LOGPACs)
         if rep.cnt.unit == None:
@@ -686,31 +619,11 @@ class agent:
         '''!
            Integrate a SITREP report to the intelligence picture.
         '''
-        rep.PostPickle(self.entity.sim)
-        if rep.Sender(self.entity.sim) == None:
+        if rep.Sender() == None:
             return
-        # Save the SITREP into the 
-        self.entity.CacheSITREP(rep.sender['uid'],rep)
         
         
-        self.log('Received a SITREP from %s'%(rep.Sender(self.entity.sim).GetName()),'communications')
-        cnts = rep.contacts + rep.friends
-        endline = False
-        for i in cnts:
-            # Convert back to a pointer from a UID (needed for serialization.)
-            i.unit = self.entity.sim.AsEntity(i.unit)
-            # catch Defunct units
-            if i.unit == None:
-                continue
-            # This should be taken care of later on in the processing, in the AbsorbFn
-            #i.UpdateField('nature','reported')
-            if self.ContactAbsorb(i,self.entity.sim.AsUID(rep.sender)):
-                endline = True
-                self.log('\t| Adding contact %s to our intelligence picture.'%(i.TrackName()),'intelligence')
-            else:
-                self.log('\t| Updating contact %s in our intelligence picture.'%(i.TrackName()),'intelligence')
-        if endline:
-           self.log('\t--- End SITREP ---','communications')
+        self.log('Received a SITREP from %s'%(rep.Sender().GetName()),'communications')
            
     
     def ProcessSUPREQ(self, request):
@@ -1063,7 +976,6 @@ class agent:
                 self.log('>>Reporting lost contact %s.'%(contact.TrackName()),'intelligence')
                 temp = contact.Duplicate('encode')
                 myrep = CNTREP(self.entity,self.entity.GetHQ(), temp, self.entity.C3Level())
-                myrep.PrePickle()
                 self.entity.Send(myrep)
         
     def ContactPolicy(self, query):
@@ -1101,7 +1013,6 @@ class agent:
                     self.Write('%s.CNTREP.txt'%(self.clock.strftime('%m%d.%H%M')),str(cnt))
                     temp = cnt.Duplicate('encode')
                     myrep = CNTREP(self.entity,self.entity.GetHQ(),temp, self.entity.C3Level())
-                    myrep.PrePickle()
                     self.entity.Send(myrep)
     def CanEngage(self, E):
         '''!
@@ -2079,17 +1990,6 @@ class agent:
           return False
       
     # File Ops
-    #
-    def PrePickle(self):
-        self.entity = None
-        for i in range(len(self.potentialengagements)):
-            self.potentialengagements[i] = self.potentialengagements[i]['uid']
-        
-    def PostPickle(self, parent):
-        self.entity = parent
-        for i in range(len(self.potentialengagements)):
-            self.potentialengagements[i] = parent.sim.AsEntity(self.potentialengagements[i])
-        
     def Write(self, name, text):
         '''!
            Write the text to a file in the entity folder
@@ -2168,7 +2068,6 @@ class agent_CO(agent):
        
        # Return the actual data structure
        mysit = SITREP(self.entity, eny, friends, out, self.entity.C3Level())
-       mysit.PrePickle()
        self.entity.Send(mysit)
        # Log it to HD
        # Make HTML file

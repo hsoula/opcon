@@ -58,30 +58,6 @@ class sandbox_event:
       self._args = args
     else:
       self._keyw = args
-    
-    
-  def PrePickle(self):
-    ''' Make the event serializable '''
-    # again, to get around the stupid problem of serializing pointers to entities.
-    try:
-      if self.parent.has_key('uid'):
-        self.parent = self.parent['uid']
-    except:
-      pass
-    # Function name
-    if self._fn != None:
-      self._fn = self._fn.__name__
-      
-  def PostPickle(self, parent = None):
-    ''' Reconstitute the event '''
-    # Instance pointer
-    if parent != None:
-      self.parent = parent
-    # Instancemethod pointer
-    if self._fn != None:
-      self._fn = getattr(self.parent,self._fn)
-    
-    
 
 '''
    A scheduler entry which doesn't execute any code but can use to post data and an identifying tag.
@@ -179,17 +155,6 @@ class sandbox_Scheduler:
     else:
       print 'Key of type %s not implemented'%(str(type(key)))
     
-
-  def PrePickle(self):
-    for i in self.events.keys():
-      for j in range(len(self.events[i])):
-        self.events[i][j].PrePickle()
-    
-  def PostPickle(self, sim):
-    for i in self.events.keys():
-      for j in range(len(self.events[i])):
-        self.events[i][j].PostPickle(sim)
-
 '''
 if __name__ == '__main__':
   class debug:

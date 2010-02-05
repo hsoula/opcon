@@ -19,7 +19,6 @@
 
 # import
 from copy import deepcopy
-from zlib import compress, decompress
 import os
 import os.path
 
@@ -84,10 +83,10 @@ class sandbox_COMM(dict):
     end = cn.find('\'',begin)
     cn = cn[begin+1:end]
     out = '%s serial %s <br>'%(cn, self['folder'])
-    ech = self.sender.Echelon()
+    ech = self.Sender().Echelon()
     if not ech:
-      ech = self.sender.HigherEchelon()
-    out += 'Sender : %s (%s) <br>'%(self['sendername'], ech)
+      ech = self.Sender().HigherEchelon()
+    out += 'Sender : %s (%s) <br>'%(self.SenderName(), ech)
     out += 'Recipient : %s <br>'%(self['recipientname'])
     
     if not self['sent timestamp']:
@@ -96,24 +95,6 @@ class sandbox_COMM(dict):
       out += 'Timestamp : %s <br>'%(self['sent timestamp'].strftime('%a %b %d %Y %H%M ZULU'))
       
     return html.Tag('b',out) + '<hr>'
-
-    
-  def PrePickle(self):
-    try:
-      sim = self.recipient.sim
-    except:
-      return
-    if type(self.sender) != type(1) and self.sender:
-      self.sender = sim.AsUID(self.sender)
-    if type(self.recipient) != type(1) and self.recipient:
-      self.recipient = sim.AsUID(self.recipient)
-    
-  def PostPickle(self, sim):
-    self.sender = sim.AsEntity(self.sender)
-    try:
-      self.recipient = sim.AsEntity(self.recipient)
-    except:
-      pass
     
   def SetSender(self, sndr):
     '''! \brief Set sender and sendername
@@ -121,10 +102,14 @@ class sandbox_COMM(dict):
     '''
     # sndr is None if built without arguments
     self.sender = None
-    self['sendername'] = ''
     if sndr:
       self.sender = sndr
-      self['sendername'] = sndr.GetName()
+      
+  def SenderName(self):
+    ''' Returns the name of the sender
+    '''
+    if self.sender:
+      return self.sender.GetName()
     
   def SetRecipient(self, rcp):
     self.recipient = None
@@ -133,11 +118,7 @@ class sandbox_COMM(dict):
       self.recipient = rcp
       self['recipientname'] = rcp.GetName()
       
-  def Sender(self, sim):
-    
-    if type(self.sender) == type(1):
-      return sim.AsEntity(self.sender)
-    else:
+  def Sender(self):    
       return self.sender
   
   def IsSuppressed(self):
@@ -146,6 +127,8 @@ class sandbox_COMM(dict):
     return False
   
 
+  def IsRecipient(self, name):
+    
   # templating interface
   def GetTemplate(self, tname=''):
     ''' Opens the template and returns it as a string, use tname if provided instead of hthe self.template
@@ -278,7 +261,7 @@ class OPORD(sandbox_COMM):
     '''
        Render OPORD as HTML code
     '''
-    if self.sender == None or type(self.sender) == type(1):
+    if self.Sender() == None or type(self.Sender()) == type(1):
       return ''
     
     out = self.RenderHeader()
@@ -517,7 +500,7 @@ class OPORD(sandbox_COMM):
     train = html.Tag('H3','b. Logistics')
     if self.GetCSS() or self.GetMSR() or self.GetRoutineRessuplyTime():
       supU = html.Tag('H4', '(1) Supply Unit / MSR')
-      HQ = self.sender.sim.AsEntity(self.GetCSS())
+      HQ = self.Sender().sim.AsEntity(self.GetCSS())
       if self.GetCSS():
         addtrain = True
         supU += html.Tag('strong','Supply Unit : ') + 'Forward all materiel request to %s. <BR>'%(HQ.GetName()) 
@@ -577,11 +560,11 @@ class OPORD(sandbox_COMM):
     addHigherUnit = False
     if self.GetHQ():
       addHigherUnit = True
-      HQ = self.sender.sim.AsEntity(self.GetHQ())
+      HQ = self.Sender().sim.AsEntity(self.GetHQ())
       hqstr += html.Tag('strong','Higher Unit : ') + 'Report to %s.<BR>'%(HQ.GetName())
     if self.GetHQ('alternate'):
       addHigherUnit = True
-      HQ = self.sender.sim.AsEntity(self.GetHQ('alternate'))
+      HQ = self.Sender().sim.AsEntity(self.GetHQ('alternate'))
       hqstr += html.Tag('strong','Alternate Higher Unit : ') + 'For contingency, report to %s.<BR>'%(HQ.GetName())
     if addHigherUnit:
       addC3 = True
@@ -592,26 +575,6 @@ class OPORD(sandbox_COMM):
     return ''
   
   # Interface
-  def PrePickle(self):
-          '''Replace task units to their uid'''
-          sandbox_COMM.PrePickle(self)
-          for i in self.GetExpandedTaskList():
-                  i['unpickle keys'] = []
-                  for j in i.keys():
-                          try:
-                                  j = i[j].sim.AsUID(i[j]['uid'])
-                                  i['unpickle keys'].append(j)
-                          except:
-                                  pass
-                          
-  def PostPickle(self, sim):
-          '''Re-generate pointers'''
-          sandbox_COMM.PostPickle(self,sim)
-          for i in self.GetExpandedTaskList():
-                  for j in i['unpickle keys']:
-                          i[j] = sim.AsEntity(i[j])
-                  i['unpickle keys'] = []
-
   def IsSuppressed(self):
     '''
        Randomly check against the C4I level of the OPORD
@@ -1111,7 +1074,7 @@ class CNTREP(sandbox_COMM):
     self['C3 level'] = C4Ilevel
     
   def AsText(self):
-    return 'Contact Report from %s\n%s\n'%(self.sendername, str(self.cnt))
+    return 'Contact Report from %s\n%s\n'%(self.Sendername(), str(self.cnt))
 '''
    Data structure of the situation report
 '''
@@ -1119,12 +1082,10 @@ class CNTREP(sandbox_COMM):
 class INTSUM(sandbox_COMM):
   def __init__(self, sender = None):
     sandbox_COMM.__init__(self, sender)
-    if sender:
-      self['sendername'] = sender.GetName()
     self['contacts'] = []
     
   def __str__(self):
-    out = 'INTSUM from %s\n\n'%(self['sendername'])
+    out = 'INTSUM from %s\n\n'%(self.SenderName())
     line = '#############################################\n\n'
     for i in self['contacts']:
       out = out + str(i) + '\n' + line
@@ -1152,8 +1113,7 @@ class SITREP(sandbox_COMM):
     self.contacts = gcontacts
     self.friends = gfriends
     if rep:
-      rep = rep[:rep.find('<body>')+7] + self.RenderHeader() + rep[rep.find('<body>')+6:]
-      self.report = compress(rep)
+      self.report = rep
     else:
       self.report = ''
     
