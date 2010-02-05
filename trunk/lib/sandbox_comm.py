@@ -128,7 +128,11 @@ class sandbox_COMM(dict):
   
 
   def IsRecipient(self, name):
-    
+    ''' Returns true if the name is in the recipient list
+    '''
+    if self.recipient and name == self.recipient.GetName():
+      return True
+    return False
   # templating interface
   def GetTemplate(self, tname=''):
     ''' Opens the template and returns it as a string, use tname if provided instead of hthe self.template

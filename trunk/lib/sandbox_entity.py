@@ -594,10 +594,14 @@ class sandbox_entity(dict):
     ''' Sends the comm_instance in a net.
     '''
     # These two keywords will handle most of the cases
-    if send_up and self.GetHQ():
-      net = self.GetHQ().GetInnerCOMMnet()
-    elif send_down:
-      net = self.GetInnerCOMMnet()
+    if not net:
+      if send_down:
+        net = self.GetInnerCOMMnet()
+      if send_up and self.GetHQ():
+        net = self.GetHQ().GetInnerCOMMnet()
+      else:
+        # send on its own net for archival
+        self.GetInnerCOMMnet()
       
     # embed the command level of the sender.
     comm_instance['C3 level'] = self.C2Level()
@@ -912,6 +916,10 @@ class sandbox_entity(dict):
     self.AdjustSupply(cost * -1.0)
   
   # Files
+  def FolderName(self):
+    ''' Return the path to the head of the folder.
+    '''
+    return os.path.join(self.sim.OS['savepath'],self['side'],self.GetName(True))
   def toXML(self, doc):
     '''! Create and populate a unit's node. Returns the node.'''
     out = doc.NewNode('unit')
