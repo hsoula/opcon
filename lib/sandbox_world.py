@@ -457,6 +457,9 @@ class sandbox:
     '''
        Post signal so it becomes available for interception by listeners.
     '''
+    # routing traces
+    signal.net = net
+    
     # Adds the comm to each unit tuned to the net
     for i in self.COMMnets.get(net, []):
       i['staff queue'].append(signal)
@@ -981,7 +984,7 @@ class sandbox:
         doc.SetAttribute('import', unit.GetName(),unode)
         doc.AddNode(unode,oob)
         # Triggers the writing of the unit's state
-        path = os.path.join(self.OS['savepath'],side_name,unit.GetName(True),'current.xml')
+        path = os.path.join(unit.FolderName(),'current.xml')
         unitdoc = sandboXML('sandbox')
         unitdoc.AddNode(unit.toXML(unitdoc),unitdoc.root)
         with open(path,'w') as fout:

@@ -105,6 +105,16 @@ class agent:
             self.ProcessINTSUM(msg)
         else:
             self.log('Unimplemented communication request to type : %s'%(type(msg)),'communications')
+            
+        # Write the communication into the COMMnet folder
+        net = signal.net
+        filename = os.path.join(self.entity.FolderName(),'COMMnet', signal.ArchiveName())
+
+        # Write a text version 
+        fout = open(filename, 'w')
+        text = html.HTMLfile('COMM on net %s'%(net),signal.AsHTML())
+        fout.write(text)
+        fout.close()
 
 
     def ProcessSTAFF_QUEUE(self):
@@ -159,7 +169,7 @@ class agent:
         
         intsum['sender'] = self.entity['uid']
         for i in self.entity['subordinates']:
-            self.entity.Send(intsum,i)
+            self.entity.Send(intsum,send_down=True)
             
         # Find the delay to the next INTSUM
         # In OPORD
@@ -356,12 +366,6 @@ class agent:
     def routine_S3(self):
         '''! \brief Routine operations staffwork.
         '''
-        # Exclude LOGPACs
-        if self.entity.GetName().find('LOGPAC') == 0:
-            return
-        
-        self.log('--------------------------------------------------------------------------')
-        
         # Process all Requests and Orders and convert into tasks and intel pictures
         self.ProcessSTAFF_QUEUE()
     
