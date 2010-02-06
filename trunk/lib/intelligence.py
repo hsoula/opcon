@@ -66,6 +66,9 @@ class sandbox_contact:
     # Time of last modification
     self.timestamp = None
     
+  def GetTimeStamp(self):
+    return self.timestamp
+    
   def __nonzero__(self):
     ''' Is this ever get used? '''
     if self.unit != None:
@@ -348,7 +351,7 @@ class sandbox_contact:
     
     self.fields[Key] = value
     if self.timestamp:
-      self.fields['datetime'] = self.timestamp.strftime('%H%MZ(%d%b%y)')
+      self.fields['datetime'] = self.timestamp.strftime('%d%H%MJ')
     #self.log.Add('Field %s set to %s with Intel Reliabilty of %.2f'%(Key, str(value), self.IntelReliability()))
     
     
@@ -657,7 +660,7 @@ class system_intelligence(system_base.system_base):
         cnt.status = 'direct'
       else:
         # It failed
-        cnt.deception += 1
+        cnt.deception += 0
   
   def ClassifyWithSensor(self, E, cnt, sensor, increment):
     ''' Determine which field to update and do it.
