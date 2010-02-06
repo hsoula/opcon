@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <scenario version="0.7">
 	<reset>1</reset>
-	<name>One Fire Team UTM</name>
+	<name>Two Fire Teams</name>
 	<clock type="datetime">3/1/2010 0700</clock>
 	
 	<!-- The Map name to load up -->

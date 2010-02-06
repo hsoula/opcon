@@ -96,9 +96,9 @@ class agent:
         # SUPREQ - Request for supply (these comes from the units requesting them)
         elif mytype == type(SUPREQ()):
             self.ProcessSUPREQ(msg)
-        # CNTREP
-        elif mytype == type(CNTREP()):
-            self.ProcessCNTREP(msg)
+        # SPOTREP
+        elif mytype == type(SPOTREP()):
+            self.ProcessSPOTREP(msg)
         elif mytype == type(SITREP()):
             self.ProcessSITREP(msg)
         elif mytype == type(INTSUM()):
@@ -107,12 +107,12 @@ class agent:
             self.log('Unimplemented communication request to type : %s'%(type(msg)),'communications')
             
         # Write the communication into the COMMnet folder
-        net = signal.net
-        filename = os.path.join(self.entity.FolderName(),'COMMnet', signal.ArchiveName())
+        net = msg.net
+        filename = os.path.join(self.entity.FolderName(),'COMMnet', msg.ArchiveName())
 
         # Write a text version 
         fout = open(filename, 'w')
-        text = html.HTMLfile('COMM on net %s'%(net),signal.AsHTML())
+        text = html.HTMLfile('COMM on net %s'%(net),msg.AsHTML())
         fout.write(text)
         fout.close()
 
@@ -141,6 +141,51 @@ class agent:
         #out['COMMAND AND SIGNAL']['COMMAND']['HIGHER UNIT'] = self.entity['uid']
         return out
     
+    def PrepareSPOTREP(self, contact):
+        ''' Make a SPOTREP from contact.
+        '''
+        # Instanciate
+        spotrep = SPOTREP(self.entity, self.entity.GetHQ(), contact.Duplicate(), self.entity.C3Level())
+        spotrep.GetTemplate()
+        
+        # Fill the fields
+        spotrep.FillField('DTG_SENT', self.clock.strftime('%d%H%MZ'))
+        spotrep.FillField('REPORTING_UNIT', self.entity.GetName())
+        spotrep.FillField('OBS_SIZE', contact.GetField('size','UNKNOWN'))
+        spotrep.FillField('OBS_ACTIVITY', contact.GetField('activity','UNKNOWN'))
+        spotrep.FillField('OBS_LOCATION', contact.GetField('location','UNKNOWN'))
+        identity = '/'.join([contact.GetField('TOE'),contact.GetField('identity')])
+        spotrep.FillField('OBS_UNIT', identity)
+        spotrep.FillField('OBS_TIME', contact.GetField('datetime','UNKNOWN'))
+        
+        # Equipment
+        eq = []
+        for i in contact.GetField('personel',[]) + contact.GetField('vehicle',[]):
+            eq.append( '%s X %s'%(i['count'],i['ID']) )
+        eq = ', '.join(eq)
+        spotrep.FillField('OBS_EQUIPMENT', eq)
+        
+        assess = []
+        excludelist = ['personel','vehicle','TOE','identity','location','activity','size']
+        for key in contact.fields.keys():
+            if not key in excludelist:
+                assess.append('%s: %s'%(key, contact.GetField(key)))
+        assess = '/ '.join(assess)
+        spotrep.FillField('ASSESSMENT', assess)
+        
+        spotrep.FillField('NARRATIVE', '---')
+        
+        # Slash uninformative lines
+        x = spotrep.report.split('\n')
+        x1 = []
+        for i in x:
+            if not '/UNKNOWN//' in i:
+                x1.append(i)
+        spotrep.report = '\n'.join(x1)
+        
+        return spotrep
+        
+        
     def PrepareINTSUM(self):
         '''
         '''
@@ -281,7 +326,7 @@ class agent:
         sitrep.report = sitrep.report.replace('&NBSP;', '&nbsp;')
         
         # Send it out
-        self.entity.Send(sitrep, send_down=True)
+        self.entity.Send(sitrep, send_up=True)
         
         return sitrep
         
@@ -356,7 +401,7 @@ class agent:
         # Process contacts
         self.ProcessContacts()
         
-        # Prepare Insum
+        # Prepare INTSUM
         self.PrepareINTSUM()
         
         # Decide whether a SITREP should be sent.
@@ -602,7 +647,7 @@ class agent:
                 endline = True
                 self.log('\t| Updating contact %s in our intelligence picture.'%(temp.TrackName()),'intelligence')
                 
-    def ProcessCNTREP(self, rep):
+    def ProcessSPOTREP(self, rep):
         '''!
            Integrate a contact report to the intelligence picture.
         '''
@@ -889,6 +934,15 @@ class agent:
 
     #
     # contacts
+    def SolveReportContact(self, contact):
+        ''' Decides if a contact should be sent as SPOT
+        '''
+        if contact.status == 'undetected':
+            return False
+        if (self.clock - contact.GetTimeStamp()) <= self.entity.sim.pulse:
+            return True
+        return False
+    
     def ProcessContacts(self):
         ''' Allow the Staff to annotate contacts 
         '''
@@ -904,6 +958,12 @@ class agent:
             # TODO: make provision for neutral
             else:
                 cnt.SetField('IFF','UNKNOWN')
+                
+            # Decides whether a SPOTREP should be sent
+            if self.SolveReportContact(cnt):
+                # Write a SPOTREP
+                spotrep = self.PrepareSPOTREP(cnt)
+                self.entity.Send(spotrep,send_up=True)
         
     def GetContact(self, E):
         return self.entity.Contact(E)
@@ -979,7 +1039,7 @@ class agent:
             if self.ContactPolicy('lost'):
                 self.log('>>Reporting lost contact %s.'%(contact.TrackName()),'intelligence')
                 temp = contact.Duplicate('encode')
-                myrep = CNTREP(self.entity,self.entity.GetHQ(), temp, self.entity.C3Level())
+                myrep = SPOTREP(self.entity,self.entity.GetHQ(), temp, self.entity.C3Level())
                 self.entity.Send(myrep)
         
     def ContactPolicy(self, query):
@@ -1014,9 +1074,9 @@ class agent:
                 # report only if HQ
                 if self.entity.GetHQ():
                     self.log('>>Reporting new contact %s.'%(cnt.TrackName()),'communications')
-                    self.Write('%s.CNTREP.txt'%(self.clock.strftime('%m%d.%H%M')),str(cnt))
+                    self.Write('%s.SPOTREP.txt'%(self.clock.strftime('%m%d.%H%M')),str(cnt))
                     temp = cnt.Duplicate('encode')
-                    myrep = CNTREP(self.entity,self.entity.GetHQ(),temp, self.entity.C3Level())
+                    myrep = SPOTREP(self.entity,self.entity.GetHQ(),temp, self.entity.C3Level())
                     self.entity.Send(myrep)
     def CanEngage(self, E):
         '''!

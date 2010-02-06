@@ -597,7 +597,7 @@ class sandbox_entity(dict):
     if not net:
       if send_down:
         net = self.GetInnerCOMMnet()
-      if send_up and self.GetHQ():
+      elif send_up and self.GetHQ():
         net = self.GetHQ().GetInnerCOMMnet()
       else:
         # send on its own net for archival
