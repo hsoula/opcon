@@ -45,15 +45,10 @@ class sandbox_COMM(dict):
     self['C3 level'] = 1.0
     
     self.SetSender(sender)
-    if recipient == None and sender != None:
-      recipient = self.AutoRecipient(sender)
     self.SetRecipient(recipient)
     
     # Metadata
-    self['folder'] = 'A-101'
-    self['echelon'] = ''
     self['sent timestamp'] = None
-    self['received timestamp'] = None
     
     # templating data
     self.template = ''
@@ -63,38 +58,6 @@ class sandbox_COMM(dict):
     ''' AUTOform a file name for this comm
     '''
     return self['sent timestamp'].strftime('%m%d.%H%M') + '.' + self.__class__.__name__ + '.html'
-  def AutoRecipient(self, sender):
-    '''! \brief Try to guess the recipient (HQ or self) if not provided
-    '''
-    if sender == None:
-      return None
-    
-    if sender.GetHQ() != None:
-      return sender.GetHQ()
-    
-    return sender
-  
-  def RenderHeader(self):
-    '''! \brief Provide a header to comms in HTML format
-    '''
-    # Class name
-    cn = str(self.__class__)
-    begin = cn.find('.')
-    end = cn.find('\'',begin)
-    cn = cn[begin+1:end]
-    out = '%s serial %s <br>'%(cn, self['folder'])
-    ech = self.Sender().Echelon()
-    if not ech:
-      ech = self.Sender().HigherEchelon()
-    out += 'Sender : %s (%s) <br>'%(self.SenderName(), ech)
-    out += 'Recipient : %s <br>'%(self['recipientname'])
-    
-    if not self['sent timestamp']:
-      out += 'Timestamp : Not Issued <br>'
-    else:
-      out += 'Timestamp : %s <br>'%(self['sent timestamp'].strftime('%a %b %d %Y %H%M ZULU'))
-      
-    return html.Tag('b',out) + '<hr>'
     
   def SetSender(self, sndr):
     '''! \brief Set sender and sendername
@@ -113,10 +76,8 @@ class sandbox_COMM(dict):
     
   def SetRecipient(self, rcp):
     self.recipient = None
-    self['recipientname'] = ''
     if rcp:
       self.recipient = rcp
-      self['recipientname'] = rcp.GetName()
       
   def Sender(self):    
       return self.sender
@@ -133,6 +94,7 @@ class sandbox_COMM(dict):
     if self.recipient and name == self.recipient.GetName():
       return True
     return False
+  
   # templating interface
   def GetTemplate(self, tname=''):
     ''' Opens the template and returns it as a string, use tname if provided instead of hthe self.template
@@ -151,16 +113,7 @@ class sandbox_COMM(dict):
       field_name = '##%s##'%(field_name).upper()
     self.report = self.report.replace(field_name,content)
     
-  def FinalizeWriteup(self):
-    ''' Remove unused fields and returns the report.
-    '''
-    # Replace all unused fields by nothing. TODO
-    pat = re.compile('##.*##')
-    
-    # return the report
-    return self.report
-    
-    
+   
     
   def ConvertToHTML(self):
     ''' convert report to html
@@ -276,7 +229,7 @@ class OPORD(sandbox_COMM):
     if self.Sender() == None or type(self.Sender()) == type(1):
       return ''
     
-    out = self.RenderHeader()
+    out = ''
     # header
     
     
@@ -1090,6 +1043,8 @@ class SPOTREP(sandbox_COMM):
     
   def AsText(self):
     return 'Contact Report from %s\n%s\n'%(self.Sendername(), str(self.cnt))
+  def AsHTML(self):
+    return self.ConvertToHTML()
 '''
    Data structure of the situation report
 '''

@@ -88,6 +88,10 @@ class agent:
         '''!
                 Generic function to process a new OPORD or REQUEST
         '''
+        # Determine if the unit is a recipient
+        if not msg.IsRecipient(self.entity.GetName()):
+            return 
+        
         # Determine whether this is a request or an OPORD using runtime type recognition
         mytype = type(msg)
         # OPORD - New operational orders
@@ -136,9 +140,7 @@ class agent:
         '''
         out = OPORD(self.entity, recipient)
         sim = recipient.sim
-
-        # Higher unit
-        #out['COMMAND AND SIGNAL']['COMMAND']['HIGHER UNIT'] = self.entity['uid']
+        
         return out
     
     def PrepareSPOTREP(self, contact):
@@ -166,7 +168,7 @@ class agent:
         spotrep.FillField('OBS_EQUIPMENT', eq)
         
         assess = []
-        excludelist = ['personel','vehicle','TOE','identity','location','activity','size']
+        excludelist = ['personel','vehicle','TOE','identity','location','activity','size','datetime']
         for key in contact.fields.keys():
             if not key in excludelist:
                 assess.append('%s: %s'%(key, contact.GetField(key)))
