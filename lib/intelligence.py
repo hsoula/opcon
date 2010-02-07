@@ -267,14 +267,7 @@ class sandbox_contact:
               continue
             
           self.UpdateField(i,other.fields[i])
-          if i == 'location':
-            self.location = other.location
-            
-    if update:
-      self.p_right = other.p_right + 0.0
-      # Location
-      self.location = copy(other.location)
-      self.UpdateField('location', self.unit.sim.map.MGRS.AsString(other.location))
+
       
   # Non-interface methods
   #

@@ -601,7 +601,7 @@ class sandbox_entity(dict):
         net = self.GetHQ().GetInnerCOMMnet()
       else:
         # send on its own net for archival
-        self.GetInnerCOMMnet()
+        net = self.GetInnerCOMMnet()
       
     # embed the command level of the sender.
     comm_instance['C3 level'] = self.C2Level()
