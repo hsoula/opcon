@@ -623,16 +623,20 @@ class sandbox_map:
        Load map data.
     '''    
     # Climate
-    self.data['climate'] = doc.Get(node, 'climate')
+    self.data['climate'] = doc.SafeGet(node, 'climate', self.data['climate'])
     
     # Width
-    self.data['width'] = doc.Get(node, 'width')
+    self.data['width'] = doc.SafeGet(node, 'width',self.data['width'])
     
     # ref coord
-    self.data['ref coord'] = doc.Get(node, 'ref_coord')
+    self.data['ref coord'] = doc.Get(node, 'ref_coord', self.data['ref coord'] )
     
     # ref XY
-    self.data['ref XY'] = doc.Get(node, 'ref_XY')
+    self.data['ref XY'] = doc.SafeGet(node, 'ref_XY', self.data['ref XY'])
+    
+    # LatLon
+    if doc.Get(node, 'LatLonQuad'):
+      coord = doc.Get(doc.Get(node, 'LatLonQuad'), 'coordinates')
     
     self.LinearParameters()
  

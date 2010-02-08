@@ -1062,6 +1062,7 @@ class agent:
         if cnt.unit.has_key('delete me'):
             if cnt.unit['delete me']:
                 return
+            
         # Get contact
         contact = self.entity.Contact(cnt.unit)
         if contact != None:

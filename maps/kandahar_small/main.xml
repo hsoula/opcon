@@ -2,10 +2,10 @@
 <map>
 	<name>kandahar_small</name>
 	<filename>main.png</filename>
-	<width>35.8992873668</width>
+	<width>37.26</width>
 	<climate>temperate</climate>
-	<ref_coord>31d37' 65d39'52"</ref_coord>
-	<ref_XY type="vect_5D"><x>47445.8215788</x><y>20749.346406</y><z>0.0</z><course>0.0</course><rate>0.0</rate></ref_XY>
+	<!-- A ref_coord without a ref_XY means -->
+	<ref_coord>65.48578935016876 31.88247249215965</ref_coord>
 	<terrain filename="terrain.png">
 		<class name="unrestricted"><color type="RGB">255, 255, 255</color></class>
 		<class name="restricted"><color type="RGB">255, 255, 0</color></class>
