@@ -23,11 +23,7 @@ def SetupFlatLand(flat, coord):
     if type(coord) == type([]):
         x = coord[0]
     else:
-        x = coord        
-    # Remove the Z coordinate
-    x = x.split(',')[:-1]
-    x[0] = float(x[0])
-    x[1] = float(x[1])
+        x = coord
     
     flat.Bind(vect_3D(), x)
     
@@ -58,13 +54,30 @@ def KMLtoOVERLAY(ov):
             coordinates = item.geometry.outerBoundaryIs.coordinates.split()
         except:
             coordinates = [item.geometry.coordinates]
+        for i in range(len(coordinates)):
+            x = float(coordinates[i].split(',')[0])
+            y = float(coordinates[i].split(',')[1])
+            coordinates[i] = [x,y]
             
         # Setup FlatLand with the first time
         if unbound:
             SetupFlatLand(flatland, coordinates)
             unbound = False
         
-        print coordinates
+        # Case 1 a point
+        if _myclass == operational_point:
+            coordinates = flatland.UTMtoXY(flatland.LLtoUTM(coordinates))
+        else:
+            for i in range(len(coordinates)):
+                coordinates[i] = flatland.UTMtoXY(flatland.LLtoUTM(coordinates[i]))
+        
+        # Instanciate the overlay item
+        ovitem = _myclass(gtype, gname, coordinates)
+        
+        # Add to the overlay
+        out.AddElement(ovitem)
+        
+    return out
         
         
         
@@ -102,7 +115,11 @@ if __name__ == '__main__':
         if folder.name == 'OVERLAYS':
             for item in folder.items:
                 if item.tag == 'Folder':
+                    # Convert to an OPCON instance
                     overlay = KMLtoOVERLAY(item)
+                    
+                    # Write to XML
+                    out.AddField('OVERLAY', overlay.toXML(out), out.root)
     
     
     # Write the output.

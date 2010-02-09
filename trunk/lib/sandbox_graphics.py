@@ -270,8 +270,16 @@ class operational_overlay:
         return [mnX, mnY, mxX, mxY]
         
     # Meta
-    def Pickle(self):
-        return dumps(self, HIGHEST_PROTOCOL)
+    def toXML(self, doc):
+        ''' Write to an OPCON XML format.
+        '''
+        # New Node
+        out = doc.NewNode('OVERLAY')
+        doc.SetAttribute('name', self.name, out)
+        
+        # Go over all points, lines and area
+        
+        return out
 #
 #
 class GraphicsTest(unittest.TestCase):
