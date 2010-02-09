@@ -255,6 +255,15 @@
 -63.46963417178551,44.65835823875084,0 -63.46944631093698,44.65836454552586,0 -63.46392827908776,44.65976819171824,0 -63.4597362592971,44.66080335682593,0 </coordinates>
 				</LineString>
 			</Placemark>
+			<Placemark>
+				<name>ROUTE BAFF</name>
+				<styleUrl>#msn_ylw-pushpin</styleUrl>
+				<LineString>
+					<tessellate>1</tessellate>
+					<coordinates>
+-63.46963417178551,44.65835823875084,0 -63.46944631093698,44.65836454552586,0 -63.46392827908776,44.65976819171824,0 -63.4597362592971,44.66080335682593,0 </coordinates>
+				</LineString>
+			</Placemark>
 		</Folder>
 	</Folder>
 </Document>

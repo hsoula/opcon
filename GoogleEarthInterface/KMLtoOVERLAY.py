@@ -53,7 +53,7 @@ def KMLtoOVERLAY(ov):
         try:
             coordinates = item.geometry.outerBoundaryIs.coordinates.split()
         except:
-            coordinates = [item.geometry.coordinates]
+            coordinates = item.geometry.coordinates.split()
         for i in range(len(coordinates)):
             x = float(coordinates[i].split(',')[0])
             y = float(coordinates[i].split(',')[1])
@@ -66,7 +66,7 @@ def KMLtoOVERLAY(ov):
         
         # Case 1 a point
         if _myclass == operational_point:
-            coordinates = flatland.UTMtoXY(flatland.LLtoUTM(coordinates))
+            coordinates = flatland.UTMtoXY(flatland.LLtoUTM(coordinates[0]))
         else:
             for i in range(len(coordinates)):
                 coordinates[i] = flatland.UTMtoXY(flatland.LLtoUTM(coordinates[i]))
@@ -76,6 +76,9 @@ def KMLtoOVERLAY(ov):
         
         # Add to the overlay
         out.AddElement(ovitem)
+    
+    # Cache the RL coordinates for all control points.
+    out.ExternalCoordinates(flatland)
         
     return out
         
@@ -119,7 +122,7 @@ if __name__ == '__main__':
                     overlay = KMLtoOVERLAY(item)
                     
                     # Write to XML
-                    out.AddField('OVERLAY', overlay.toXML(out), out.root)
+                    out.AddNode(overlay.toXML(out), out.root)
     
     
     # Write the output.
