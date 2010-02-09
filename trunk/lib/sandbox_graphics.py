@@ -32,6 +32,7 @@ class operational_graphic:
         
         # placeholder for control points
         self.shape = ''
+        self.real_world_coordinates = []
         
         self.style = {}
         
@@ -56,6 +57,20 @@ class operational_graphic:
         self.style = s
         
 
+
+    def ExternalCoordinates(self, flatland):
+        ''' Convert all relevant point to UTM for serialization
+        '''
+        pass
+    
+    def toXML(self, doc):
+        ''' Basics of XML serialization
+        '''
+        out = doc.NewNode('control_measure')
+        doc.SetAttribute('name', self.name, out)
+        doc.SetAttribute('type', self.type, out)
+        return out
+    
     # Access Methods
     def Center(self):
         return None
@@ -80,10 +95,7 @@ class operational_graphic:
         except:
             return [None, None, None, None]
     
-    def PositionLabel(self):
-        '''! \brief reference point for a label
-        '''
-        return None
+
     def DistanceToPoint(self, P):
         # Abstract Method to be overloaded, work for the point case
         try:
@@ -104,6 +116,18 @@ class operational_point(operational_graphic):
         return [self.shape.x,self.shape.y,self.shape.x,self.shape.y]
     def Center(self):
         return self.shape
+    def ExternalCoordinates(self, flatland):
+        ''' Convert all relevant point to UTM for serialization
+        '''
+        self.real_world_coordinates = flatland.XYtoUTM(self.GetShape())
+    
+    def toXML(self, doc):
+        out = doc.NewNode('point')
+        doc.SetAttribute('name', self.name, out)
+        doc.SetAttribute('type', self.type, out)
+        doc.SetAttribute('datum', self.real_world_coordinates, out)
+        return out
+
 class operational_line(operational_graphic):
     '''! \brief A sequence of points forming a line
     '''
@@ -116,6 +140,7 @@ class operational_line(operational_graphic):
         self.style['LineStyle'] = 'Solid'
         self.style['LineColor'] = 'RED'
         
+        self.waypoints = []
         if type in operational_line.paths:
             self.SubElements()
         
@@ -150,7 +175,21 @@ class operational_line(operational_graphic):
             mxY = max(mxY, i.y)
             
         return [mnX,mnY,mxX,mxY]
+    def ExternalCoordinates(self, flatland):
+        ''' Convert all relevant point to UTM for serialization
+        '''
+        self.real_world_coordinates = []
+        for i in self.GetShape():
+            self.real_world_coordinates.append(flatland.XYtoUTM(i))
     
+    def toXML(self, doc):
+        out = doc.NewNode('line')
+        doc.SetAttribute('name', self.name, out)
+        doc.SetAttribute('type', self.type, out)
+        for i in self.real_world_coordinates:
+            doc.AddField('point', i, out)
+            
+        return out    
 class operational_area(operational_graphic):
     '''! \brief A wrapper for the polygon class
     '''
@@ -174,6 +213,22 @@ class operational_area(operational_graphic):
 
     def PointInside(self, P):
         return self.shape.PointInside(P)
+    def ExternalCoordinates(self, flatland):
+        ''' Convert all relevant point to UTM for serialization
+        '''
+        self.real_world_coordinates = []
+        for i in self.GetShape().vertices():
+            self.real_world_coordinates.append(flatland.XYtoUTM(i))
+            
+            
+    def toXML(self, doc):
+        out = doc.NewNode('area')
+        doc.SetAttribute('name', self.name, out)
+        doc.SetAttribute('type', self.type, out)
+        for i in self.real_world_coordinates:
+            doc.AddField('point', i, out)
+        return out    
+
 # Overlap
 class operational_overlay:
     '''! \brief Contain all the necessary information to overlay to a map for the agent to 
@@ -270,6 +325,13 @@ class operational_overlay:
         return [mnX, mnY, mxX, mxY]
         
     # Meta
+    def ExternalCoordinates(self, flatland):
+        ''' Cache UTM for all of the controls points in the overlay. This is required
+            for serialization.
+        '''
+        for i in self.ListElements():
+            self.GetElement(i).ExternalCoordinates(flatland)
+            
     def toXML(self, doc):
         ''' Write to an OPCON XML format.
         '''
@@ -278,7 +340,9 @@ class operational_overlay:
         doc.SetAttribute('name', self.name, out)
         
         # Go over all points, lines and area
-        
+        for i in self.ListPoints() + self.ListLines() + self.ListAreas():
+            doc.AddNode(self.GetElement(i).toXML(doc),out)
+            
         return out
 #
 #

@@ -566,6 +566,13 @@ class base_polygon:
         '''! \brief Write as an array of points.
         '''
         pass
+    def toXML(self, doc):
+        ''' Write itself as a polygon in a XML document
+        '''
+        out = doc.NewNode('polygon')
+        for i in self.pts:
+            doc.AddField('point', '%f,%f'%(i.x, i.y), out)
+        return out
         
         
     # Internal Methods    
