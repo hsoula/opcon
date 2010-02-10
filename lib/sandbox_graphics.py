@@ -461,7 +461,7 @@ class GraphicsTest(unittest.TestCase):
         # Create a flatland instance and bind it to EPW control measure as 0,0
         from FlatLand import FlatLand
         flatland = FlatLand()
-        flatland.Bind(vect_3D(), '38 E 483209 2961993')
+        flatland.Bind(vect_3D(), '20 T 462736 4945630')
         
         # file to load
         import os

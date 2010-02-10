@@ -57,7 +57,7 @@
       <data key="d3">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="70.0" x="345.0" y="545.0"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:Fill color="#FF0000" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.93975830078125" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="51.66015625" x="9.169921875" y="5.530120849609375">overlays</y:NodeLabel>
           <y:Shape type="roundrectangle"/>
@@ -211,7 +211,7 @@
       <data key="d3">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="70.0" x="430.0" y="591.0"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:Fill color="#FF0000" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.93975830078125" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="60.841796875" x="4.5791015625" y="5.530120849609375">write XML</y:NodeLabel>
           <y:Shape type="roundrectangle"/>

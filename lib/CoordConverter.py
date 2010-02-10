@@ -313,6 +313,7 @@ class CoordTranslator:
         LatRad = radians(Lat)
         LongRad = radians(LongTemp)
     
+        # Add half a turn to rescale to 360
         ZoneNumber = int((LongTemp + 180)/6) + 1
       
         if Lat >= 56.0 and Lat < 64.0 and LongTemp >= 3.0 and LongTemp < 12.0:
