@@ -1,47 +1,47 @@
 <?xml version="1.0" ?>
 <Document>
 	<OVERLAY name="SITTEP-A">
-		<point datum="38 E 483209 2961993" name="RED" type="EPW"/>
+		<point datum="20 T 462736 4945630" name="RED" type="EPW"/>
 		<line type="PL" name="SCHMOK">
-			<point>38 E 482974 2962038</point>
-			<point>38 E 482974 2962059</point>
-			<point>38 E 483041 2962675</point>
-			<point>38 E 483090 2963142</point>
+			<point>20 T 462766 4945107</point>
+			<point>20 T 462781 4945107</point>
+			<point>20 T 463220 4945261</point>
+			<point>20 T 463553 4945374</point>
 		</line>
 		<line type="ROUTE" name="BAFF">
-			<point>38 E 482974 2962038</point>
-			<point>38 E 482974 2962059</point>
-			<point>38 E 483041 2962675</point>
-			<point>38 E 483090 2963142</point>
+			<point>20 T 462766 4945107</point>
+			<point>20 T 462781 4945107</point>
+			<point>20 T 463220 4945261</point>
+			<point>20 T 463553 4945374</point>
 		</line>
 		<area type="AO" name="BLUE">
-			<point>38 E 483300 2961877</point>
-			<point>38 E 483197 2961774</point>
-			<point>38 E 483063 2962010</point>
-			<point>38 E 482905 2962222</point>
-			<point>38 E 482857 2962351</point>
-			<point>38 E 482747 2962531</point>
-			<point>38 E 482698 2962562</point>
-			<point>38 E 482707 2963394</point>
-			<point>38 E 482887 2963716</point>
-			<point>38 E 482976 2963432</point>
-			<point>38 E 483120 2962851</point>
-			<point>38 E 483216 2962408</point>
-			<point>38 E 483300 2961877</point>
+			<point>20 T 462654 4945834</point>
+			<point>20 T 462580 4945603</point>
+			<point>20 T 462747 4945306</point>
+			<point>20 T 462896 4944955</point>
+			<point>20 T 462987 4944850</point>
+			<point>20 T 463115 4944607</point>
+			<point>20 T 463137 4944497</point>
+			<point>20 T 463729 4944523</point>
+			<point>20 T 463960 4944926</point>
+			<point>20 T 463758 4945123</point>
+			<point>20 T 463346 4945439</point>
+			<point>20 T 463031 4945650</point>
+			<point>20 T 462654 4945834</point>
 		</area>
 		<area type="OA" name="GOLD">
-			<point>38 E 482846 2962415</point>
-			<point>38 E 482871 2962621</point>
-			<point>38 E 482913 2962519</point>
-			<point>38 E 482874 2962344</point>
-			<point>38 E 482846 2962415</point>
+			<point>20 T 463033 4944824</point>
+			<point>20 T 463180 4944883</point>
+			<point>20 T 463108 4944975</point>
+			<point>20 T 462983 4944887</point>
+			<point>20 T 463033 4944824</point>
 		</area>
 		<area type="AA" name="SILVER">
-			<point>38 E 483114 2962064</point>
-			<point>38 E 483086 2962091</point>
-			<point>38 E 483099 2962228</point>
-			<point>38 E 483128 2962213</point>
-			<point>38 E 483114 2962064</point>
+			<point>20 T 462786 4945420</point>
+			<point>20 T 462805 4945358</point>
+			<point>20 T 462902 4945388</point>
+			<point>20 T 462892 4945453</point>
+			<point>20 T 462786 4945420</point>
 		</area>
 	</OVERLAY>
 </Document>

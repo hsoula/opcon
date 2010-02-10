@@ -55,8 +55,8 @@ def KMLtoOVERLAY(ov):
         except:
             coordinates = item.geometry.coordinates.split()
         for i in range(len(coordinates)):
-            x = float(coordinates[i].split(',')[0])
-            y = float(coordinates[i].split(',')[1])
+            x = float(coordinates[i].split(',')[1])
+            y = float(coordinates[i].split(',')[0])
             coordinates[i] = [x,y]
             
         # Setup FlatLand with the first time
