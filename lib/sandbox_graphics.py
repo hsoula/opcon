@@ -71,6 +71,8 @@ class operational_graphic:
         doc.SetAttribute('type', self.type, out)
         return out
     
+    def fromXML(self, doc, node):
+        pass
     # Access Methods
     def Center(self):
         return None
@@ -106,7 +108,7 @@ class operational_graphic:
 class operational_point(operational_graphic):
     '''! \brief Single points CP
     '''
-    def __init__(self, type, name, vertex):
+    def __init__(self, type='', name='', vertex=None):
         operational_graphic.__init__(self, type, name)
         self.shape = vertex
 
@@ -121,19 +123,28 @@ class operational_point(operational_graphic):
         '''
         self.real_world_coordinates = flatland.XYtoUTM(self.GetShape())
     
+    def InternalCoordinates(self, flatland):
+        utm = flatland.AsUTM(self.real_world_coordinates)
+        self.shape = flatland.UTMtoXY(utm)
+        
+        
     def toXML(self, doc):
         out = doc.NewNode('point')
         doc.SetAttribute('name', self.name, out)
         doc.SetAttribute('type', self.type, out)
         doc.SetAttribute('datum', self.real_world_coordinates, out)
         return out
-
+    def fromXML(self, doc, node):
+        self.type = doc.SafeGet(node, 'type', 'DATUM')
+        self.name = doc.SafeGet(node, 'name', '')
+        self.real_world_coordinates = doc.Get(node, 'datum')
+        
 class operational_line(operational_graphic):
     '''! \brief A sequence of points forming a line
     '''
     paths = ['MSR','ROUTE']
-    def __init__(self, type, name, points):
-        operational_graphic.__init__(self, type, name)
+    def __init__(self, gtype='', name='', points=[]):
+        operational_graphic.__init__(self, gtype, name)
         self.shape = points
         
         self.style['LineWidth'] = 2
@@ -141,7 +152,7 @@ class operational_line(operational_graphic):
         self.style['LineColor'] = 'RED'
         
         self.waypoints = []
-        if type in operational_line.paths:
+        if gtype in operational_line.paths:
             self.SubElements()
         
     def Center(self):
@@ -182,6 +193,11 @@ class operational_line(operational_graphic):
         for i in self.GetShape():
             self.real_world_coordinates.append(flatland.XYtoUTM(i))
     
+    def InternalCoordinates(self, flatland):
+        for i in self.real_world_coordinates:
+            utm = flatland.AsUTM(i)
+            self.shape.append(flatland.UTMtoXY(utm))
+        
     def toXML(self, doc):
         out = doc.NewNode('line')
         doc.SetAttribute('name', self.name, out)
@@ -190,10 +206,17 @@ class operational_line(operational_graphic):
             doc.AddField('point', i, out)
             
         return out    
+    def fromXML(self, doc, node):
+        self.type = doc.SafeGet(node, 'type', 'PL')
+        self.name = doc.SafeGet(node, 'name', '')
+        self.real_world_coordinates = []
+        for i in doc.Get(node, 'point', True):
+            self.real_world_coordinates.append(i)
+
 class operational_area(operational_graphic):
     '''! \brief A wrapper for the polygon class
     '''
-    def __init__(self, gtype, name, polygon):
+    def __init__(self, gtype='', name='', polygon=base_polygon()):
         operational_graphic.__init__(self, gtype, name)
         
         if type(polygon) == type([]):
@@ -221,6 +244,14 @@ class operational_area(operational_graphic):
             self.real_world_coordinates.append(flatland.XYtoUTM(i))
             
             
+    def InternalCoordinates(self, flatland):
+        out = []
+        for i in self.real_world_coordinates:
+            utm = flatland.AsUTM(i)
+            out.append(flatland.UTMtoXY(utm))
+            
+        self.shape = base_polygon(out)
+        
     def toXML(self, doc):
         out = doc.NewNode('area')
         doc.SetAttribute('name', self.name, out)
@@ -228,6 +259,13 @@ class operational_area(operational_graphic):
         for i in self.real_world_coordinates:
             doc.AddField('point', i, out)
         return out    
+    def fromXML(self, doc, node):
+        self.type = doc.SafeGet(node, 'type', 'AO')
+        self.name = doc.SafeGet(node, 'name', '')
+        self.real_world_coordinates = []
+        for i in doc.Get(node, 'point', True):
+            self.real_world_coordinates.append(i)
+
 
 # Overlap
 class operational_overlay:
@@ -331,7 +369,14 @@ class operational_overlay:
         '''
         for i in self.ListElements():
             self.GetElement(i).ExternalCoordinates(flatland)
-            
+    def InternalCoordinates(self, flatland):
+        ''' Convert external coordinated to vectors.
+        '''
+        for i in self.ListElements():
+            element = self.GetElement(i)
+            element.InternalCoordinates(flatland)
+        
+        
     def toXML(self, doc):
         ''' Write to an OPCON XML format.
         '''
@@ -344,6 +389,28 @@ class operational_overlay:
             doc.AddNode(self.GetElement(i).toXML(doc),out)
             
         return out
+
+    def fromXML(self, doc, node):
+        ''' Load the overlay from a XML node.
+        '''
+        # Get the name
+        self.name = doc.SafeGet(node, 'name', self.name)
+        
+        # Go over each item in this node
+        for nd in doc.ElementAsList(node):
+            if nd.tagName == 'point':
+                cm = operational_point()
+            elif nd.tagName == 'line':
+                cm = operational_line()
+            elif nd.tagName == 'area':
+                cm = operational_area()
+            else:
+                continue
+            
+            cm.fromXML(doc, nd)
+            
+            self.AddElement(cm)
+            
 #
 #
 class GraphicsTest(unittest.TestCase):
@@ -390,6 +457,26 @@ class GraphicsTest(unittest.TestCase):
         a.AddElement(operational_area('OA','JIMBO', base_polygon([vect_3D(),vect_3D(1.,1.),vect_3D(0.,2.)])))
         box = a.BoundingBox()
         self.assertEqual(box, [0.0,0.0,1.0,2.0])             
+    def testOverlayfromXML(self):
+        # Create a flatland instance and bind it to EPW control measure as 0,0
+        from FlatLand import FlatLand
+        flatland = FlatLand()
+        flatland.Bind(vect_3D(), '38 E 483209 2961993')
+        
+        # file to load
+        import os
+        filename = os.path.join(os.environ['OPCONhome'],'tests','overlay.xml')
+        from sandbox_XML import sandboXML
+        doc = sandboXML(read=filename)
+        ovnode = doc.Get(doc.root, 'OVERLAY')
+        
+        # Blank overlay
+        ov = operational_overlay()
+        ov.fromXML(doc, ovnode)
+        ov.InternalCoordinates(flatland)
+        
+        # Test
+        self.assertEqual(vect_3D(),ov.GetElement('EPW RED').GetShape())
 #
 #
 if __name__ == '__main__':
