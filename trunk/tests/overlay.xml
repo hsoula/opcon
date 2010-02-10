@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<Document>
+	<OVERLAY name="SITTEP-A">
+		<point datum="38 E 483209 2961993" name="RED" type="EPW"/>
+		<line type="PL" name="SCHMOK">
+			<point>38 E 482974 2962038</point>
+			<point>38 E 482974 2962059</point>
+			<point>38 E 483041 2962675</point>
+			<point>38 E 483090 2963142</point>
+		</line>
+		<line type="ROUTE" name="BAFF">
+			<point>38 E 482974 2962038</point>
+			<point>38 E 482974 2962059</point>
+			<point>38 E 483041 2962675</point>
+			<point>38 E 483090 2963142</point>
+		</line>
+		<area type="AO" name="BLUE">
+			<point>38 E 483300 2961877</point>
+			<point>38 E 483197 2961774</point>
+			<point>38 E 483063 2962010</point>
+			<point>38 E 482905 2962222</point>
+			<point>38 E 482857 2962351</point>
+			<point>38 E 482747 2962531</point>
+			<point>38 E 482698 2962562</point>
+			<point>38 E 482707 2963394</point>
+			<point>38 E 482887 2963716</point>
+			<point>38 E 482976 2963432</point>
+			<point>38 E 483120 2962851</point>
+			<point>38 E 483216 2962408</point>
+			<point>38 E 483300 2961877</point>
+		</area>
+		<area type="OA" name="GOLD">
+			<point>38 E 482846 2962415</point>
+			<point>38 E 482871 2962621</point>
+			<point>38 E 482913 2962519</point>
+			<point>38 E 482874 2962344</point>
+			<point>38 E 482846 2962415</point>
+		</area>
+		<area type="AA" name="SILVER">
+			<point>38 E 483114 2962064</point>
+			<point>38 E 483086 2962091</point>
+			<point>38 E 483099 2962228</point>
+			<point>38 E 483128 2962213</point>
+			<point>38 E 483114 2962064</point>
+		</area>
+	</OVERLAY>
+</Document>
