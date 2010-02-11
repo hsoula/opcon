@@ -1,47 +1,33 @@
 <?xml version="1.0" ?>
 <Document>
-	<OVERLAY name="SITTEP-A">
-		<point datum="20 T 462736 4945630" name="RED" type="EPW"/>
-		<line type="PL" name="SCHMOK">
-			<point>20 T 462766 4945107</point>
-			<point>20 T 462781 4945107</point>
-			<point>20 T 463220 4945261</point>
-			<point>20 T 463553 4945374</point>
+	<OVERLAY name="KHA-1">
+		<point datum="41 R 763672 3502932" name="RED" type="EPW"/>
+		<line type="PL" name="GOO">
+			<point>41 R 761587 3502694</point>
+			<point>41 R 763709 3505711</point>
+			<point>41 R 767265 3508624</point>
 		</line>
-		<line type="ROUTE" name="BAFF">
-			<point>20 T 462766 4945107</point>
-			<point>20 T 462781 4945107</point>
-			<point>20 T 463220 4945261</point>
-			<point>20 T 463553 4945374</point>
-		</line>
-		<area type="AO" name="BLUE">
-			<point>20 T 462654 4945834</point>
-			<point>20 T 462580 4945603</point>
-			<point>20 T 462747 4945306</point>
-			<point>20 T 462896 4944955</point>
-			<point>20 T 462987 4944850</point>
-			<point>20 T 463115 4944607</point>
-			<point>20 T 463137 4944497</point>
-			<point>20 T 463729 4944523</point>
-			<point>20 T 463960 4944926</point>
-			<point>20 T 463758 4945123</point>
-			<point>20 T 463346 4945439</point>
-			<point>20 T 463031 4945650</point>
-			<point>20 T 462654 4945834</point>
-		</area>
 		<area type="OA" name="GOLD">
-			<point>20 T 463033 4944824</point>
-			<point>20 T 463180 4944883</point>
-			<point>20 T 463108 4944975</point>
-			<point>20 T 462983 4944887</point>
-			<point>20 T 463033 4944824</point>
+			<point>41 R 760930 3507146</point>
+			<point>41 R 761164 3506866</point>
+			<point>41 R 762985 3507835</point>
+			<point>41 R 762634 3508187</point>
+			<point>41 R 760930 3507146</point>
 		</area>
 		<area type="AA" name="SILVER">
-			<point>20 T 462786 4945420</point>
-			<point>20 T 462805 4945358</point>
-			<point>20 T 462902 4945388</point>
-			<point>20 T 462892 4945453</point>
-			<point>20 T 462786 4945420</point>
+			<point>41 R 764725 3502632</point>
+			<point>41 R 764838 3503676</point>
+			<point>41 R 763375 3503547</point>
+			<point>41 R 763220 3502921</point>
+			<point>41 R 764725 3502632</point>
+		</area>
+		<area type="AO" name="BLUE">
+			<point>41 R 766626 3502134</point>
+			<point>41 R 767464 3507689</point>
+			<point>41 R 763995 3509147</point>
+			<point>41 R 758179 3505544</point>
+			<point>41 R 759147 3503566</point>
+			<point>41 R 766626 3502134</point>
 		</area>
 	</OVERLAY>
 </Document>
