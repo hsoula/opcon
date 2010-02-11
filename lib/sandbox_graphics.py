@@ -476,7 +476,29 @@ class GraphicsTest(unittest.TestCase):
         ov.InternalCoordinates(flatland)
         
         # Test
-        self.assertEqual(vect_3D(),ov.GetElement('EPW RED').GetShape())
+        self.assertEqual(type(vect_3D()),type(ov.GetElement('EPW RED').GetShape()))
+        
+    def testWriteOverlaytoKML(self):
+        # file to load
+        import os
+        filename = os.path.join(os.environ['OPCONhome'],'tests','overlay.xml')
+        from sandbox_XML import sandboXML
+        doc = sandboXML(read=filename)
+        ovnode = doc.Get(doc.root, 'OVERLAY')
+
+        # Write to KML
+        from Renderer_kml import KML_renderer
+        kml = KML_renderer()
+        
+        # Blank overlay
+        ov = operational_overlay()
+        ov.fromXML(doc, ovnode)
+        ov.InternalCoordinates(kml.map.MGRS)
+        
+        
+        out = kml.WriteOverlay(ov)
+        
+        self.assertTrue(out)
 #
 #
 if __name__ == '__main__':

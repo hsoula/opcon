@@ -71,7 +71,7 @@ class vect_3D:
     '''
        Same within 7 places
     '''
-    if other == None:
+    if other == None or other == '':
       return 1
     dist = (self-other).length()
     return not dist <= 0.0000001
