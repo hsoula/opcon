@@ -379,7 +379,7 @@ class sandbox_map:
 
     self.mapenv = mapenv
     # Set path and initialize the data
-    self.path = os.path.join(os.getcwd(),'maps',mapenv)
+    self.path = os.path.join(os.environ['OPCONhome'],'maps',mapenv)
     
     # Metadata
     self.data = {'climate':'temperate','width':100,'ref XY':vect_3D(),'ref coord':'00d00\'00" 00d00\'00"'}
@@ -404,7 +404,7 @@ class sandbox_map:
     '''! \brief Remedy to the lack of a file structure for an environment
     '''
     # Make the path
-    if not os.access(self.path,os.F_OK):
+    if not os.path.exists(self.path):
       os.mkdir(self.path)
     
     # Make the graphic file
@@ -629,7 +629,7 @@ class sandbox_map:
     self.data['width'] = doc.SafeGet(node, 'width',self.data['width'])
     
     # ref coord
-    self.data['ref coord'] = doc.Get(node, 'ref_coord', self.data['ref coord'] )
+    self.data['ref coord'] = doc.SafeGet(node, 'ref_coord', self.data['ref coord'] )
     
     # ref XY
     self.data['ref XY'] = doc.SafeGet(node, 'ref_XY', self.data['ref XY'])
