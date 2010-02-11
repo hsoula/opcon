@@ -461,7 +461,7 @@ class GraphicsTest(unittest.TestCase):
         # Create a flatland instance and bind it to EPW control measure as 0,0
         from FlatLand import FlatLand
         flatland = FlatLand()
-        flatland.Bind(vect_3D(), '20 T 462736 4945630')
+        flatland.Bind(vect_3D(), '41 R 763672 3502932')
         
         # file to load
         import os
@@ -488,7 +488,7 @@ class GraphicsTest(unittest.TestCase):
 
         # Write to KML
         from Renderer_kml import KML_renderer
-        kml = KML_renderer()
+        kml = KML_renderer('khandahar_small')
         
         # Blank overlay
         ov = operational_overlay()
