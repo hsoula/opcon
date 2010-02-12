@@ -135,11 +135,7 @@ class OPORD(sandbox_COMM):
    Define a Supply Request as formatted in the Canadian Army SUPREQ
    Checklist:
       - Add a Get and Check method.
-      - Does it need Pre-postpickle work?
       - Handle at the FRAGO level
-      - Does it requires an entry in the OPORDmenu class (GUIwxFrames module)
-      - Write a rendering routine for HTML display.
-      - [write a dialog for editing?]
    
   '''
   def __init__(self, sender = None, recipient = None):
