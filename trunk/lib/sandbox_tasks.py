@@ -918,13 +918,7 @@ class taskRelocate(sandbox_task):
         if random() < 0.5:
           return True
     return False
-  def PosAsVect(self, A, pos):
-    '''! \brief Force a position into a vector type.
-         \A an agent
-         \pos A position
-    '''
-    pass
-  
+
 #
 # Maneuver (combat)
 class taskOffense(sandbox_task):
