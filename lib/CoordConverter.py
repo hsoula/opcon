@@ -210,6 +210,11 @@ class CoordTranslator:
                 span = re.compile('[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?').search(coord,span[1]).span()
                 out.append(float(coord[span[0]:span[1]]))
                 return out, 'UTM'
+            elif self.re_degdecimal.match(coord):
+                x = self.re_degdecimal.match(coord)
+                lat = float(x.groups()[0])
+                lon = float(x.groups()[2])
+                return [lon, lat], 'LL'
             elif self.re_degminosecpair.match(coord):
                 # Longitude
                 span = self.re_degminosec.search(coord).span()

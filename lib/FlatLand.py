@@ -178,6 +178,8 @@ class FlatLand(CoordTranslator):
             coord = self.LLtoUTM(temp[0])
         elif temp[1] == 'MGRS':
             coord = self.MGRStoUTM(temp[0])
+        elif temp[1] == 'UTM':
+            coord = temp[0]
         
         # Forget previous refpoint (if any)
         self.refpoint.clear()
