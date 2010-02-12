@@ -292,11 +292,10 @@ class CoordTranslator:
         self.k0 = 0.9996
         self.eccPrimeSquared = (self.eccSquared)/(1-self.eccSquared)
         
+        # Regular expressions to identify coordinates as strings.
         self.re_mgrs = re.compile('[0-9]{1,2}\s?[C-T]\s?[A-Z][A-V]\s?[0-9]{2,10}')
         self.re_utm = re.compile('[0-9]{1,2}\s?[C-T]\s?[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?\s?[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?')
         self.re_degminosec = re.compile('[+-]?(\d+)[d]?\s?(\d+)[\']?(\s?\d+(\.\d*)?)?[\"]?') # Only One deg min sec group (secs are optional)
-        self.re_degminsec = re.compile('[+-]?\d+[d]?\s?\d+[\']?\s?\d+[\"]?') # Only One deg min sec group (secs are not optional)
-        #self.re_degminosecpair = re.compile('[+-]?\d+[d]?\s?\d+[\']?(\s?\d+[\"]?)?\s[+-]?\d+[d]?\s?\d+[\']?(\s?\d+[\"]?)?')
         self.re_degminosecpair = re.compile('^[+-]?(\d+)[d]?\s?(\d+)[\']?(\s?\d+(\.\d*)?)?[\"]?\s([NS]\s)?[+-]?(\d+)[d]?\s?(\d+)[\']?(\s?\d+(\.\d*)?)?[\"]?')
         self.re_degdecimal = re.compile('([+-]?\d+[\.]?\d*)\s([NS]\s)*([+-]?\d+[\.]?\d*)(\s[NS]\s)*')
         
