@@ -49,5 +49,49 @@ class KML_renderer:
             # Get the external coordinates
             coord = flatland.AsLatLong(flatland.XYtoUTM(e.GetShape()))
             x = KMLIconPlacemark(e.name, coord[0], coord[1])
+            x.SetName(e.Name())
             points.AddItem(x)
+            
+        for i in overlay.ListLines():
+            e = overlay.GetElement(i)
+            x = self.LinetoKML(e)
+            lines.AddItem(x)
+            
+        for i in overlay.ListAreas():
+            e = overlay.GetElement(i)
+            x = self.AreatoKML(e)
+            areas.AddItem(x)
+            
+        return out
+    
+    def LinetoKML(self, line):
+        # Create a placemark
+        out = KMLPlacemark()
+        out.SetName(line.Name())
+        # Set Geometry
+        out.geometry = KMLLineString()
+        # Input coordinates
+        x = ''
+        for p in line.shape:
+            ll = self.map.MGRS.AsLatLong(self.map.MGRS.XYtoUTM(p))
+            x += '%f,%f,0 '%(ll[1],ll[0])
+            
+        out.geometry.coordinates = x
+        return out
+        
+    def AreatoKML(self, area):
+        # Create a placemark
+        out = KMLPlacemark()
+        out.SetName(area.Name())
+        # Set Geometry
+        out.geometry = KMLLinearRing()
+        # Input coordinates
+        x = ''
+        for p in area.shape.pts:
+            ll = self.map.MGRS.AsLatLong(self.map.MGRS.XYtoUTM(p))
+            x += '%f,%f,0 '%(ll[1],ll[0])
+            
+        out.geometry.coordinates = x
+        return out
+
             

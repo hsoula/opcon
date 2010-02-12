@@ -194,6 +194,7 @@ class operational_line(operational_graphic):
             self.real_world_coordinates.append(flatland.XYtoUTM(i))
     
     def InternalCoordinates(self, flatland):
+        self.shape = []
         for i in self.real_world_coordinates:
             utm = flatland.AsUTM(i)
             self.shape.append(flatland.UTMtoXY(utm))
@@ -497,6 +498,12 @@ class GraphicsTest(unittest.TestCase):
         
         
         out = kml.WriteOverlay(ov)
+        
+        # Write to a KML file
+        from pysmirk import KMLDocument
+        x = KMLDocument('test_overlay.kml')
+        x.AddItem(out)
+        x.WriteXML()
         
         self.assertTrue(out)
 #
