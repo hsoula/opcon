@@ -488,7 +488,7 @@ class GraphicsTest(unittest.TestCase):
 
         # Write to KML
         from Renderer_kml import KML_renderer
-        kml = KML_renderer('khandahar_small')
+        kml = KML_renderer('kandahar_small')
         
         # Blank overlay
         ov = operational_overlay()
