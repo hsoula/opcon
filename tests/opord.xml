@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<test>
+    <COMM type="OPORD">
+        <DTG type="datetime">3/1/2010 0800</DTG>
+        <FROM>501 AAD</FROM>
+        <OPORD_NO>1</OPORD_NO>
+        <TO>1-501 AAD</TO>
+        <!-- Line 7 -->
+        <SITUATION>
+            <GENERAL/>
+            <BATTLESPACE AO="" HAO="" AoI="">
+                <OVERLAY/>
+            </BATTLESPACE>
+            <ENEMY_FORCES><DISPOSITION><!-- A contact list--></DISPOSITION></ENEMY_FORCES>
+            <FRIENDLY_FORCES>
+                <DISPOSITION><!-- A contact list--></DISPOSITION>
+                <CENTER_OF_GRAVITY/>
+                <NGO/>
+            </FRIENDLY_FORCES>
+            <ENVIRONMENT>
+                <TERRAIN/>
+                <WEATHER/>
+                <CIVIL_CONSIDERATIONS/>
+            </ENVIRONMENT>
+            <ATTACHMENTS_AND_DETACHMENTS>
+                <ATTACHMENTS>UNIT NAME</ATTACHMENTS>
+                <DETACHMENTS>UNITS NAME</DETACHMENTS>
+            </ATTACHMENTS_AND_DETACHMENTS>
+            <ASSUMPTIONS/>
+        </SITUATION>
+        <!-- LINE 8 -->
+        <MISSION/>
+        <!-- LINE 9 -->
+        <EXECUTION>
+            <INTENT/>
+            <CONCEPT>
+                <PRIORITY><!-- a comma-separated list of words--></PRIORITY>
+                <MANEUVERS/>
+                <FIRE/>
+                <SUPPORT/>
+                <INTELLIGENCE/>
+            </CONCEPT>
+            <MANEUVERS_TASKS>
+                <!-- A sequence of tasks -->
+            </MANEUVERS_TASKS>
+            <SUPPORT_TASKS>
+                <!-- A sequence of tasks -->
+            </SUPPORT_TASKS>
+            <COORDINATING_INSTRUCTIONS>
+                <HHOUR type="datetime"/>
+                <ENGAGEMENT_INSTRUCTIONS>
+                </ENGAGEMENT_INSTRUCTIONS>
+                <REPORTING>
+                    <!-- example -->
+                    <SITREP every="hour"/>
+                </REPORTING>
+                <ROE/>
+            <COORDINATING_INSTRUCTIONS>
+        </EXECUTION>
+        
+    </COMM>
+</test> 
