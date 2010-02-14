@@ -48,15 +48,35 @@
             </SUPPORT_TASKS>
             <COORDINATING_INSTRUCTIONS>
                 <HHOUR type="datetime"/>
-                <ENGAGEMENT_INSTRUCTIONS>
-                </ENGAGEMENT_INSTRUCTIONS>
+                <ENGAGEMENT_INSTRUCTIONS/>
                 <REPORTING>
                     <!-- example -->
                     <SITREP every="hour"/>
                 </REPORTING>
                 <ROE/>
-            <COORDINATING_INSTRUCTIONS>
+                <CCIR/>
+            </COORDINATING_INSTRUCTIONS>
         </EXECUTION>
+        <SERVICE_AND_SUPPORT>
+            <TRAIN unit="10CSS" LOC="CAGLIARI"/>
+            <MATERIEL>
+                <SUPPLY min="0.33" max="1.0"/>
+                <SERVICES/>
+                <MAINTENANCE/>
+                <TRANSPORTATION/>
+                <MEDICAL_EVACUATION/>
+            </MATERIEL>
+            <EPW/>
+            <MISCELANEOUS/>
+        </SERVICE_AND_SUPPORT>
+        <COMMAND_AND_SIGNAL>
+            <COMMAND>
+                <HIGHER_UNIT/>
+                <ALTERNATE_HIGHER_UNIT/>
+                <OPCON/>
+            </COMMAND>
+            <SIGNAL EMCON=""/>
+        </COMMAND_AND_SIGNAL>
         
     </COMM>
 </test> 
