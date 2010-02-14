@@ -142,6 +142,8 @@ class OPORD(sandbox_COMM):
     # Other 
     sandbox_COMM.__init__(self, sender, recipient)
     self['scope'] = 'overwrite'
+    self['DTG'] = ''
+    self['OPORD NO'] = ''
     self['SITUATION']= {}
     self['SITUATION']['GENERAL'] = ''
     self['SITUATION']['BATTLESPACE'] = {}
@@ -205,6 +207,7 @@ class OPORD(sandbox_COMM):
     self['COMMAND AND SIGNAL']['COMMAND'] = {}
     self['COMMAND AND SIGNAL']['COMMAND']['HIGHER UNIT'] = {}
     self['COMMAND AND SIGNAL']['COMMAND']['ALTERNATE HIGHER UNIT'] = {}
+    self['COMMAND AND SIGNAL']['COMMAND']['OPCON'] = {}
     self['COMMAND AND SIGNAL']['SIGNAL'] = {}
     self['COMMAND AND SIGNAL']['SIGNAL']['SOI'] = {}
     self['COMMAND AND SIGNAL']['SIGNAL']['SILENCE'] = {}
@@ -215,7 +218,47 @@ class OPORD(sandbox_COMM):
 
     
 
-  
+  def fromXMLnode(self, doc, node, root):
+    ''' Populate the dictionary at the root. Meant to be used recursively.
+    '''
+    pass
+    
+    
+  def fromXML(self, doc, node, root=None):
+    ''' Read in the XML and populate the information tree.
+        Bloody complicated piece of code that should work independently of what is in the XML.
+    '''
+    # Handle the default argument
+    if root == None:
+      root = self
+      
+    # Find the new root
+    item_name = node.tagName.replace('_', ' ')
+      
+    children = doc.ElementsAsDict(node)
+    for ndkey in children:
+      # Get the node itself, then clean up the key name
+      nd = children[ndkey]
+      ndkey = ndkey.replace('_', ' ')
+      # Check to see if it is typed already
+      if nd.__class__ == node.__class__:
+        # The node is a node, check to see if it has elements
+        if doc.ElementsAsDict(nd):
+          # recurse
+          if ndkey in root and type(root[ndkey]) == type({}):
+            root = root[ndkey]
+          # recurse into this node
+          self.fromXML(doc, nd, root)
+        else:
+          # It is a text node (or else, not a node in the tree structure).
+          root[ndkey] = doc.Get(nd)
+      else:
+        root[ndkey] = nd
+    else:
+      # A text field
+      root[item_name] = doc.Get(node)
+      
+    
 
   
   def AsHTML(self, owner = None):
@@ -1128,6 +1171,20 @@ SOPstd = {'BLUE':SOP,'RED':deepcopy(SOP)}
 import unittest
 
 class TestCaseOPORD(unittest.TestCase):
+  def testLoadfromXML(self):
+    # Test files
+    filename = os.path.join(os.environ['OPCONhome'], 'tests', 'opord.xml')
+    
+    # Get the XML data
+    from sandbox_XML import sandboXML
+    doc = sandboXML(read=filename)
+    node = doc.Get(doc.root, 'COMM')
+    
+    # Read the document
+    opord = OPORD()
+    opord.fromXML(doc, node)
+    
+    
   def testEmptyOPORD(self):
     opord = OPORD()
     self.assertEqual(0,len(opord.GetExpandedTaskList()))
@@ -1162,3 +1219,14 @@ class TestCaseOPORD(unittest.TestCase):
     temp = O.GetSupplyPolicies()
     
     self.assert_(temp['minimum']==1.0 and temp['maximum']==2.0)
+
+if __name__ == '__main__':
+    # suite
+    testsuite = []
+
+    # basic tests on sandbox instance
+    testsuite.append(unittest.makeSuite(TestCaseOPORD))
+    
+    # collate all and run
+    allsuite = unittest.TestSuite(testsuite)
+    unittest.TextTestRunner(verbosity=2).run(allsuite)
