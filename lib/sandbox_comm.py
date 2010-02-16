@@ -235,7 +235,10 @@ class OPORD(sandbox_COMM):
     # Find the new root
     item_name = node.tagName.replace('_', ' ')
       
-    children = doc.ElementsAsDict(node)
+    children = doc.AllElementsAsDict(node)
+    if not children:
+      # A text field
+      root[item_name] = doc.Get(node)
     for ndkey in children:
       # Get the node itself, then clean up the key name
       nd = children[ndkey]
@@ -243,20 +246,19 @@ class OPORD(sandbox_COMM):
       # Check to see if it is typed already
       if nd.__class__ == node.__class__:
         # The node is a node, check to see if it has elements
-        if doc.ElementsAsDict(nd):
+        if doc.AllElementsAsDict(nd):
           # recurse
           if ndkey in root and type(root[ndkey]) == type({}):
-            root = root[ndkey]
-          # recurse into this node
-          self.fromXML(doc, nd, root)
+            # recurse into this node
+            self.fromXML(doc, nd, root[ndkey])
+          else:
+            # recurse into this node
+            self.fromXML(doc, nd, root)
         else:
           # It is a text node (or else, not a node in the tree structure).
           root[ndkey] = doc.Get(nd)
       else:
         root[ndkey] = nd
-    else:
-      # A text field
-      root[item_name] = doc.Get(node)
       
     
 
@@ -1183,6 +1185,9 @@ class TestCaseOPORD(unittest.TestCase):
     # Read the document
     opord = OPORD()
     opord.fromXML(doc, node)
+    
+    # Test for the structure of the OPORD
+    print opord
     
     
   def testEmptyOPORD(self):

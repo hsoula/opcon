@@ -97,6 +97,12 @@ class sandboXML:
             out[al.item(i).name] = self.NumericalTypes(al.item(i).nodeValue)
         return out
         
+    def AllElementsAsDict(self, node):
+        ''' Returns all of the children nodes + attributes, in this order.
+        '''
+        out = self.ElementsAsDict(node)
+        out.update(self.AttributesAsDict(node))
+        return out
     
     def ElementsAsDict(self, node):
         '''! \brief Return an index dictionary of elements.
