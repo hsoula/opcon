@@ -575,7 +575,7 @@ class agent:
         self.SolveOPORDRessuply(opord)
         
         # Initiate the first task
-        if opord['scope'] == 'overwrite':
+        if opord.status == 'overwrite':
             self.entity['OPORD'] = opord
             self.InitializeOPORD()
         
@@ -2008,6 +2008,7 @@ class agent:
                 Begin OPORD implementation
         '''
         # Initialize cursor to first non-completed task
+        self.entity['OPORD'].initialized = True
         self.entity['OPORD'].AutoCursor()
         if self.entity['OPORD']['sent timestamp'] == self.clock:
             self.log('=====================================================')

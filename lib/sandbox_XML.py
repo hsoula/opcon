@@ -24,6 +24,7 @@ from vector import vect_5D
 from logistics import supply_package
 from intelligence import sandbox_contact
 from sandbox_position import position_descriptor
+from sandbox_comm import OPORD
 
 
 class XMLParseError(Exception):
@@ -202,6 +203,12 @@ class sandboXML:
         out.fromXML(self, node)
         return out
 
+    def type_OPORD(self, node):
+        ''' Transform the XML structure into an OPORD.
+            TODO... no kidding.
+        '''
+        out = OPORD()
+        return out
     # OUTPUT methods
     def write_datetime(self, tagname, dt):
         n = self.doc.createElement(tagname)
