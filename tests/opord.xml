@@ -7,8 +7,8 @@
         <TO>1-501 AAD</TO>
         <!-- Line 7 -->
         <SITUATION>
-            <GENERAL/>
-            <BATTLESPACE AO="" HAO="" AoI="">
+            <GENERAL>This is a sample General situation text.</GENERAL>
+            <BATTLESPACE AO="AO GREEN" HAO="AO REDKEN" AoI="AO BLUE">
                 <OVERLAY/>
             </BATTLESPACE>
             <ENEMY_FORCES><DISPOSITION><!-- A contact list--></DISPOSITION></ENEMY_FORCES>
@@ -23,8 +23,8 @@
                 <CIVIL_CONSIDERATIONS/>
             </ENVIRONMENT>
             <ATTACHMENTS_AND_DETACHMENTS>
-                <ATTACHMENTS>UNIT NAME</ATTACHMENTS>
-                <DETACHMENTS>UNITS NAME</DETACHMENTS>
+                <ATTACHMENTS>3Plt</ATTACHMENTS>
+                <DETACHMENTS>2Plt</DETACHMENTS>
             </ATTACHMENTS_AND_DETACHMENTS>
             <ASSUMPTIONS/>
         </SITUATION>
@@ -47,7 +47,7 @@
                 <!-- A sequence of tasks -->
             </SUPPORT_TASKS>
             <COORDINATING_INSTRUCTIONS>
-                <HHOUR type="datetime"/>
+                <HHOUR type="datetime">14/02/2010 0107</HHOUR>
                 <ENGAGEMENT_INSTRUCTIONS/>
                 <REPORTING>
                     <!-- example -->

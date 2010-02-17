@@ -142,6 +142,7 @@ class OPORD(sandbox_COMM):
     # Other 
     sandbox_COMM.__init__(self, sender, recipient)
     self['scope'] = 'overwrite'
+    '''
     self['DTG'] = ''
     self['OPORD NO'] = ''
     self['SITUATION']= {}
@@ -214,7 +215,7 @@ class OPORD(sandbox_COMM):
     self['COMMAND AND SIGNAL']['SIGNAL']['COMMUNICATION METHOD PRIORITY'] = {}
     self['COMMAND AND SIGNAL']['SIGNAL']['EMERGENCY SIGNAL'] = {}
     self['COMMAND AND SIGNAL']['SIGNAL']['CODE WORDS'] = {}
-    
+    '''
 
     
 
@@ -1144,31 +1145,7 @@ class CODEWORD(sandbox_COMM):
     sandbox_COMM.__init__(self, sender, recipient)
     self.message = CODE
     
-# Define a skeleton SOP
-SOP = OPORD()
-
-# Logistics
-SOP['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']['minimum'] = 0.33
-SOP['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']['maximum'] = 1.0
-SOP['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']['surplus'] = 'keep'
-
-# Priorities
-SOP.SetPriorities(['terrain','readiness'])
-
-# reporting
-SOP['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['silence'] = False
-SOP['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['new'] = True
-SOP['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['lost'] = False
-SOP['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['SITREP'] = 0.5
-SOP['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['INTSUM'] = 1.0
-
-# Engagement
-SOP['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS']['ENGAGEMENT']['WEAPON FREE'] = True
-SOP['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS']['DISENGAGEMENT'] = {'threshold':0.15}
-
-
-SOPstd = {'BLUE':SOP,'RED':deepcopy(SOP)}
-     
+  
 
 import unittest
 
@@ -1187,7 +1164,7 @@ class TestCaseOPORD(unittest.TestCase):
     opord.fromXML(doc, node)
     
     # Test for the structure of the OPORD
-    print opord
+    self.assertTrue(opord)
     
     
   def testEmptyOPORD(self):

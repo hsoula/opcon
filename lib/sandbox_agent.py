@@ -223,9 +223,6 @@ class agent:
         if self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING'].has_key('INTSUM'):
             d = self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['INTSUM']
             self.data['next INTSUM'] = self.clock + timedelta(hours=d)
-        elif self.entity['SOP']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING'].has_key('INTSUM'):
-            d = self.entity['SOP']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['INTSUM']
-            self.data['next INTSUM'] = self.clock + timedelta(hours=d)
         else:
             del self.data['next INTSUM']
             self.log('No more scheduled INTSUM, should we take appropriate actions?','intelligence')
@@ -769,7 +766,6 @@ class agent:
         '''
         # Get the OPORDs concepts
         concepts = self.entity['OPORD']['EXECUTION']['CONCEPT']['PRIORITY']
-        concepts = concepts + self.entity['SOP']['EXECUTION']['CONCEPT']['PRIORITY']
         
         # Add in order 
         out = []
@@ -786,9 +782,6 @@ class agent:
         # Set next SITREP
         if self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING'].has_key('SITREP'):
             d = self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['SITREP']
-            self.data['next SITREP'] = self.clock + timedelta(hours=d)
-        elif self.entity['SOP']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING'].has_key('SITREP'):
-            d = self.entity['SOP']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['SITREP']
             self.data['next SITREP'] = self.clock + timedelta(hours=d)
         else:
             del self.data['next SITREP']
@@ -1050,7 +1043,7 @@ class agent:
         '''
         if self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING'].has_key(query):
             return self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']
-        return self.entity['SOP']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']
+        return False
     
     def ContactUpdate(self, cnt):
         '''! 
@@ -1843,16 +1836,12 @@ class agent:
         minsup = maxsup = 0.0
         
         opord = self.entity['OPORD']
-        sop = self.entity['SOP']
         
         opord_pol = opord.GetSupplyPolicies()
-        sop_pol   =   sop.GetSupplyPolicies()
         
         for i in ['minimum','maximum']:
             if opord_pol.has_key(i):
                 temp = opord_pol[i]
-            elif sop_pol.has_key(i):
-                temp = sop_pol[i]
             else:
                 temp = 0.0
             if i == 'minimum':
@@ -1872,8 +1861,6 @@ class agent:
             return []
         
         msr = self.entity['OPORD'].GetMSR()
-        if not msr:
-            msr = self.entity['SOP'].GetMSR()
         if msr:
             gfx = ov.GetElement(msr)
             if gfx:
@@ -1888,10 +1875,6 @@ class agent:
              2) SOP
         '''
         temp = self.entity['OPORD'].GetCSS()
-        if type(temp) == type(1):
-            return self.entity.sim.AsEntity(temp)
-        
-        temp = self.entity['SOP'].GetCSS()
         if type(temp) == type(1):
             return self.entity.sim.AsEntity(temp)
         
@@ -1978,9 +1961,7 @@ class agent:
         policy = None
         if self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS'].has_key('ENGAGEMENT'):
             policy = self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS']['ENGAGEMENT']
-        if not policy:
-            if self.entity['SOP']['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS'].has_key('ENGAGEMENT'):
-                policy = self.entity['SOP']['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS']['ENGAGEMENT']
+        
         if not policy:
             # Do not engages because of lack of orders to do so.
             return False
@@ -2001,9 +1982,7 @@ class agent:
         policy = None
         if self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS'].has_key('DISENGAGEMENT'):
             policy = self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS']['DISENGAGEMENT']
-        if not policy:
-            if self.entity['SOP']['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS'].has_key('DISENGAGEMENT'):
-                policy = self.entity['SOP']['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS']['DISENGAGEMENT']
+
         if not policy:
             # Do not disengage because of lack of orders to do so.
             return False

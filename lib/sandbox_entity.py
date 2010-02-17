@@ -126,7 +126,6 @@ class sandbox_entity(dict):
     self['log'] = sandbox_log()
     self['staff queue'] = []
     self['OPORD'] = OPORD(self,self)
-    self['SOP'] = SOPstd[side]
     
     # Location, heading, speed and disposition (non-templated)
     self.SetPosition( position_descriptor() ) #vect_5D()
