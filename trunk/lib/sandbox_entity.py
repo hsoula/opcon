@@ -125,7 +125,7 @@ class sandbox_entity(dict):
     self.agentData = {}
     self['log'] = sandbox_log()
     self['staff queue'] = []
-    self['OPORD'] = OPORD(self,self)
+    self['OPORD'] = OPORD()
     
     # Location, heading, speed and disposition (non-templated)
     self.SetPosition( position_descriptor() ) #vect_5D()
@@ -1076,6 +1076,10 @@ class sandbox_entity(dict):
       temp = doc.AttributesAsDict(x)
       for i in temp.keys():
         self[i] = temp[i]
+        
+    # Operational Orders ###########################################
+    x = doc.SafeGet(node, 'OPORD', self['OPORD'])
+      
         
     # Chain of command #############################################
     coc = doc.Get(node, 'chain_of_command')
