@@ -159,6 +159,31 @@ class sandbox_COMM(dict):
     return False
     
   # IO
+  def toXML(self, doc, root= None, node=None):
+    # Create a node if it already doesn't exist, the node is named after the class name
+    if node == None:
+      node = doc.NewNode(self.__class__.__name__)
+      
+    # Get the root if not set by default
+    if root == None:
+      root = self
+      
+    # Iterate through the data tree
+    for key in root.keys():
+      # Create recursively a new node
+      if type(root[key]) == type({}):
+        doc.AddNode(self.toXML(doc, root[key]))
+      # Add the data as a node if the data has a toXML method
+      elif hasattr(root[key],'toXML'):
+        doc.AddNode(getattr(root[key],'toXML')(doc))
+      # If all else fails, add the data as string if it isn't null
+      elif root[key]:
+        safekey = key.replace(' ','_')
+        doc.Addfield(safekey, str(root[key]), node)
+        
+    return node
+  
+  
   def fromXML(self, doc, node, root=None):
     ''' Read in the XML and populate the information tree.
         Bloody complicated piece of code that should work independently of what is in the XML.
@@ -216,6 +241,9 @@ class OPORD(sandbox_COMM):
     self.status = 'overwrite'
     self.initialized = False
     
+    # fields
+    self['EXECUTION']['MANEUVER TASKS']['sequence']
+    self['EXECUTION']['MANEUVER TASKS']['cursor']
     
   def fromXML(self, doc, node, root=None):
     ''' Read in the XML and populate the information tree.
@@ -627,39 +655,43 @@ class OPORD(sandbox_COMM):
   def SetAO(self, AO, higher = False):
     '''! \brief Set the AO name at the right place.
     '''
+    
     if higher:
-      self['SITUATION']['BATTLESPACE']['HAO'] = AO
-      return
-    self['SITUATION']['BATTLESPACE']['AO'] = AO
+      v = ['SITUATION','BATTLESPACE','HAO']
+    else:
+      v = ['SITUATION','BATTLESPACE','AO']
+    self.SetData(v,AO)
     
   def GetAO(self,higher = False):
     if higher:
-      return self['SITUATION']['BATTLESPACE']['HAO']
-    return self['SITUATION']['BATTLESPACE']['AO']
+      return self.GetData(['SITUATION','BATTLESPACE','HAO'])
+    return self.GetData(['SITUATION','BATTLESPACE','AO'])
   
-  def SetOverlay(self, overlay, name = ''):
+  def SetOverlay(self, overlay):
     '''! \brief Set an overlay to be indexed by its name
          
          default overlay has no key
     '''
-    self['SITUATION']['BATTLESPACE']['overlay'][name] = overlay
+    self.SetData(['SITUATION','BATTLESPACE','OVERLAY'], overlay)
       
-  def GetOverlay(self, name = ''):
+  def GetOverlay(self):
     '''! \brief Access an overlay.
     
          If no name is provided, and there is only one overlay of a different name, return it as such.
          This is mainly a backward compatibility with the initial code.
     '''
-    if name in self['SITUATION']['BATTLESPACE']['overlay']:
-      return self['SITUATION']['BATTLESPACE']['overlay'][name]
-    elif name == '' and len(self['SITUATION']['BATTLESPACE']['overlay']) == 1:
-      return self['SITUATION']['BATTLESPACE']['overlay'].values()[0]
+    x = self.SetData(['SITUATION','BATTLESPACE','OVERLAY'])
+    if not x:
+      x = operational_overlay()
+      
+    return x
   
   def InsertToCurrentTask(self, task):
-    if not self['EXECUTION']['MANEUVER TASKS'].has_key('cursor'):
+    if not self.GetData(['EXECUTION','MANEUVER TASKS','sequence']):
       self['EXECUTION']['MANEUVER TASKS']['cursor'] = 0
       self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
-    cursor = self['EXECUTION']['MANEUVER TASKS']['cursor']
+      
+    cursor = self.GetData(['EXECUTION','MANEUVER TASKS','cursor'])
     self.InsertTask(cursor,task)
     
   def InsertTask(self, index, task):
@@ -793,12 +825,17 @@ class OPORD(sandbox_COMM):
   def GetExpandedTaskList(self):
     '''! \brief Return a complete list of subtasks for methods requiring an exhautive iteration.
     '''
-    if self['EXECUTION']['MANEUVER TASKS'].has_key('sequence'):
-      out = []
-      for i in self['EXECUTION']['MANEUVER TASKS']['sequence']:
-        out.extend(i.ExpandedSubtaskList())
-      return out
-    return []
+    # Chek to see if the list exists
+    if self.GetData(['EXECUTION','MANEUVER TASKS','sequence']) == '':
+      # it doesn't set it as list
+      self.SetData(['EXECUTION','MANEUVER TASKS','sequence'],[])
+      
+    # Iterate recursively over each subtasks
+    out = []
+    for i in self.GetData(['EXECUTION','MANEUVER TASKS','sequence']):
+      out.extend(i.ExpandedSubtaskList())
+    return out
+
     
     
   def AddTask(self, task):
@@ -1130,6 +1167,22 @@ class TestCaseOPORD(unittest.TestCase):
     
     # Test for the structure of the OPORD
     self.assertTrue(opord)
+    
+  def testWriteOPORDtoXML(self):
+    # Test files
+    filename = os.path.join(os.environ['OPCONhome'], 'tests', 'opord.xml')
+    
+    # Get the XML data
+    from sandbox_XML import sandboXML
+    doc = sandboXML(read=filename)
+    node = doc.Get(doc.root, 'COMM')
+    
+    # Read the document
+    opord = OPORD()
+    opord.fromXML(doc, node)
+    
+    # Write to an XML node
+    doc.AddNode(opord.toXML(doc))
     
     
   def testEmptyOPORD(self):
