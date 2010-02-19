@@ -125,7 +125,7 @@ class sandbox_COMM(dict):
     out = out.replace('$%$%$%$','&nbsp;')
     return out
   # Data Structure
-  def GetData(self, vector):
+  def GetData(self, vector, default=''):
     '''! \brief Return the free text for an arbitrary field where each 
                 string in vector is a key in the data tree
     '''
@@ -135,7 +135,7 @@ class sandbox_COMM(dict):
         out = out[i]
       else:
         # The tree structure don't contain this node... return nothing
-        return ''
+        return default
     return out
   
   def SetData(self, vector, data={}):
@@ -242,8 +242,8 @@ class OPORD(sandbox_COMM):
     self.initialized = False
     
     # fields
-    self['EXECUTION']['MANEUVER TASKS']['sequence']
-    self['EXECUTION']['MANEUVER TASKS']['cursor']
+    self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
+    self['EXECUTION']['MANEUVER TASKS']['cursor'] = None
     
   def fromXML(self, doc, node, root=None):
     ''' Read in the XML and populate the information tree.
@@ -680,17 +680,14 @@ class OPORD(sandbox_COMM):
          If no name is provided, and there is only one overlay of a different name, return it as such.
          This is mainly a backward compatibility with the initial code.
     '''
-    x = self.SetData(['SITUATION','BATTLESPACE','OVERLAY'])
+    x = self.GetData(['SITUATION','BATTLESPACE','OVERLAY'])
     if not x:
       x = operational_overlay()
+      self.SetData(['SITUATION','BATTLESPACE','OVERLAY'], x)
       
     return x
   
   def InsertToCurrentTask(self, task):
-    if not self.GetData(['EXECUTION','MANEUVER TASKS','sequence']):
-      self['EXECUTION']['MANEUVER TASKS']['cursor'] = 0
-      self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
-      
     cursor = self.GetData(['EXECUTION','MANEUVER TASKS','cursor'])
     self.InsertTask(cursor,task)
     
@@ -699,71 +696,66 @@ class OPORD(sandbox_COMM):
        does What it claims
     '''
     task['opord'] = self
-    if not self['EXECUTION']['MANEUVER TASKS'].has_key('sequence'):
-      self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
-      self['EXECUTION']['MANEUVER TASKS']['cursor'] = 0
-    
-    self['EXECUTION']['MANEUVER TASKS']['sequence'].insert(index,task)
+    self.GetData(['EXECUTION','MANEUVER TASKS','sequence']).insert(index,task)
     
   def GetContactList(self):
     '''
     '''
     out = []
-    for i in self['SITUATION']['FRIENDLY FORCES']['DISPOSITION'] + self['SITUATION']['ENNEMY FORCES']['DISPOSITION']:
+    friends = self.GetData(['SITUATION','FRIENDLY FORCES','DISPOSITION'])
+    if not friends:
+      friends = []
+    eny = self.GetData(['SITUATION','ENNEMY FORCES','DISPOSITION'])
+    if not eny:
+      eny = []
+      
+    for i in friends + eny:
             out.append(i)
     return out
 
   def GetPriorities(self):
-    return self['EXECUTION']['CONCEPT']['PRIORITY']
+    return self.GetData(['EXECUTION','CONCEPT','PRIORITY'],[])
   def SetPriorities(self, P):
-    self['EXECUTION']['CONCEPT']['PRIORITY'] = P
+    self.SetData(['EXECUTION','CONCEPT','PRIORITY'],P)
   def GetHhour(self):
-    if self['EXECUTION']['COORDINATING INSTRUCTION']['H-hour']:
-      return self['EXECUTION']['COORDINATING INSTRUCTION']['H-hour']
-    return None
+    return self.GetData(['EXECUTION','COORDINATING INSTRUCTION','HHOUR'],None)
   def SetHhour(self, H):
-    if H:
-      self['EXECUTION']['COORDINATING INSTRUCTION']['H-hour'] = H
+    self.SetData(['EXECUTION','COORDINATING INSTRUCTION','HHOUR'],H)
   def GetHQ(self, alternate = False):
     if not alternate:
-      return self['COMMAND AND SIGNAL']['COMMAND']['HIGHER UNIT']
-    return self['COMMAND AND SIGNAL']['COMMAND']['ALTERNATE HIGHER UNIT']
+      return self.GetData(['COMMAND AND SIGNAL','COMMAND','HIGHER UNIT'])
+    return self.GetData(['COMMAND AND SIGNAL','COMMAND','ALTERNATE HIGHER UNIT'])
   
   def GetCSS(self):
-    return self['SERVICE AND SUPPORT']['TRAIN']['UNIT']
-
+    return self.GetData(['SERVICE AND SUPPORT','TRAIN','UNIT'])
+  def SetCSS(self, CSSunit):
+    self.SetData(['SERVICE AND SUPPORT','TRAIN','UNIT'],CSSunit)
   
   def GetMSR(self):
-    return self['SERVICE AND SUPPORT']['TRAIN']['LOC']
+    return self.GetData(['SERVICE AND SUPPORT','TRAIN','LOC'])
   
   def SetMSR(self, loc):
-    self['SERVICE AND SUPPORT']['TRAIN']['LOC'] = loc
+    self.SetData(['SERVICE AND SUPPORT','TRAIN','LOC'],loc)
   
   def SetRoutineRessuplyTime(self, mytime):
-    if type(mytime) == type(''):
-      mytime = mytime.split(' ')
-    self['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']['routine time'] = mytime
+    self.SetData(['SERVICE AND SUPPORT','MATERIEL','SUPPLY','routine time'],mytime)
   def GetRoutineRessuplyTime(self):
+    return self.GetData(['SERVICE AND SUPPORT','MATERIEL','SUPPLY','routine time'])
     return self['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']['routine time']
   
   def SetHQ(self, HQuid, alternate = None):
     ''' HQuid must be a uid
     '''
     if not alternate:
-      self['COMMAND AND SIGNAL']['COMMAND']['HIGHER UNIT'] = HQuid
+      self.SetData(['COMMAND AND SIGNAL','COMMAND','HIGHER UNIT'],HQuid)
     else:
-      self['COMMAND AND SIGNAL']['COMMAND']['ALTERNATE HIGHER UNIT'] = HQuid
-
-  def SetCSS(self, CSSuid, flag = None):
-    # and just what is this flag for?
-    if flag == None:
-      self['SERVICE AND SUPPORT']['TRAIN']['UNIT'] = CSSuid
-
+      self.SetData(['COMMAND AND SIGNAL','COMMAND','ALTERNATE HIGHER UNIT'], HQuid)
+      
   def GetSupplyPolicies(self):
     '''
        Return the policie for the ressuply.
     '''
-    return self['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']
+    return self.GetData(['SERVICE AND SUPPORT','MATERIEL','SUPPLY'])
   def SetSupplyMinMaxPolicies(self, gmin = None, gmax = None):
     '''
        Specifically set min and max to the supply policies. 
@@ -775,35 +767,33 @@ class OPORD(sandbox_COMM):
       gmax = temp
     
     if gmin != None:
-      self['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']['minimum'] = gmin
+      self.SetData(['SERVICE AND SUPPORT','MATERIEL','SUPPLY','minimum'],gmin)
     if gmax != None:
-      self['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']['maximum'] = gmax
+      self.SetData(['SERVICE AND SUPPORT','MATERIEL','SUPPLY','maximum'],gmax)
     
   def SetTaskList(self, lst, css = None):
     '''! \brief set a task list.
          make sure that the cursor points to the first incomplete task.
     '''
     if css:
-      self['EXECUTION']['SUPPORT TASKS']['sequence'] = lst
+      self.SetData(['EXECUTION','SUPPORT TASKS','sequence'],lst)
     else:
-      self['EXECUTION']['MANEUVER TASKS']['sequence'] = lst
+      self.SetData(['EXECUTION','MANEUVER TASKS','sequence'],lst)
       # Set cursor to first task that isn't completed.
       self.AutoCursor()
     
   def AutoCursor(self):
     '''! \brief Set the cursor to the first non-completed task.
     '''
-    if 'sequence' in self['EXECUTION']['MANEUVER TASKS']:
-      a = self['EXECUTION']['MANEUVER TASKS']['sequence']
-    else:
-      a= self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
+    tasks = self.GetData(['EXECUTION']['MANEUVER TASKS']['sequence'])
     # Set cursor to first task that isn't completed.
     for i in range(len(a)):
-      if not a[i].IsCompleted():
-        self['EXECUTION']['MANEUVER TASKS']['cursor'] = i
-        return
+      if not tasks[i].IsCompleted():
+        self.SetData(['EXECUTION','MANEUVER TASKS','cursor'], i)
+        return i
     # Set to 1+ last task!
-    self['EXECUTION']['MANEUVER TASKS']['cursor'] = len(self['EXECUTION']['MANEUVER TASKS']['sequence'])
+    self.SetData(['EXECUTION','MANEUVER TASKS','cursor'], len(tasks))
+    return len(tasks)
         
   def GetTaskList(self, css = None):
     '''! \brief Return a list of tasks for planners
@@ -812,24 +802,13 @@ class OPORD(sandbox_COMM):
          \note Does not expand to subtasks.
     '''
     if css:
-      try:
-        return self['EXECUTION']['SUPPORT TASKS']['sequence']
-      except:
-        return []
+      self.GetData(['EXECUTION','SUPPORT TASKS','sequence'],[])
     else:
-      try:
-        return self['EXECUTION']['MANEUVER TASKS']['sequence']
-      except:
-        return []
+      self.GetData(['EXECUTION','MANEUVER TASKS','sequence'],[])
   
   def GetExpandedTaskList(self):
     '''! \brief Return a complete list of subtasks for methods requiring an exhautive iteration.
     '''
-    # Chek to see if the list exists
-    if self.GetData(['EXECUTION','MANEUVER TASKS','sequence']) == '':
-      # it doesn't set it as list
-      self.SetData(['EXECUTION','MANEUVER TASKS','sequence'],[])
-      
     # Iterate recursively over each subtasks
     out = []
     for i in self.GetData(['EXECUTION','MANEUVER TASKS','sequence']):
@@ -843,15 +822,8 @@ class OPORD(sandbox_COMM):
        Add a task to the queue
     '''
     task['opord'] = self
-    if self['EXECUTION']['MANEUVER TASKS'].has_key('sequence') == 0:
-      self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
-      
-    if self['EXECUTION']['MANEUVER TASKS'].has_key('cursor') == 0:
-      self['EXECUTION']['MANEUVER TASKS']['cursor'] = 0
-    
-    self['EXECUTION']['MANEUVER TASKS']['sequence'].append(task)
-    if self['EXECUTION']['MANEUVER TASKS']['cursor'] == None:
-      self['EXECUTION']['MANEUVER TASKS']['cursor'] = 0
+    self.SetData(['EXECUTION','MANEUVER TASKS','sequence']).append(task)
+    self.AutoCursor()
 
       
 
@@ -876,7 +848,7 @@ class OPORD(sandbox_COMM):
     '''
        Allow to set a ressuply route.
     '''
-    self['SERVICE AND SUPPORT']['TRAIN']['LOC'] = route
+    self.SetData(['SERVICE AND SUPPORT','TRAIN','LOC'], route)
     
   def GetCurrentWaypoints(self):
     '''
@@ -892,14 +864,15 @@ class OPORD(sandbox_COMM):
     
   def GetCurrentTask(self):
     # Returns nothing if there is no sequence
-    if not self['EXECUTION']['MANEUVER TASKS']['sequence']:
+    if not self.GetData(['EXECUTION','MANEUVER TASKS','sequence']):
       return None
     # If there is no tasks, the cursor should be None, not 0.
-    i = self['EXECUTION']['MANEUVER TASKS']['cursor']
+    i = self,GetData(['EXECUTION','MANEUVER TASKS','cursor'])
     if i == None:
-      return i
+      return None
+    
     try:
-      return self['EXECUTION']['MANEUVER TASKS']['sequence'][i]
+      return self.GetData(['EXECUTION','MANEUVER TASKS','sequence'])[i]
     except:
       return None
   
@@ -913,13 +886,8 @@ class OPORD(sandbox_COMM):
     return None 
   
   def GetNextTask(self):
-    if not self['EXECUTION']['MANEUVER TASKS'].has_key('cursor'):
-      return None
-    i = self['EXECUTION']['MANEUVER TASKS']['cursor']
-    if i == None:
-      return i
     try:
-      return self['EXECUTION']['MANEUVER TASKS']['sequence'][i+1]
+      return self['EXECUTION']['MANEUVER TASKS']['sequence'][self.AutoCursor()]
     except:
       return None
     
@@ -945,8 +913,9 @@ class OPORD(sandbox_COMM):
       return True
     
     # Move on to next phase/task
-    self['EXECUTION']['MANEUVER TASKS']['cursor'] += 1
-    if self['EXECUTION']['MANEUVER TASKS']['cursor'] < len(self['EXECUTION']['MANEUVER TASKS']['sequence']):
+    cursor = self.AutoCursor()
+    self.SetData(['EXECUTION','MANEUVER TASKS','cursor'], cursor+1)
+    if self.GetData(['EXECUTION','MANEUVER TASKS','cursor']) < len(self.GetData(['EXECUTION','MANEUVER TASKS','sequence'])):
       return True
     
     # No increment possible
@@ -957,13 +926,7 @@ class OPORD(sandbox_COMM):
     '''
        Add a support task to perform.
     '''
-    if self['EXECUTION']['SUPPORT TASKS'].has_key('sequence') == 0:
-      self['EXECUTION']['SUPPORT TASKS']['sequence'] = []
-      
-    if self['EXECUTION']['SUPPORT TASKS'].has_key('cursor') == 0:
-      self['EXECUTION']['SUPPORT TASKS']['cursor'] = None
-    
-    self['EXECUTION']['SUPPORT TASKS']['sequence'].append(task)
+    self.SetData(['EXECUTION','SUPPORT TASKS','sequence']).append(task)
     if self['EXECUTION']['SUPPORT TASKS']['cursor'] == None:
       self['EXECUTION']['SUPPORT TASKS']['cursor'] = 0
       
