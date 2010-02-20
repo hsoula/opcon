@@ -242,8 +242,75 @@ class OPORD(sandbox_COMM):
     self.initialized = False
     
     # fields
+    self['SITUATION']= {}
+    self['SITUATION']['GENERAL'] = ''
+    self['SITUATION']['BATTLESPACE'] = {}
+    self['SITUATION']['BATTLESPACE']['overlay'] = {}
+    # Three free text fields
+    self['SITUATION']['BATTLESPACE']['Joint Operation'] = ''
+    self['SITUATION']['BATTLESPACE']['HAO'] = ''
+    self['SITUATION']['BATTLESPACE']['Area of Interest'] = ''
+    self['SITUATION']['BATTLESPACE']['Area of Operation'] = ''
+    self['SITUATION']['BATTLESPACE']['AO'] = ''
+    self['SITUATION']['ENNEMY FORCES'] = {}
+    self['SITUATION']['ENNEMY FORCES']['DISPOSITION'] = []
+    self['SITUATION']['FRIENDLY FORCES'] = {}
+    self['SITUATION']['FRIENDLY FORCES']['DISPOSITION'] = []
+    # free text fields
+    self['SITUATION']['FRIENDLY FORCES']['center of gravity'] = ''
+    self['SITUATION']['FRIENDLY FORCES']['Gov and NGO agencies'] = ''
+    self['SITUATION']['ATTACHMENTS AND DETACHMENTS'] = {}
+    self['SITUATION']['ATTACHMENTS AND DETACHMENTS']['ATTACHMENTS'] = []
+    self['SITUATION']['ATTACHMENTS AND DETACHMENTS']['DETACHMENTS'] = []
+    # free text fields
+    self['SITUATION']['assumptions'] = ''
+    self['SITUATION']['legal implications'] = ''
+    # ----------------------------------------------------------------
+    self['MISSION'] = ''
+    self['EXECUTION'] = {}
+    self['EXECUTION']['INTENTS'] = ''
+    self['EXECUTION']['CONCEPT'] = {}
+    self['EXECUTION']['CONCEPT']['PRIORITY'] = []
+    self['EXECUTION']['CONCEPT']['MANEUVERS']= ''
+    self['EXECUTION']['CONCEPT']['FIRE'] = ''
+    self['EXECUTION']['CONCEPT']['SUPPORT']= ''
+    self['EXECUTION']['MANEUVER TASKS'] = {}
+    self['EXECUTION']['MANEUVER TASKS']['cursor'] = 0
     self['EXECUTION']['MANEUVER TASKS']['sequence'] = []
-    self['EXECUTION']['MANEUVER TASKS']['cursor'] = None
+    self['EXECUTION']['SUPPORT TASKS'] = {}
+    self['EXECUTION']['COORDINATING INSTRUCTION'] = {}
+    self['EXECUTION']['COORDINATING INSTRUCTION']['H-hour'] = {}
+    self['EXECUTION']['COORDINATING INSTRUCTION']['MOPP'] = {}
+    self['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS'] = {}
+    self['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS']['ENGAGEMENT'] = {}
+    self['EXECUTION']['COORDINATING INSTRUCTION']['ENGAGEMENT INSTRUCTIONS']['DISENGAGEMENT'] = {}
+    self['EXECUTION']['COORDINATING INSTRUCTION']['REORGANIZATION'] = {}
+    self['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING'] = {}
+    self['EXECUTION']['COORDINATING INSTRUCTION']['RULES OF ENGAGEMENT'] = {}
+    self['EXECUTION']['CCIR'] = []
+    self['SERVICE AND SUPPORT'] = {}
+    self['SERVICE AND SUPPORT']['TRAIN'] = {}
+    self['SERVICE AND SUPPORT']['TRAIN']['UNIT'] = {}
+    self['SERVICE AND SUPPORT']['TRAIN']['LOC'] = {}    
+    self['SERVICE AND SUPPORT']['MATERIEL'] = {}
+    self['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY'] = {}
+    self['SERVICE AND SUPPORT']['MATERIEL']['SUPPLY']['routine time'] = []
+    self['SERVICE AND SUPPORT']['MATERIEL']['TRANSPORTATION'] = {}
+    self['SERVICE AND SUPPORT']['MATERIEL']['SERVICES'] = {}
+    self['SERVICE AND SUPPORT']['MATERIEL']['MAINTENANCE'] = {}
+    self['SERVICE AND SUPPORT']['MATERIEL']['MEDICAL EVACUATION'] = {}
+    self['SERVICE AND SUPPORT']['EPW'] = {}
+    self['SERVICE AND SUPPORT']['MISCELANEOUS'] = {}
+    self['COMMAND AND SIGNAL'] = {}
+    self['COMMAND AND SIGNAL']['COMMAND'] = {}
+    self['COMMAND AND SIGNAL']['COMMAND']['HIGHER UNIT'] = {}
+    self['COMMAND AND SIGNAL']['COMMAND']['ALTERNATE HIGHER UNIT'] = {}
+    self['COMMAND AND SIGNAL']['SIGNAL'] = {}
+    self['COMMAND AND SIGNAL']['SIGNAL']['SOI'] = {}
+    self['COMMAND AND SIGNAL']['SIGNAL']['SILENCE'] = {}
+    self['COMMAND AND SIGNAL']['SIGNAL']['COMMUNICATION METHOD PRIORITY'] = {}
+    self['COMMAND AND SIGNAL']['SIGNAL']['EMERGENCY SIGNAL'] = {}
+    self['COMMAND AND SIGNAL']['SIGNAL']['CODE WORDS'] = {}
     
   def fromXML(self, doc, node, root=None):
     ''' Read in the XML and populate the information tree.
@@ -1122,11 +1189,10 @@ class TestCaseOPORD(unittest.TestCase):
     # Get the XML data
     from sandbox_XML import sandboXML
     doc = sandboXML(read=filename)
-    node = doc.Get(doc.root, 'COMM')
+    opord = doc.Get(doc.root, 'COMM')
     
-    # Read the document
-    opord = OPORD()
-    opord.fromXML(doc, node)
+    # Write the node info
+    opord.toXML(doc)
     
     # Test for the structure of the OPORD
     self.assertTrue(opord)
