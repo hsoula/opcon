@@ -145,10 +145,10 @@ class sandbox_COMM(dict):
     for i in range(len(vector)):
       key = vector[i]
       # Add the data field to the root
-      if not key in root:
+      if not key in root and not key == vector[-1]:
         root[key] = {}
       # If key isn't the last key in vector, update the root
-      if i < len(vector):
+      if i < len(vector)-1:
         root = root[key]
         continue
       else:
@@ -179,7 +179,7 @@ class sandbox_COMM(dict):
       # If all else fails, add the data as string if it isn't null
       elif root[key]:
         safekey = key.replace(' ','_')
-        doc.Addfield(safekey, str(root[key]), node)
+        doc.AddField(safekey, str(root[key]), node)
         
     return node
   
@@ -852,9 +852,9 @@ class OPORD(sandbox_COMM):
   def AutoCursor(self):
     '''! \brief Set the cursor to the first non-completed task.
     '''
-    tasks = self.GetData(['EXECUTION']['MANEUVER TASKS']['sequence'])
+    tasks = self.GetData(['EXECUTION','MANEUVER TASKS','sequence'])
     # Set cursor to first task that isn't completed.
-    for i in range(len(a)):
+    for i in range(len(tasks)):
       if not tasks[i].IsCompleted():
         self.SetData(['EXECUTION','MANEUVER TASKS','cursor'], i)
         return i
