@@ -170,15 +170,22 @@ class sandbox_COMM(dict):
       
     # Iterate through the data tree
     for key in root.keys():
+      safekey = key.replace(' ','_')
+      if bool(root[key]) == False:
+        # don't bother
+        #doc.AddNode(doc.NewNode(safekey),node)
+        pass
       # Create recursively a new node
-      if type(root[key]) == type({}):
-        doc.AddNode(self.toXML(doc, root[key]))
+      elif type(root[key]) == type({}):
+        newnode = self.toXML(doc, root[key],node=doc.NewNode(safekey))
+        # Write conditionally to the fact that newnode must not be empty
+        if doc.AllElementsAsDict(newnode):
+          doc.AddNode(newnode, node)
       # Add the data as a node if the data has a toXML method
       elif hasattr(root[key],'toXML'):
-        doc.AddNode(getattr(root[key],'toXML')(doc))
+        doc.AddNode(getattr(root[key],'toXML')(doc),node)
       # If all else fails, add the data as string if it isn't null
       elif root[key]:
-        safekey = key.replace(' ','_')
         doc.AddField(safekey, str(root[key]), node)
         
     return node
@@ -869,9 +876,9 @@ class OPORD(sandbox_COMM):
          \note Does not expand to subtasks.
     '''
     if css:
-      self.GetData(['EXECUTION','SUPPORT TASKS','sequence'],[])
+      return self.GetData(['EXECUTION','SUPPORT TASKS','sequence'],[])
     else:
-      self.GetData(['EXECUTION','MANEUVER TASKS','sequence'],[])
+      return self.GetData(['EXECUTION','MANEUVER TASKS','sequence'],[])
   
   def GetExpandedTaskList(self):
     '''! \brief Return a complete list of subtasks for methods requiring an exhautive iteration.
@@ -1190,9 +1197,14 @@ class TestCaseOPORD(unittest.TestCase):
     from sandbox_XML import sandboXML
     doc = sandboXML(read=filename)
     opord = doc.Get(doc.root, 'COMM')
+    opord.SetMSR('ROUTE BLUE')
     
     # Write the node info
-    opord.toXML(doc)
+    newopordnode = opord.toXML(doc)
+    outxml = sandboXML('COMMS')
+    outxml.AddNode(newopordnode, outxml.root)
+    with open(os.path.join(os.environ['OPCONhome'], 'tests', 'testOPORD.xml'),'w') as fout:
+      fout.write(str(outxml))
     
     # Test for the structure of the OPORD
     self.assertTrue(opord)
@@ -1204,11 +1216,7 @@ class TestCaseOPORD(unittest.TestCase):
     # Get the XML data
     from sandbox_XML import sandboXML
     doc = sandboXML(read=filename)
-    node = doc.Get(doc.root, 'COMM')
-    
-    # Read the document
-    opord = OPORD()
-    opord.fromXML(doc, node)
+    opord = doc.Get(doc.root, 'COMM')
     
     # Write to an XML node
     doc.AddNode(opord.toXML(doc))
