@@ -784,7 +784,7 @@ class agent:
             d = self.entity['OPORD']['EXECUTION']['COORDINATING INSTRUCTION']['REPORTING']['SITREP']
             self.data['next SITREP'] = self.clock + timedelta(hours=d)
         else:
-            del self.data['next SITREP']
+            #del self.data['next SITREP']
             self.log('No more scheduled SITREP, should we take appropriate actions?','operations')
         return True
     

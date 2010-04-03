@@ -1173,6 +1173,10 @@ class EntityTest(unittest.TestCase):
     b = sandbox_entity()
     c = sandbox_entity()
     
+    self.sim.AddEntity(a)
+    self.sim.AddEntity(b)
+    self.sim.AddEntity(c)
+    
     a.ReportToHQ(b)
     c.ReportToHQ(b)
     
@@ -1182,6 +1186,9 @@ class EntityTest(unittest.TestCase):
     b = sandbox_entity(name = 'hq')
     c = sandbox_entity(name = 'c')
     d = sandbox_entity(name = 'd')
+    
+    for i in [a,b,c,d]:
+      self.sim.AddEntity(i)
     
     a.ReportToHQ(b)
     c.ReportToHQ(b)
