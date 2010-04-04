@@ -159,6 +159,8 @@ class sandbox_COMM(dict):
     return False
     
   # IO
+  def AsHTML(self):
+    return ''
   def toXML(self, doc, root= None, node=None):
     # Create a node if it already doesn't exist, the node is named after the class name
     if node == None:

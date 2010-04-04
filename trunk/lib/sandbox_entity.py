@@ -1162,7 +1162,8 @@ class EntityTest(unittest.TestCase):
 
   def testSendNoWorld(self):
     unit = sandbox_entity(template='FireTeam', sim=self.sim)
-    self.assertFalse(unit.Send({}))
+    self.sim.AddEntity(unit)
+    self.assertFalse(unit.Send(sandbox_COMM()))
 
   def testExpendPulseSupplyNoPulseNoWorld(self):
     unit = sandbox_entity(template='FireTeam', sim=self.sim)
