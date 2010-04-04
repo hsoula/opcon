@@ -5,4 +5,4 @@
 After seeing how the folks developing the game [http://www.bay12games.com/dwarves/dev_story.html Dwarf Fortress] are coming up with ideas for their game, I felt that it would be a good idea to use a similar approach. 
 
 = Cases =
-  #[CutOffFromHIGHER]
+  # [CutOffFromHIGHER]
