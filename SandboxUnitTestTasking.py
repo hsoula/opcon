@@ -178,7 +178,6 @@ if __name__ == '__main__':
   
   # Task testing
   testsuite.append(unittest.makeSuite(SandBoxEmptyWorld))
-  testsuite.append(unittest.makeSuite(SandBoxThreeUnitsWorld))
   # collate all and run
   allsuite = unittest.TestSuite(testsuite)
   unittest.TextTestRunner(verbosity=2).run(allsuite)
