@@ -20,5 +20,9 @@
             <begin_time type="datetime"/>
             <end_time type="datetime"/>
         </timing>
+        <!-- Sequence, a sequence of sub-task. The task itself is designated by a <self/> node -->
+        <sequence>
+            <self/>
+        </sequence>
     </task>
 </test>

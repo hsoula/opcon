@@ -846,7 +846,7 @@ class agent:
         
         # Make sure the current task isn't ressuply
         if opord.GetCurrentTask():
-          if opord.GetCurrentTask()['type'] == 'Ressuply':
+          if opord.GetCurrentTask().task_type == 'Ressuply':
             return
           
         toremove = []
@@ -1315,7 +1315,7 @@ class agent:
                     qunty = ''
                     tgt = ''
                     for t in i['OPORD'].GetTaskList():
-                        if t['type'] == 'Drop-Off':
+                        if t.task_type == 'Drop-Off':
                             # Retrieve the package to load
                             qunty = '%.2f STON'%(float(t['cargo']))
                             tgt = self.entity.sim.AsEntity(t['recipient']).GetName()

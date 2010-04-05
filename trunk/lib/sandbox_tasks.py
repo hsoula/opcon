@@ -57,7 +57,7 @@ class sandbox_task(dict):
   '''
   def __init__(self, type = 'idle'):
     # mandatory fields
-    self['type'] = type
+    self.task_type = type
     
     # subtasking sequence
     self.sequence = []
@@ -73,7 +73,6 @@ class sandbox_task(dict):
     self['planned end time'] = None
     self['begin time'] = None
     self['end time'] = None
-    self['time conflict'] = False
     
     # Supply related
     self['supply required'] = supply_package()
@@ -106,13 +105,19 @@ class sandbox_task(dict):
     self['concurent'] = True
     
   def __str__(self):
-    return 'Task :%s'%(self['type'])
+    return 'Task :%s'%(self.task_type)
+  def toXML(self, doc):
+    pass
+  def fromXML(self, doc, node):
+    # instanciate to the correct type
+    pass
+    
   def AsHTML(self, A):
     '''! Prepare a info string for a SITREP.
          \param A The agent
          \param opord The owning OPORD, assumed to be the active opord otherwise
     '''
-    return Tag('p','Task %s is ongoing (Implement a report method!)'%(self['type']))
+    return Tag('p','Task %s is ongoing (Implement a report method!)'%(self.task_type))
   
   def Step(self, E):
     '''! \brief Iterate over a pulse of the task.
@@ -189,7 +194,7 @@ class sandbox_task(dict):
     '''!
        Prepare an Order string for OPORD/FRAGO
     '''
-    return self['type']
+    return self.task_type
   def OrderTimingHTML(self):
     '''!
        Generic instructions about timing.
@@ -2224,7 +2229,7 @@ class taskSupport(sandbox_task):
     # The ressuply tasks
     tasks = []
     for i in E['OPORD'].GetTaskList('css'):
-      if i['type'] == 'Dispatch Supply':
+      if i.task_type == 'Dispatch Supply':
         tasks.append(i)
         
     # Prioritize
@@ -2256,7 +2261,7 @@ class taskSupport(sandbox_task):
             qunty = ''
             tgt = ''
             for t in i['OPORD'].GetExpandedTaskList():
-                if t['type'] == 'Drop-Off':
+                if t.task_type == 'Drop-Off':
                     qunty = '%.2f STON'%(float(t['cargo']))
                     tgt = A.entity.sim.AsEntity(t['recipient']).GetName()
                     break
