@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<test>
+    <task task_type="base" cursor="0" completion="False" concurent="False" >
+        <!-- there can be many consumption_code-->
+        <consumption_code>idle</consumption_code>
+        <!-- there can be many parameters -->
+        <parameter name="test">value</parameter>
+        <!-- Section reserved by the AI for planning.-->
+        <AI>
+            <!-- In hours-->
+            <time>0.0</time>
+            <!-- In datetime format-->
+            <planned_begin_time type="datetime"/>
+            <planned_end_time type="datetime"/>
+            <!-- As a LOGPAC -->            
+            <supply_required type="LOGPAC"/>
+        </AI>
+        <!-- Log times -->
+        <timing>
+            <begin_time type="datetime"/>
+            <end_time type="datetime"/>
+        </timing>
+    </task>
+</test>
