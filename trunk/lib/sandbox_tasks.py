@@ -110,7 +110,9 @@ class sandbox_task(dict):
     pass
   def fromXML(self, doc, node):
     # instanciate to the correct type
-    pass
+    self.cursor = doc.SafeGet(node, 'cursor',self.cursor)
+    self['completion'] = doc.SafeGet(node, 'completion', self['completion'])
+    self['concurent'] = doc.SafeGet(node, 'concurent', self['concurent'])
     
   def AsHTML(self, A):
     '''! Prepare a info string for a SITREP.
@@ -2334,3 +2336,28 @@ class taskTemplate(sandbox_task):
   
   
   
+import unittest
+import os
+class TaskTesting(unittest.TestCase):
+  def testReadTask(self):
+    # Read from XML test file
+    # Test files
+    filename = os.path.join(os.environ['OPCONhome'], 'tests', 'tasks.xml')
+    
+    # Get the XML data
+    from sandbox_XML import sandboXML
+    doc = sandboXML(read=filename)
+    x = doc.Get(doc.root, 'test1')
+    task = doc.Get(x,'task')
+    
+    
+if __name__ == '__main__':
+    # suite
+    testsuite = []
+
+    # basic tests on sandbox instance
+    testsuite.append(unittest.makeSuite(TaskTesting))
+    
+    # collate all and run
+    allsuite = unittest.TestSuite(testsuite)
+    unittest.TextTestRunner(verbosity=2).run(allsuite)

@@ -25,6 +25,7 @@ from logistics import supply_package
 from intelligence import sandbox_contact
 from sandbox_position import position_descriptor
 from sandbox_comm import OPORD
+import sandbox_tasks
 
 
 class XMLParseError(Exception):
@@ -208,7 +209,26 @@ class sandboXML:
             TODO... no kidding.
         '''
         out = OPORD()
+        out.fromXML(self, node)
         return out
+    
+    def type_task(self, node):
+        ''' Type correctly the task and return the instance. That is the tricky bit
+            in this code.
+        '''
+        # Get the task type to fetch the correct class instance
+        ttype = self.SafeGet(node,'task_type','base')
+        
+        if ttype == 'base':
+            out = sandbox_tasks.sandbox_task()
+        else:
+            # Warning, the case in the XML file is important!
+            if hasattr(sandbox_tasks,'task'+ttype):
+                out = getattr(sandbox_tasks,'task'+ttype)()
+        out.fromXML(self, node)
+        
+        return out
+    
     # OUTPUT methods
     def write_datetime(self, tagname, dt):
         n = self.doc.createElement(tagname)
