@@ -19,4 +19,5 @@ If you want a quick gist of the project, please look at the [BasicPrinciple prin
  
   * Milestone 2 : Increment on MS1 by allowing multiple entities and thus restore the ability to handle chains of commands and contacts.
 
-= User Interface(s) =
+= UseCase =
+Here is a link to design narratives that are there to help defining features of gameplay and for modeling.
