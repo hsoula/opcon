@@ -114,6 +114,25 @@ class sandbox_task(dict):
     self['completion'] = doc.SafeGet(node, 'completion', self['completion'])
     self['concurent'] = doc.SafeGet(node, 'concurent', self['concurent'])
     
+    # Consumption code
+    for ccode in doc.Get(node, 'consumption_code',True):
+      if not ccode in self['consumption code']:
+        self['consumption code'].append(ccode)
+        
+    # Parameters
+    for para in doc.Get(node, 'parameter',True):
+      key = doc.Get(para,'name')
+      val = doc.Get(para)
+      self[key] = val
+      
+    # AI
+    AI = doc.Get(node, 'AI')
+    if AI:
+      for k in ['task time', 'planned begin time', 'planned end time', 'supply required']:
+        _k = k.replace(' ','_')
+        self[k] = doc.SafeGet(AI,_k,self[k])
+      
+    
   def AsHTML(self, A):
     '''! Prepare a info string for a SITREP.
          \param A The agent
@@ -783,7 +802,6 @@ class taskRelocate(sandbox_task):
     self['recompute path'] = True
     
     self['parameters'].append('destination')
-    #self['parameters'].append('route')
   
   def _Process(self, E):
     '''
