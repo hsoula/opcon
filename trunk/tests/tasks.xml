@@ -12,8 +12,8 @@
                 <!-- In hours-->
                 <time>0.0</time>
                 <!-- In datetime format-->
-                <planned_begin_time type="datetime"/>
-                <planned_end_time type="datetime"/>
+                <planned_begin_time type="datetime">3/1/2010 0800</planned_begin_time>
+                <planned_end_time type="datetime">3/1/2010 0800</planned_end_time>
                 <!-- As a LOGPAC -->            
                 <supply_required type="LOGPAC"/>
             </AI>
