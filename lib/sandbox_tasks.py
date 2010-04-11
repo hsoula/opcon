@@ -131,6 +131,24 @@ class sandbox_task(dict):
       for k in ['task time', 'planned begin time', 'planned end time', 'supply required']:
         _k = k.replace(' ','_')
         self[k] = doc.SafeGet(AI,_k,self[k])
+        
+    # Timing
+    timing = doc.Get(node, 'timing')
+    if timing:
+      for k in ['begin time', 'end time']:
+        _k = k.replace(' ','_')
+        self[k] = doc.SafeGet(AI,_k,self[k])
+    
+    # Sequencing
+    seq = doc.Get(node,'sequence')
+    if seq:
+      self.sequence = []
+      for i in doc.ElementAsList(seq):
+        # Treat the taslk itself as its own subtask
+        if hasattr(i,'tagName') and i.tagName == 'self':
+          self.sequence.append(self)
+        else:
+          self.sequence.append(i)
       
     
   def AsHTML(self, A):
@@ -2367,6 +2385,8 @@ class TaskTesting(unittest.TestCase):
     doc = sandboXML(read=filename)
     x = doc.Get(doc.root, 'test1')
     task = doc.Get(x,'task')
+    
+    self.assertEqual(task.TaskTime(),0.0)
     
     
 if __name__ == '__main__':
