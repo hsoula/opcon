@@ -107,7 +107,53 @@ class sandbox_task(dict):
   def __str__(self):
     return 'Task :%s'%(self.task_type)
   def toXML(self, doc):
-    pass
+    ''' Write the data for a task to XML
+    '''
+    out = doc.NewNode('task')
+    doc.SetAttribute('task_type',self.task_type,out)
+    if self.cursor != None:
+      doc.SetAttribute('cursor',str(self.cursor),out)
+    if self['completion']:
+      doc.SetAttribute('completion', self['completion'], out)
+    if self['concurent']:
+      doc.SetAttribute('concurent', self['concurent'], out)
+      
+    # Note Consumption code are type specific and thus not written out.
+    
+    # Parameters
+    predet = ['task time', 'planned begin time', 'planned end time', 'supply required'] + ['begin time', 'end time']
+    for para in self:
+      if not para in predet:
+        if 'datetime' in self[para].__class__:
+          doc.AddField('parameter',str(self[para]), out, type='datetime',name=para.replace(' ','_'))
+        else:
+          doc.AddField('parameter',str(self[para]), out, name=para.replace(' ','_'))
+          
+    # AI
+    ai = doc.NewNode('AI')
+    for i in ['planned begin time', 'planned end time']:
+      doc.AddField(i.replace(' ','_'),str(self[i]), ai, type='datetime')
+    doc.AddField('task_time',str(self['task time']),ai)
+    doc.AddField('supply_required',str(self['supply required']),ai)
+    doc.AddNode(ai,out)
+    
+    # Timing
+    timing = doc.NewNode('timing')
+    for i in ['begin time', 'end time']:
+      doc.AddField(i.replace(' ','_'),str(self[i]), ai, type='datetime')    
+    doc.AddNode(timing, out)
+    
+    # Sequence
+    seq = doc.NewNode('sequence')
+    for i in self.sequence:
+      if i != self:
+        x = i.toXML(doc)
+      else:
+        x = doc.NewNode('self')
+      doc.AddNode(x)
+    doc.AddNode(seq,out)
+        
+    
   def fromXML(self, doc, node):
     # instanciate to the correct type
     self.cursor = doc.SafeGet(node, 'cursor',self.cursor)
