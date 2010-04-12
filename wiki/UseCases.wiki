@@ -6,3 +6,4 @@ After seeing how the folks developing the game [http://www.bay12games.com/dwarve
 
 = Cases =
   # IntelGathering
+  # SecuringAreaMission
