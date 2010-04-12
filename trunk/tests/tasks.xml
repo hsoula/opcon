@@ -28,4 +28,10 @@
             </sequence>
         </task>
     </test1>
+    <test2>
+        <!-- Ordering a redeployment to combat stance with no other -->
+        <task task_type="Redeploy">
+            <parameter name="final stance">combat</parameter>
+        </task>
+    </test2>
 </tests>

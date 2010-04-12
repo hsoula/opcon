@@ -647,6 +647,9 @@ class taskRedeploy(sandbox_task):
     self['initial readiness'] = None
     self['final readiness'] = 0.0 # Assumption
     
+    # The stance to assume. Assmed to be the same as initial if uncpecified.
+    self['final stance'] = ''
+    
   def _Process(self, E):
     '''
         Transition to a new stance.
@@ -2375,18 +2378,39 @@ class taskTemplate(sandbox_task):
 import unittest
 import os
 class TaskTesting(unittest.TestCase):
-  def testReadTask(self):
-    # Read from XML test file
-    # Test files
+  def setUp(self):
     filename = os.path.join(os.environ['OPCONhome'], 'tests', 'tasks.xml')
     
     # Get the XML data
     from sandbox_XML import sandboXML
-    doc = sandboXML(read=filename)
+    self.doc = sandboXML(read=filename)
+    
+  def testReadTask(self):
+    # Read from XML test file
+    # Test files
+    doc = self.doc
     x = doc.Get(doc.root, 'test1')
     task = doc.Get(x,'task')
     
     self.assertEqual(task.TaskTime(),0.0)
+    
+  def testReadRedeployTask(self):
+    doc = self.doc
+    x = doc.Get(doc.root, 'test2')
+    task = doc.Get(x,'task')
+    
+    self.assertEqual(task.TaskTime(),0.0)
+  
+  def testWriteRedeployTask(self):
+    doc = self.doc
+    x = doc.Get(doc.root, 'test2')
+    task = doc.Get(x,'task')
+    
+    # Write is back to XML
+    node = task.toXML(doc)
+    doc.AddNode(task.toXML(doc),x)
+    
+    self.assertTrue(node)
     
     
 if __name__ == '__main__':
