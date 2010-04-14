@@ -121,18 +121,21 @@ class sandbox_task(dict):
     # Note Consumption code are type specific and thus not written out.
     
     # Parameters
-    predet = ['task time', 'planned begin time', 'planned end time', 'supply required'] + ['begin time', 'end time']
+    predet = ['task time', 'planned begin time', 'planned end time', 'supply required'] + ['begin time', 'end time'] + ['consumption code']
     for para in self:
       if not para in predet:
-        if 'datetime' in self[para].__class__:
-          doc.AddField('parameter',str(self[para]), out, type='datetime',name=para.replace(' ','_'))
+        if not self[para]:
+          continue
+        if hasattr(self[para],'second'):
+          doc.AddField('parameter',self[para], out, type='datetime',name=para.replace(' ','_'))
         else:
           doc.AddField('parameter',str(self[para]), out, name=para.replace(' ','_'))
           
     # AI
     ai = doc.NewNode('AI')
     for i in ['planned begin time', 'planned end time']:
-      doc.AddField(i.replace(' ','_'),str(self[i]), ai, type='datetime')
+      if self[i]:
+        doc.AddField(i.replace(' ','_'),str(self[i]), ai, type='datetime')
     doc.AddField('task_time',str(self['task time']),ai)
     doc.AddField('supply_required',str(self['supply required']),ai)
     doc.AddNode(ai,out)
@@ -140,7 +143,8 @@ class sandbox_task(dict):
     # Timing
     timing = doc.NewNode('timing')
     for i in ['begin time', 'end time']:
-      doc.AddField(i.replace(' ','_'),str(self[i]), ai, type='datetime')    
+      if self[i]:
+        doc.AddField(i.replace(' ','_'),str(self[i]), ai, type='datetime')    
     doc.AddNode(timing, out)
     
     # Sequence
@@ -152,6 +156,8 @@ class sandbox_task(dict):
         x = doc.NewNode('self')
       doc.AddNode(x)
     doc.AddNode(seq,out)
+    
+    return out
         
     
   def fromXML(self, doc, node):
@@ -166,10 +172,10 @@ class sandbox_task(dict):
         self['consumption code'].append(ccode)
         
     # Parameters
-    for para in doc.Get(node, 'parameter',True):
+    for para in doc.Get(node, 'parameter',True,True):
       key = doc.Get(para,'name')
       val = doc.Get(para)
-      self[key] = val
+      self[key.replace('_', ' ')] = val
       
     # AI
     AI = doc.Get(node, 'AI')
@@ -2423,6 +2429,7 @@ class taskTemplate(sandbox_task):
   
 import unittest
 import os
+import datetime
 class TaskTesting(unittest.TestCase):
   def setUp(self):
     filename = os.path.join(os.environ['OPCONhome'], 'tests', 'tasks.xml')
@@ -2452,11 +2459,19 @@ class TaskTesting(unittest.TestCase):
     x = doc.Get(doc.root, 'test2')
     task = doc.Get(x,'task')
     
-    # Write is back to XML
-    node = task.toXML(doc)
-    doc.AddNode(task.toXML(doc),x)
+    # Add Parameters
+    task['favourite color'] = 'pink'
+    task['birthdate'] = datetime.datetime.now()
     
-    self.assertTrue(node)
+    # Write is back to XML
+    # New document
+    from sandbox_XML import sandboXML
+    outdoc = sandboXML('blah')
+    node = task.toXML(outdoc)
+    outdoc.AddNode(node,outdoc.root)
+    task2 = outdoc.Get(outdoc.root,'task')
+    
+    self.assertTrue((task['birthdate'] - task2['birthdate']).seconds < 60)
     
     
 if __name__ == '__main__':

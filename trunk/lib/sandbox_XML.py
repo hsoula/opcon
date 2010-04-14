@@ -63,7 +63,7 @@ class sandboXML:
         else:
             return defaultval
         
-    def Get(self, node, tag='', force_list = False):
+    def Get(self, node, tag='', force_list = False, raw_nodes=False):
         '''! \brief Look for an attribute or element with the corresponding tag(s). Return a list of if there is multiple elements.
         '''
         E = [] #node.getElementsByTagName(tag)
@@ -74,12 +74,16 @@ class sandboXML:
         # No tag Case
         if tag == '' and len(node.childNodes) == 1:
             if node.childNodes[0].nodeType == 3:
-                return self.NumericalTypes(str(node.childNodes[0].nodeValue))
+                if not self.Get(node,'type'):
+                    return self.NumericalTypes(str(node.childNodes[0].nodeValue))
+                else:
+                    return self.AttemptTyping(node)
             
         if E:
             # Type 
             for i in range(len(E)):
-                E[i] = self.AttemptTyping(E[i])
+                if not raw_nodes:
+                    E[i] = self.AttemptTyping(E[i])
             if type(E) == type([]) and len(E) == 1 and not force_list:
                 return E[0]
             return E
