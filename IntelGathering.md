@@ -1,0 +1,9 @@
+# Narrative #
+The platoon is created in the vicinity of the village with the order to defend against a possible infiltration from the North. The first reflex of the Platoon leader is to listen on all channel for traffic from HIGHER. In absence of signal, the platoon leader considers that since the threat axis is set to the North, the unit should deploy in hasty defense with a Platoon threat axis to the North as well. In absence of further instruction, the Platoon CO decides to secure the village because it has the best defensive potential.
+
+A squad is sent in while the other two are standing by. In absence of hostile contact, the squad is ordered to gather HUMINT while B squad is ordered to relocate to the other side of the village. After 30 minutes, B and C squads are in hasty defense against a possible threat to the North. The HUMINT report to Plt CO is that RED was sighted 12 hours ago. The sighting was made of 1 UAV and 2-3 infantrymen. The HUMINT report points to the location of the UAV then. C Squad is sent to patrol the area at the edge of the forest and find the track of a light utility vehicle. With the HUMINT and the track sighting on hand, Plt CO sends a SPOTREP to HIGHER.
+
+# Analysis #
+
+  * Inhabited areas can contain HUMINT listeners: neutral units that gather INTEL through simple sensors such as visual and auditory. HUMINT gathering consist on getting information from these listeners.
+  * Units are leaving tacks behind. Keeping track of this isn't a good option. Maybe this could be done by mining the location logs of units to find out which units were on a location and how long ago. Some kind of track signature should be implemented.
